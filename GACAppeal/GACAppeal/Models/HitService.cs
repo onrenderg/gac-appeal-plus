@@ -287,8 +287,11 @@ namespace GACAppeal.Models
             {
                 try
                 {
+                    //mgogo
                     var client = new HttpClient();
                     //Added Basic Auth to client
+                    Preferences.Set("EncKey", "5gS2E70CA13935B9");
+                    Preferences.Set("BasicAuth", $"3O%2BMVC0RSgx0klSvZ4%2Fpcw%3D%3D:2uS7yDJy02QGCywWXsEx7aVd%2BjrDBhbERipESVk%2BRcU%3D");
                     var m = Preferences.Get("BasicAuth", "xx:xx");
                     var byteArray = Encoding.ASCII.GetBytes(Preferences.Get("BasicAuth", "xx:xx"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
@@ -318,11 +321,11 @@ namespace GACAppeal.Models
                     //End Json request
 
                     //awaited for API Response
-                    HttpResponseMessage response = await client.PostAsync("https://authenticate.epramaan.gov.in/authwebservice/requestauth", content);
+                    HttpResponseMessage response = await client.PostAsync("https://authenticate.epramaan.gov.in/authwebservice/requestauth/v3", content);
                     //API Response Received
                     // if response is 200 then 
 
-                    if ((int)response.StatusCode == 404)
+                    if ((int)response.StatusCode == 200)
                     {
                         await App.Current.MainPage.DisplayAlert("Title", $"{response}", "OK");
 
