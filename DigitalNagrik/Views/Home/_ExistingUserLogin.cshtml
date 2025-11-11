@@ -1,0 +1,302 @@
+﻿@model DigitalNagrik.Areas.Public.Models.mPinLogin
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="~/Scripts/SHA256.js"></script>
+<style>
+    .form-control:disabled, .form-control[readonly] {
+        background-color: #e9ecef;
+        opacity: 1;
+    }
+
+    .validation-summary-errors {
+        color: red;
+    }
+
+    .field-validation-error {
+        color: red;
+    }
+</style>
+<div class="row mt-2" id="dvPIN1">
+    @using (Html.BeginForm("PINLogin", "Home", FormMethod.Post, new { id = "PinLogin" }))
+    {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(x => x.Seed, new { id = "hdnSeed" })
+        @Html.HiddenFor(x => x.HashPwd, new { id = "hdHashPwd" })
+
+
+        <div class="row ">
+            <div class="col-md-5 ">
+                <label class="fw-bold" for="form2Example17">Enter Your Registered </label>
+            </div>
+            <div class="col-md-4">
+                @Html.RadioButtonFor(m => m.EmailorMobile, "M")  Mobile
+                @Html.RadioButtonFor(m => m.EmailorMobile, "E")  Email
+            </div>
+
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-5" id="idMobile">
+                @Html.TextBoxFor(m => m.txtPinMobile, new { @class = "form-control", @maxlength = "10", @placeholder = "999999999" })
+                @Html.ValidationMessageFor(x => x.txtPinMobile)
+            </div>
+            <div class="col-md-5" id="idEmail" style="display:none;">
+                @Html.TextBoxFor(m => m.txtEmail, new { @class = "form-control", @maxlength = "100", @placeholder = "abc@xyz.com" })
+                @Html.ValidationMessageFor(x => x.txtEmail)
+            </div>
+        </div>
+        <div class="row  mt-2">
+
+            <div class="col-md-5">
+                <label class="fw-bold ">Login Using</label>
+            </div>
+            <div class="col-md-4">
+
+                @Html.RadioButtonFor(m => m.rbtnPINorOTP, "P")  PIN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                @Html.RadioButtonFor(m => m.rbtnPINorOTP, "O")  OTP
+            </div>
+
+            <div class="col-md-5" id="dvPIN">
+
+                @Html.PasswordFor(m => m.txtPIN, new { @class = "form-control", @maxlength = "6" })
+                @Html.ValidationMessageFor(x => x.txtPIN)
+            </div>
+        </div>
+
+        <div class="mt-4 row">
+            <div class="col-md-8">
+                <label class="custom-input-label mb-1">Captcha<span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text" id="basic-addon1">
+                        <img id="CaptchaImage" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                        <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                    </span>
+                    @Html.TextBoxFor(x => x.Captcha, new { @id = "txtCaptcha", @class = "form-control DisabledInputs", placeholder = "Enter Captcha", autocomplete = "off", maxlength = "6" })
+                </div>
+                <div id="SpanCaptchaValidation">
+                    @Html.ValidationMessageFor(x => x.Captcha)
+                </div>
+            </div>
+            <div class="col-md-2  mt-1" style="text-align:left;">
+                <br />
+                <input type="button" id="btnLogin" class="btn btn-loginpanel  btn-block" value="Login" />
+            </div>
+
+        </div>
+        <div class="row mt-3">
+
+            <div class="col-md-12 " style="text-align:left;">
+                <input type="button" id="btnNewUser" class="btn btn-loginpanel  btn-block" value="New Appellant" />
+            </div>
+
+        </div>
+
+        <div class="alert alert-danger" role="alert" id="dvMessage" style="display :none ;">
+
+        </div>
+    }
+</div>
+@if (ViewData["SuccessMessage"] != null)
+{
+    <script type="text/javascript">
+                window.onload = function () {
+                    alertify.success('@ViewData["SuccessMessage"]');
+                 };
+    </script>
+}
+@if (ViewData["ErrorMessage"] != null)
+{
+    <script type="text/javascript">
+                window.onload = function () {
+                    alertify.error('@ViewData["ErrorMessage"]');
+                 };
+    </script>
+}
+<script>
+     function RefreshCaptcha() {
+        $.ajax({
+            url: '@Url.Action("CaptchaImage", "Home", new { area = "" })',
+            data: {},
+            success: function (data) {
+                $("#CaptchaImage").html(data);
+            }
+        });
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };
+     function IsEmail(email) {
+            var regex =/^([a-zA-Z0-9_\.\-\+])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            if (!regex.test(email)) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+    $(document).ready(function () {
+       // RefreshCaptcha();
+        if ("@Model.EmailorMobile.ToString()" == 'M') {
+            $("#idMobile").show();
+            $("#idEmail").hide();
+        }
+        else {
+            $("#idMobile").hide();
+            $("#idEmail").show();
+        }
+        if ("@Model.rbtnPINorOTP.ToString()" == 'P') {
+            $("#dvPIN").show();
+            $("#btnLogin").val("Login");
+        }
+        else {
+
+            $("#btnLogin").val("Send OTP");
+            $("#dvPIN").hide();
+        }
+        $("input[name='EmailorMobile']").change(function () {
+            //console.log("12");
+            if ($("input[name='EmailorMobile']:checked").val() == "M") {
+                $("#idMobile").show();
+                $("#idEmail").hide();
+            }
+            else {
+                $("#idMobile").hide();
+                $("#idEmail").show();
+            }
+        });
+        $("#btnLogin").click(function () {
+            var txtPinMobile = $("#txtPinMobile").val();
+            var txtEmail = $("#txtEmail").val();
+
+            var txtPIN = $("#txtPIN").val();
+
+            var EmailorMobile = $("input[name='EmailorMobile']:checked").val();
+           // console.log(EmailorMobile);
+            if (EmailorMobile == "" || EmailorMobile==null) {
+                $('#dvMessage').show();
+                $('#dvMessage').html("Please select Mobile or Email ");
+                return false;
+            }
+
+            if (EmailorMobile =="E") {
+
+                if (IsEmail(txtEmail) == false) {
+                    $('#dvMessage').show();
+                    $('#dvMessage').html("Please enter valid Email ID");
+                    return false;
+                }
+            }
+            else {
+                var d = $.isNumeric(txtPinMobile);
+                if (!d) {
+                    $('#dvMessage').show();
+                    $('#dvMessage').html("Please enter valid mobile number.");
+                    return false;
+                }
+                if (txtPinMobile.length < 10) {
+                    $('#dvMessage').show();
+                    $('#dvMessage').html("Your Mobile must be 10 digit.");
+                    return false;
+                }
+
+            }
+
+            if ($("input[name='rbtnPINorOTP']:checked").val() == "P") {
+
+                if (txtPIN.length < 6) {
+                    $('#dvMessage').show();
+                    $('#dvMessage').html("Your password must be at least 6 digit.");
+                    return false;
+                }
+
+                $("#hdHashPwd").val(SHA256($("#hdnSeed").val() + SHA256($("#txtPIN").val())));
+                $("#txtPIN").val("XXXXX");
+                var data = new FormData();
+                //Add the input element values
+                data.append("txtPinMobile", $("#txtPinMobile").val());
+                data.append("txtEmail", $("#txtEmail").val());
+                data.append("rbtnPINorOTP", $("#rbtnPINorOTP").val());
+                data.append("txtPIN", $("#txtPIN").val());
+                data.append("HashPwd", $("#hdHashPwd").val());
+                data.append("Captcha", $("#txtCaptcha").val());
+                data.append("Seed", $("#hdnSeed").val());
+                data.append("EmailorMobile", EmailorMobile);
+                $.ajax({
+                type: "POST",
+                url:"@Url.Action("PINLogin", "Home")",
+                contentType: false,
+                processData: false,
+                data: data,
+                    success: function (response) {
+                        if (response == "LoginSuccess") {
+                            window.location="@Url.Action("CitizenDashboard", "Registration", new { Message = "LoginSuccess", Area = "Public" })"
+                        }
+                        else {
+                           // console.log(response);
+                            //RefreshCaptcha();
+
+                            $("#LoginDiv").html(response);
+                            RefreshCaptcha();
+                        }
+
+                },
+                });
+
+                return true;
+            }
+            else {
+                 var data = new FormData();
+                //Add the input element values
+                data.append("txtPinMobile", $("#txtPinMobile").val());
+                data.append("txtEmail", $("#txtEmail").val());
+                data.append("rbtnPINorOTP", "O");
+                data.append("txtPIN", $("#txtPIN").val());
+                data.append("HashPwd", $("#hdHashPwd").val());
+                data.append("Captcha", $("#txtCaptcha").val());
+                data.append("Seed", $("#hdnSeed").val());
+                data.append("EmailorMobile", EmailorMobile);
+                $.ajax({
+                type: "POST",
+                url:"@Url.Action("PINLogin", "Home")",
+                contentType: false,
+                processData: false,
+                data: data,
+                    success: function (response) {
+                        if (response == "LoadOTPVerification") {
+
+                            $("#LoginDiv").load("@Url.Action("_OTPLoginVerification", "Home", new { Message = "LoginSuccess", Area = "" })");
+                        }
+                        else {
+                            //console.log(response);
+
+
+                            $("#LoginDiv").html(response);
+                            RefreshCaptcha();
+                        }
+
+                }
+                });
+            }
+
+        });
+        $("input[name='rbtnPINorOTP']").change(function () {
+
+            if ($(this).val() == 'P') {
+                $("#dvPIN").show();
+                $("#dvOTP").hide();
+                $("#btnLogin").val("Login");
+            }
+            else {
+                $("#dvPIN").hide();
+                $("#dvOTP").show();
+                $("#btnLogin").val("Send OTP");
+            }
+        });
+    });
+    $("#btnNewUser").click(function () {
+
+        $("#LoginDiv").load("@Url.Action("_NewUser", "Home", new {  Area = "" })");
+    });
+
+
+
+</script>

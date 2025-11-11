@@ -1,0 +1,242 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.Dashboard_Stats
+@using DigitalNagrik.Areas.GridView.Data
+@using DigitalNagrik.Models
+@{
+    string CD = "Stats";
+    string GACId = ViewBag.GACId;
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+@*<style>
+        .card-dash-stats:hover {
+            background: #f7f7f7;
+        }
+    </style>*@
+
+<script>
+    function RenderPercent_@(CD)(_containerId, _labels, _data, _colors) {
+        const ChartOptions = {
+            series: _data,
+            labels: _labels,
+            chart: { height: 140, width: 125, type: 'radialBar' },
+            plotOptions: {
+                radialBar: {
+                    size: 100, offsetY: 20, startAngle: -90, endAngle: 90, hollow: { size: '40%' },
+                    track: { background: _colors, strokeWidth: '10%', opacity: 0.3, },
+                    dataLabels: {
+                        name: { offsetY: 15, color: headingColor, fontSize: '10px', fontWeight: '600' },
+                        value: { offsetY: -15, color: headingColor, fontSize: '12px', fontWeight: '500' }
+                    }
+                }
+            },
+            colors: _colors,
+            fill: { type: 'gradient', gradient: { shade: 'dark', shadeIntensity: 0.6, gradientToColors: _colors, inverseColors: true, opacityFrom: 1, opacityTo: 0.8, stops: [30, 70, 100] } },
+            stroke: { dashArray: 3 },
+            grid: { padding: { top: -35, bottom: -10, right: -40 } },
+            states: { hover: { filter: { type: 'none' } }, active: { filter: { type: 'none' } } }
+        };
+        var Chart = new ApexCharts(document.querySelector('#' + _containerId), ChartOptions); Chart.render();
+    }
+</script>
+
+<div>
+    <div class="row gx-3">
+        <div class="@(!(GACId == "0" && UserSession.RoleID == UserRoles.Secretariat) ? "col-xl-3" : "col-xl-2") col-lg-4 col-md-6 mb-3">
+            <div class="card card-dash-stats h-100 cursor-pointer" title="Click to view Appeals">
+                <div class="card-body pb-3" data-title="@LabelDictionary["AppealsReceived"]" data-qs="@SecureQueryString.SecureQueryString.Encrypt("GACId=" + GACId + "&Flag=" + GACGridViewInbox.MenuStatus.All)" onclick="GetAppealList($(this))">
+                    <div class="card-title d-flex align-items-start justify-content-between">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded bg-label-primary">
+                                <i class="bx bx-envelope-open"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <h4 class="d-block fw-light mb-1">@LabelDictionary["AppealsReceived"]</h4>
+                    <h1 class="card-title mb-0">@Model.AppealsReceived</h1>
+                    <div class="text-end mt-1 font-xxxl">
+                        @LabelDictionary["AppealsReceived/Day"]:
+                        <span data-bs-toggle="popover" data-bs-placement="bottom" data-bs-html="true" data-flag="@GACGridViewInbox.MenuStatus.Inbox" class="fw-semibold ms-1 text-orange popover-stats@(CD)"></span>
+                    </div>
+                    <div class="text-end font-xxxl">
+                        <i class="bx bx-user-plus fs-3 align-middle text-info me-1"></i>Users Registered:
+                        <span class="fw-semibold ms-1 text-orange">@Model.UsersRegistered</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (GACId == "0" && UserSession.RoleID == UserRoles.Secretariat)
+        {
+            <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+                <div class="card card-dash-stats h-100 cursor-pointer @(Model.PendingForAssignment != "0" ? "pulsing" : "")" title="Click to view Appeals">
+                    <div class="card-body pb-3" data-title="@LabelDictionary["PendingforAssignment"]" data-qs="@SecureQueryString.SecureQueryString.Encrypt("GACId=" + GACId + "&Flag=" + GACGridViewInbox.MenuStatus.AssignmentPending)" onclick="GetAppealList($(this))">
+                        <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                                <span class="avatar-initial rounded bg-label-warning">
+                                    <i class="bx bx-time"></i>
+                                </span>
+                            </div>
+                            <div id="CC_Percent_AssignmentPending@(CD)" class="position-absolute" style="right: -10px;top:-12px">
+                                <script>
+                            var _labels = ['']; var _data = [parseFloat('@Model.PendingForAssignment_Percent')]; var _colors = [config.colors.warning]; RenderPercent_@(CD)('CC_Percent_AssignmentPending@(CD)', _labels, _data, _colors);
+                                </script>
+                            </div>
+                        </div>
+                        <h4 class="d-block fw-light mb-1">@LabelDictionary["PendingforAssignment"]</h4>
+                        <h1 class="card-title mb-0">@Model.PendingForAssignment</h1>
+                        <div class="text-end mt-1 font-xxxl">
+                            @LabelDictionary["AssignedtoGAC"]:
+                            <span class="fw-semibold ms-1 text-orange">@Model.AssignedToGAC</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+            <div class="card card-dash-stats h-100 cursor-pointer" title="Click to view Appeals" data-title="@LabelDictionary["ResponsefromRespondentIntermediary"]" data-qs="@SecureQueryString.SecureQueryString.Encrypt("GACId=" + GACId + "&Flag=" + GACGridViewInbox.MenuStatus.IntermediaryResponse)" onclick="GetAppealList($(this))">
+                <div class="card-body pb-3">
+                    <div class="card-title d-flex align-items-start justify-content-between">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded bg-label-info">
+                                <i class="bx bx-send"></i>
+                            </span>
+                        </div>
+                        <div id="CC_Percent_Assigned@(CD)" class="position-absolute" style="right: -10px;top:-12px">
+                            <script>
+                                var _labels = ['']; var _data = [parseFloat('@Model.ResponseIntermediary_Percent')]; var _colors = [config.colors.info]; RenderPercent_@(CD)('CC_Percent_Assigned@(CD)', _labels, _data, _colors);
+                            </script>
+                        </div>
+                    </div>
+                    <h4 class="d-block fw-light mb-1">@LabelDictionary["ResponsefromRespondentIntermediary"]</h4>
+                    <h1 class="card-title mb-0">@Model.ResponseIntermediary</h1>
+                    <div class="text-end mt-1 font-xxxl">
+                        @LabelDictionary["ResponseAwaited"]:
+                        <span data-bs-toggle="popover" data-bs-placement="bottom" data-bs-html="true" class="me-2 fw-semibold ms-1 text-orange">@Model.ResponseFromIntermediary_NoResponse</span>
+                        @LabelDictionary["NoResponse"]:
+                        <span data-bs-toggle="popover" data-bs-placement="bottom" data-bs-html="true" class="me-2 fw-semibold ms-1 text-danger">@Model.ResponseIntermediary_ResponseTimeExceeded</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+            <div class="card card-dash-stats h-100 cursor-pointer" title="Click to view Appeals" data-title="@LabelDictionary["InProcess"]" data-qs="@SecureQueryString.SecureQueryString.Encrypt("GACId=" + GACId + "&Flag=" + GACGridViewInbox.MenuStatus.InProcess)" onclick="GetAppealList($(this))">
+                <div class="card-body pb-3">
+                    <div class="card-title d-flex align-items-start justify-content-between">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded bg-label-secondary">
+                                <i class="bx bx-cog"></i>
+                            </span>
+                        </div>
+                        <div id="CC_Percent_Scrutiny@(CD)" class="position-absolute" style="right: -10px;top:-12px">
+                            <script>
+                                var _labels = ['']; var _data = [parseFloat('@Model.InScrutiny_Percent')]; var _colors = [config.colors.secondary]; RenderPercent_@(CD)('CC_Percent_Scrutiny@(CD)', _labels, _data, _colors);
+                            </script>
+                        </div>
+                    </div>
+                    <h4 class="d-block fw-light mb-1">@LabelDictionary["InProcess"]</h4>
+                    <h1 class="card-title mb-0">@Model.InScrutiny</h1>
+                    <div class="text-end mt-1 font-xxxl">
+                        @LabelDictionary["Averagedaystostartprocess"]:
+                        <span data-bs-toggle="popover" data-bs-placement="bottom" data-bs-html="true" data-flag="@GACGridViewInbox.MenuStatus.InProcess" class="fw-semibold ms-1 text-orange popover-stats@(CD)"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+            <div class="card card-dash-stats h-100 cursor-pointer" title="Click to view Appeals" data-title="@LabelDictionary["Disposedof"]" data-qs="@SecureQueryString.SecureQueryString.Encrypt("GACId=" + GACId + "&Flag=" + GACGridViewInbox.MenuStatus.Disposed)" onclick="GetAppealList($(this))">
+                <div class="card-body pb-3">
+                    <div class="card-title d-flex align-items-start justify-content-between">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded bg-label-success">
+                                <i class="bx bx-check-circle"></i>
+                            </span>
+                        </div>
+                        <div id="CC_Percent_Disposed@(CD)" class="position-absolute" style="right: -10px;top:-12px">
+                            <script>
+                                var _labels = ['']; var _data = [parseFloat('@Model.Disposed_Percent')]; var _colors = [config.colors.success]; RenderPercent_@(CD)('CC_Percent_Disposed@(CD)', _labels, _data, _colors);
+                            </script>
+                        </div>
+                    </div>
+                    <h4 class="d-block fw-light mb-1">@LabelDictionary["Disposedof"]</h4>
+                    <h1 class="card-title mb-0">@Model.Disposed<span class="px-2 font-lg text-muted">|</span><span class="font-xxxl fw-normal">@LabelDictionary["Compliance"]: <span class="fw-semibold">@Model.Compliance</span></span></h1>
+                    <div class="font-xxxl mt-1">
+                        <span class="no-wrap">@LabelDictionary["ReliefGiven"]:<span class="me-2 fw-semibold ms-1 text-orange">@Model.reliefGiven</span></span>
+                        <span class="no-wrap">@LabelDictionary["ReliefnotGiven"]:<span class="me-2 fw-semibold ms-1 text-orange">@Model.noRelief</span></span>
+                        <span class="no-wrap">@LabelDictionary["Others"]:<span class="me-2 fw-semibold ms-1 text-orange">@Model.otherRelief</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="@(!(GACId == "0" && UserSession.RoleID == UserRoles.Secretariat) ? "col-xl-3" : "col-xl-2") col-lg-4 col-md-6 mb-3">
+            <div class="card card-dash-stats h-100 cursor-pointer" title="Click to view Appeals" data-title="@LabelDictionary["NotAdmitted"]" data-qs="@SecureQueryString.SecureQueryString.Encrypt("GACId=" + GACId + "&Flag=" + GACGridViewInbox.MenuStatus.Rejected)" onclick="GetAppealList($(this))">
+                <div class="card-body pb-3">
+                    <div class="card-title d-flex align-items-start justify-content-between">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded bg-label-danger">
+                                <i class="bx bx-window-close"></i>
+                            </span>
+                        </div>
+                        <div id="CC_Percent_Rejected@(CD)" class="position-absolute" style="right: -10px;top:-12px">
+                            <script>
+                                var _labels = ['']; var _data = [parseFloat('@Model.Rejected_Percent')]; var _colors = [config.colors.danger]; RenderPercent_@(CD)('CC_Percent_Rejected@(CD)', _labels, _data, _colors);
+                            </script>
+                        </div>
+                    </div>
+                    <h4 class="d-block fw-light mb-1">@LabelDictionary["NotAdmitted"]</h4>
+                    <h1 class="card-title mb-0">@Model.Rejected</h1>
+                    <div class="font-xxxl mt-1">
+                        <span class="no-wrap">@LabelDictionary["TimeBarred"]:<span class="me-2 fw-semibold ms-1 text-orange">@Model.TimeBarred</span></span>
+                        <span class="no-wrap">@LabelDictionary["NoComplaint"]:<span class="me-2 fw-semibold ms-1 text-orange">@Model.NoComplaint</span></span>
+                        <span class="no-wrap">@LabelDictionary["SubJudice"]:<span class="me-2 fw-semibold ms-1 text-orange">@Model.SubJudice</span></span>
+                        <span class="no-wrap">@LabelDictionary["Others"]:<span class="me-2 fw-semibold ms-1 text-orange">@Model.RejOther</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var SpinnerHtml = '<div class="spinner-border spinner-border-sm text-secondary" role="status"><span class="visually-hidden">Loading...</span></div>';
+    $('.popover-stats@(CD)').each(function () {
+        var element = $(this); element.html(SpinnerHtml); var Flag = element.data("flag");
+        setTimeout(function () {
+            $.ajax({
+                url: '@Url.Action("StatisticsAverageDays_PV", "AdminDashboard", new { area = "Dashboard" })', type: "GET", data: { GACId: '@GACId', Flag: Flag }, async: false, dataType: "JSON",
+                success: function (data) {
+                    if (data) { element.html(data.TotalNoOfDays); if (data.HtmlString) { new bootstrap.Popover(element, { container: 'body', content: data.HtmlString, trigger: "hover", html: true, sanitize: false }); } }
+                }
+            });
+        }, 500);
+    });
+
+    function GetAppealList(element) {
+        var qs = element.data("qs"); var Title = element.data("title"); $("#dash-appeallist-modal-title").html(Title);
+        _Container = $("#dash-appeallist-modal-content"); _Container.html(_LoadHtml); $("#dash-appeallist-modal").modal('show');
+        if (qs) { setTimeout(function () { $.ajax({ url: '@Url.Action("GetAppealList_PV", "AdminDashboard", new { Area = "Dashboard" })' + '?qs=' + qs, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { _Container.html(data); } }, }); }, 400); }
+    }
+
+    function ShowComparsionDocument(element) {
+        var src = element.data('href'); var ComparisonContainer = $(".gv-container-comparison-doc");
+        ComparisonContainer.html('<div class="my-2 text-right"><a href="javascript:void(0);" class="btn btn-danger btn-xs" onclick="$(\'.gv-container-comparison-doc\').hide(\'fast\')">@LabelDictionary["Close"]</a></div><object width="100%" height="93%;" data="' + src + '"></object>');
+        ComparisonContainer.show('fast'); ComparisonContainer.append('');
+    }
+
+    function ShowComparsionHtml(element) {
+        var tcid = element.data('tcid'); var html = "";
+        if (tcid) { html = $("#" + tcid).html(); } else { element.data('html'); }
+        var ComparisonContainer = $(".gv-container-comparison-doc");
+        ComparisonContainer.html('<div class="my-2 text-right"><a href="javascript:void(0);" class="btn btn-danger btn-xs" onclick="$(\'.gv-container-comparison-doc\').hide(\'fast\')">@LabelDictionary["Close"]</a></div><div class="font-lg" width="100%" height="93%;">' + html + '</div>');
+        ComparisonContainer.show('fast'); ComparisonContainer.append('');
+        $(".txt-dash-search-ground").val($("#hdnDashSearchGround").val());
+    }
+
+    function SelectGround(element) {
+        var GACId = element.data("gacid"); var GroundId = element.data("groundid"); var GroundNm = element.data("groundnm");
+        $("#ddlGACList").val(GACId); $("#AppealGround").val(GroundId); $("#lblDashSelectedGround").html(GroundNm); $('.gv-container-comparison-doc').hide('fast');
+    }
+</script>

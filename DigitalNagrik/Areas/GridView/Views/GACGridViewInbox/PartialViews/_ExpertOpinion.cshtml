@@ -1,0 +1,47 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACGridViewInbox_AppealDetails
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+@if (Model.ExpertOpinionList.Count > 0)
+{
+    <div style="max-height:200px" class="overflow-auto">
+        <table class='table table-bordered w-100 table-sm font-md mb-0'>
+            <thead>
+                <tr>
+                    <td class="fw-semibold">@LabelDictionary["Request"]</td>
+                    <td class="fw-semibold">@LabelDictionary["Reply"]</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var Request in Model.ExpertOpinionList)
+                {
+                    <tr style="line-height:1rem;">
+                        <td class="align-top">
+                            @LabelDictionary["Number"]: <span class="fw-semibold">@Request.InputRequestNo</span> @LabelDictionary["dated"] <span class="fw-semibold">@Request.SeekDate</span>
+                            <div><i class="bx bx-user-circle align-top"></i> <span class="fw-semibold">@Request.ExpertName</span></div>
+                            <div><i class="bx bx-at align-top"></i> <span class="fw-semibold">@Request.ExpertEmail.ToString().Replace("@", "[at]").Replace(".", "[dot]") </span></div>
+                            <div><i class="bx bx-mobile align-top"></i> <span class="fw-semibold">@Request.ExpertMobile</span></div>
+                            <div>@LabelDictionary["Query"]: <span class="fw-semibold">@Request.SeekRemarks</span></div>
+                        </td>
+                        <td style="width:50%" class="align-top">
+                            @if (string.IsNullOrWhiteSpace(Request.InputRemarks))
+                            {
+                                <div class="no-wrap text-danger"><i class='bx bx-calendar-exclamation align-top font-md'></i> @LabelDictionary["Awaited"]</div>
+                            }
+                            else
+                            {
+                                <div class='no-wrap' title='Reply submitted on @Request.InputDate'><i class='bx bxs-check-circle align-top text-success font-lg'></i> @LabelDictionary["Received"]</div>
+                                <div class="fw-semibold">@Request.InputRemarks</div>
+                                if (!string.IsNullOrWhiteSpace(Request.FilePath))
+                                {
+                                    <a target="_blank" href="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + Request.FilePath + "&FileType=pdf") })">@LabelDictionary["ViewDocument"]</a>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

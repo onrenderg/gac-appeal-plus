@@ -1,0 +1,215 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="GACAppeal.AppealPage"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    ios:Page.UseSafeArea="true">
+    <NavigationPage.TitleView >
+        <StackLayout x:Name="Custom_Navigation" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" BackgroundColor="Transparent" >
+            <Image Source="goi_icon.png" HeightRequest="40" VerticalOptions="CenterAndExpand"/>
+            <Label x:Name="Lbl_Nav_title" Style="{StaticResource NavBar_LabelStyle}" />
+            <Image Source="app_nic_header.png" x:Name="Image_Nav_nic"  HeightRequest="30" VerticalOptions="CenterAndExpand"/>
+        </StackLayout>
+    </NavigationPage.TitleView>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="language_ico.png" Clicked="Language_Clicked"/>
+        <ToolbarItem IconImageSource="Home_ico.png" Clicked="ToolbarItem_Clicked"/>
+    </ContentPage.ToolbarItems>
+    <Grid Margin="6">
+        <StackLayout>
+            <BoxView Style="{StaticResource BoxView_Line}"/>
+            <Label x:Name="Lbl_Title" Text="Appeal Details" Style="{StaticResource LabelStyle_PageTitle}"/>
+            <BoxView Style="{StaticResource BoxView_Line}"/>
+            <ScrollView VerticalOptions="FillAndExpand" x:Name="scrollView">
+                
+                <StackLayout VerticalOptions="FillAndExpand">
+                    <Label x:Name="Lbl_Mandatory" Text="Fields marked with * are mandatory" Style="{StaticResource Danger_LabelStyle}"/>
+
+                    <BoxView Style="{StaticResource BoxView_Line}"/>
+                    <Label Style="{StaticResource LabelStyle_PageTitle}" x:Name="Lbl_AppellantDetails" Text="Appellant Details"/>
+
+                    
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_FirstName" Text="First Name*"/>
+                    <Entry x:Name="Entry_FName" MaxLength="100" Keyboard="Default" ClearButtonVisibility="WhileEditing" FontAttributes="Bold"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_MiddleName" Text="Middle Name"/>
+                    <Entry x:Name="Entry_MName" MaxLength="100" Keyboard="Default" ClearButtonVisibility="WhileEditing" FontAttributes="Bold"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_LastName" Text="Last Name"/>
+                    <Entry x:Name="Entry_LName" MaxLength="100" Keyboard="Default" ClearButtonVisibility="WhileEditing" FontAttributes="Bold"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_MobileNo" Text="Mobile"/>
+                    <Entry x:Name="User_Mobile" FontAttributes="Bold"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Email" Text="Email*"/>
+                    <Entry x:Name="Entry_Email" MaxLength="200" Keyboard="Email" ClearButtonVisibility="WhileEditing" FontAttributes="Bold"/>
+                    <Label Style="{StaticResource Danger_LabelStyle}" x:Name="Lbl_EmailHint" Text="Email is needed to change your registered Mobile Number in future, if required." HorizontalTextAlignment="Start"/>
+
+                    <BoxView Style="{StaticResource BoxView_Line}"/>
+                    <Label Style="{StaticResource LabelStyle_PageTitle}" x:Name="Lbl_Respondent_Intermediary_Details" Text="Respondent Intermediary Details"/>
+
+                    <StackLayout Orientation="Vertical">
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_DateOfComplaint" Text="Date of Complaint"/>
+                        <Label Style="{StaticResource Danger_LabelStyle}" x:Name="Lbl_DateOfComplaint_Hint" Text="(Registered with the intermediary)"/>
+                        <Frame Style="{StaticResource FrameStyle}" x:Name="User_DateOfComplaint" HasShadow="False" Margin="0" Padding="2">
+                            <Label Text="dd-MM-yyyy" Padding="4">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="User_DateOfComplaint_Tapped"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Frame>
+                        <!--<Entry x:Name="User_DateOfComplaint" Placeholder="dd-MM-yyyy" IsVisible="false"/>-->
+                        <DatePicker x:Name="DatePicker_User_DateOfComplaint" Format="dd-MM-yyyy" FontAttributes="Bold" IsVisible="false" DateSelected="DatePicker_User_DateOfComplaint_DateSelected" ios:DatePicker.UpdateMode="WhenFinished"/>
+                    </StackLayout>
+                    
+                    <StackLayout Orientation="Vertical">
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_DateOfDecision" Text="Date of Decision"/>
+                        <Label Style="{StaticResource Danger_LabelStyle}" x:Name="Lbl_DateOfDecision_Hint" Text="(Given by the intermediary)"/>
+                        <Frame Style="{StaticResource FrameStyle}" x:Name="User_DateOfDecision" HasShadow="False" Margin="0" Padding="2">
+                            <Label Text="dd-MM-yyyy" Padding="4">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="User_DateOfDecision_Tapped"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Frame>
+                        <!--<Entry x:Name="User_DateOfDecision" Placeholder="dd-MM-yyyy" />-->
+                        <DatePicker x:Name="DatePicker_User_DateOfDecision" Format="dd-MM-yyyy" FontAttributes="Bold" IsVisible="false" DateSelected="DatePicker_User_DateOfDecision_DateSelected" ios:DatePicker.UpdateMode="WhenFinished"/>
+                    </StackLayout>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_IntermediaryName" Text="Name of the respondent intermediary against whom violation of the rules is alleged*"/>
+                    <Entry x:Name="Entry_IntermediaryName" Unfocused="Entry_IntermediaryName_Unfocused" TextChanged="Entry_IntermediaryName_TextChanged" MaxLength="100" ClearButtonVisibility="WhileEditing" FontAttributes="Bold"/>
+                    <ListView x:Name="Intermediary_Hint" VerticalOptions="Fill" HasUnevenRows="True" ItemTapped="Intermediary_Hint_ItemTapped"  IsVisible="false" HeightRequest="160" BackgroundColor="YellowGreen">
+                        <ListView.ItemTemplate >
+                            <DataTemplate>
+                                <ViewCell>
+                                    <StackLayout Orientation="Horizontal" >
+                                        <Label Text="{Binding IntermediaryTitle}" Style="{StaticResource LabelStyle}" VerticalTextAlignment="Center" HorizontalOptions="FillAndExpand" Padding="10" HorizontalTextAlignment="Start"/>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_URLIntermediary" Text="Uniform Resource Locator (URL) / website link of the respondent intermediary*"/>
+                    <Entry x:Name="Entry_URLIntermediary" FontAttributes="Bold" Focused="Entry_URLIntermediary_Focused"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_EmailIntermediary" Text="Email *"/>
+                    <Entry x:Name="Entry_EmailIntermediary" FontAttributes="Bold" Focused="Entry_EmailIntermediary_Focused"/>
+
+                    <StackLayout Orientation="Vertical">
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_ContactDetails_GO_Intermediary" Text="Contact details of the Grievance Officer / respondent intermediary to which complaint was made(other than email)"/>
+                        <Frame Style="{StaticResource FrameStyle}" HasShadow="False" Margin="0" Padding="2" >
+                            <Editor x:Name="Editor_ContactDetails_GO_Intermediary" Keyboard="Default" AutoSize="TextChanges" FontAttributes="Bold" Focused="Editor_ContactDetails_GO_Intermediary_Focused"/>
+                        </Frame>
+                    </StackLayout>
+
+                    <BoxView Style="{StaticResource BoxView_Line}"/>
+                    <Label Style="{StaticResource LabelStyle_PageTitle}" x:Name="Lbl_AppealDetails" Text="Appeal Details"/>
+
+                    <StackLayout Orientation="Vertical">
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Keyword" Text="Subject / Keyword / Specific provision in the law (Max 1000 Characters)*"/>
+                        <Frame Style="{StaticResource FrameStyle}" HasShadow="False" Margin="0" Padding="2">
+                            <Editor x:Name="Editor_Keyword" TextChanged="Editor_Keyword_TextChanged" MaxLength="1000" Keyboard="Default" AutoSize="TextChanges" FontAttributes="Bold" Unfocused="Editor_Keyword_Unfocused"/>
+                        </Frame>
+
+                        <ListView x:Name="Keyword_Hint" VerticalOptions="Fill" HasUnevenRows="True" ItemTapped="Keyword_Hint_ItemTapped"  IsVisible="false" HeightRequest="160" BackgroundColor="YellowGreen">
+                            <ListView.ItemTemplate >
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <StackLayout Orientation="Horizontal" >
+                                            <Label Text="{Binding Keyword}" Style="{StaticResource LabelStyle}" VerticalTextAlignment="Center" HorizontalOptions="FillAndExpand" Padding="10" HorizontalTextAlignment="Start"/>
+                                        </StackLayout>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackLayout>
+                    <Label Style="{StaticResource Danger_LabelStyle}" x:Name="Lbl_Keyword_hint" Text="(if you can specify the specific clause in the Act/Rules, please enter the provisions for expedite disposal of your appeal)" HorizontalTextAlignment="Start"/>
+
+                    <StackLayout Orientation="Vertical">
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Compaint" Text="Brief of Complaint (Max 1000 Characters)*"/>
+                        <Frame Style="{StaticResource FrameStyle}" HasShadow="False" Margin="0" Padding="2">
+                            <Editor x:Name="Editor_Complaint" MaxLength="1000" Keyboard="Default" AutoSize="TextChanges" FontAttributes="Bold" Focused="Editor_Complaint_Focused"/>
+                        </Frame>
+                    </StackLayout>
+
+                    
+
+                    <StackLayout Orientation="Vertical">
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Justification" Text="Justification for invoking the ground for the appeal (max. 250 words)*"/>
+                        <Frame Style="{StaticResource FrameStyle}" HasShadow="False" Margin="0" Padding="2">
+                            <Editor x:Name="Editor_Justification" MaxLength="4000" Keyboard="Default" AutoSize="TextChanges" FontAttributes="Bold" TextChanged="Editor_Justification_TextChanged" Focused="Editor_Justification_Focused"/>
+                        </Frame>
+                        <Label Style="{StaticResource Hint_LabelStyle}" HorizontalTextAlignment="End" HorizontalOptions="EndAndExpand" x:Name="Lbl_JustificationWord"/>
+                    </StackLayout>
+
+                    <StackLayout Orientation="Vertical">
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Relief_Sough" Text="Relief Sought Details (Max 500 Characters)*"/>
+                        <Frame Style="{StaticResource FrameStyle}" HasShadow="False" Margin="0" Padding="2">
+                            <Editor x:Name="Editor_Relief_Sought" MaxLength="500" Keyboard="Default" AutoSize="TextChanges" FontAttributes="Bold" Focused="Editor_Relief_Sought_Focused"/>
+                        </Frame>
+                    </StackLayout>
+                    
+                    <BoxView Style="{StaticResource BoxView_Line}"/>
+                    <Label Style="{StaticResource LabelStyle_PageTitle}" x:Name="Lbl_AppleaComplaint" Text="Appeal/Complaint Related Documents"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_CopuOfComplaint" Text="Copy of the complaint made to the Grievance Officer / intermediary and the decision on that complaint given by the intermediary&#x0a;(such as email sent to the Grievance Officer or screenshot of online complaint)*"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_CopuOfComplaint_hint1" Text=""/>
+                    <Label Style="{StaticResource Danger_LabelStyle}" x:Name="Lbl_CopuOfComplaint_hint" Text="(JPEG/JPG/PNG/PDF, Max size 4 MB, upto 3 files)" HorizontalTextAlignment="Start"/>
+                    <ListView x:Name="DetailedList_CopyOfComplaint" VerticalOptions="Fill" HasUnevenRows="True" ItemTapped="DetailedList_CopyOfComplaint_ItemTapped" IsVisible="false">
+                        <ListView.ItemTemplate >
+                            <DataTemplate>
+                                <ViewCell>
+                                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                                        <Label Text="{Binding FileName}" Style="{StaticResource Hint_LabelStyle}" VerticalTextAlignment="Center" HorizontalOptions="FillAndExpand" Padding="10" HorizontalTextAlignment="Start"/>
+                                        <ImageButton x:Name="Btn_DeleteCC"  HeightRequest="30" CommandParameter="{Binding FileId}" Clicked="Btn_DeleteCC_Clicked" Source="trash_ico.png" VerticalOptions="CenterAndExpand" HorizontalOptions="End"/>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Button Style="{StaticResource Danger_ButtonStyle}" Text="Upload" x:Name="Btn_ChooseCompyOfComplaint" Clicked="Btn_ChooseCompyOfComplaint_Clicked"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_AnyOtherInformation" Text="Any other relevant information"/>
+                    <Label Style="{StaticResource Danger_LabelStyle}" x:Name="Lbl_AnyOtherInformation_Hint" Text="(JPEG/JPG/PNG/PDF, Max size 1 MB)" HorizontalTextAlignment="Start"/>
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                        <Label x:Name="Link_CD" Text="Click To Download/Delete" Style="{StaticResource Hint_LabelStyle}" TextDecorations="Underline" IsVisible="false" HorizontalOptions="FillAndExpand">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="CD_Tapped"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                        <ImageButton x:Name="Btn_DeleteCD" HeightRequest="30" Clicked="Btn_DeleteCD_Clicked" Source="trash_ico.png" VerticalOptions="CenterAndExpand" HorizontalOptions="End" IsVisible="false"/>
+                    </StackLayout>
+                    <Button Style="{StaticResource Danger_ButtonStyle}" Text="Upload" x:Name="Btn_ChooseCompyOfDecision" Clicked="Btn_ChooseCompyOfDecision_Clicked"/>
+                </StackLayout>
+            </ScrollView>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                <Button Style="{StaticResource ButtonStyle}" Text="Save as Draft" x:Name="Btn_Draft" Clicked="Btn_Draft_Clicked" VerticalOptions="End" HorizontalOptions="FillAndExpand" Margin="1"/>
+                <Button Style="{StaticResource ButtonStyle}" Text="Proceed" x:Name="Btn_Save" Clicked="Btn_Save_Clicked" VerticalOptions="End" HorizontalOptions="FillAndExpand" Margin="1"/>
+            </StackLayout>
+        </StackLayout>
+        <ContentView x:Name="Loading_activity" BackgroundColor="#C0808080" Padding="20, 20" IsVisible="false">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <Frame Style="{StaticResource FrameLoadingStyle}">
+                    <StackLayout Orientation="Horizontal" Padding="6">
+                    <ActivityIndicator IsVisible="true" IsRunning="true" Margin="5"/>
+                    <Label x:Name="Lbl_PleaseWait" Text="Please Wait ..." Style="{StaticResource LabelStyle}" HorizontalOptions="FillAndExpand" WidthRequest="600"/>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </ContentView>
+        <ContentView x:Name="Upload_activity" BackgroundColor="#C0808080" Padding="10, 10" IsVisible="false">
+            <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <Frame Style="{StaticResource FrameStyle}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="10">
+                    <StackLayout Orientation="Vertical" Padding="3">
+                        <BoxView Style="{StaticResource BoxView_Line}"/>
+                        <Label x:Name="Lbl_Title_Browser" Text="" Style="{StaticResource LabelStyle_PageTitle}"/>
+                        <BoxView Style="{StaticResource BoxView_Line}"/>
+                        <WebView x:Name="Upload_borwser" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Navigated="Upload_borwser_Navigated"/>
+                        <Button Text="Cancel" Style="{StaticResource Danger_ButtonStyle}" x:Name="Btn_CloseBrowser" Clicked="Btn_CloseBrowser_Clicked" Margin="5"/>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </ContentView>
+    </Grid>
+</ContentPage>

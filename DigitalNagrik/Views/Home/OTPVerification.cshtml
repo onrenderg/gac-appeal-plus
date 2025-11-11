@@ -1,0 +1,193 @@
+﻿@model DigitalNagrik.Areas.Public.Models.mPinLogin
+@{
+    ViewBag.Title = "Home";
+    var resendOTP = Url.Action("getResendOTP", "Registration", new { Area = "Public" });
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+
+
+<main id="main">
+    <div class="container">
+        <div class="row">
+            @Html.Partial("~/Views/Home/_PublicChartPartial.cshtml")
+            @Html.Partial("~/Views/Home/_PublicHomeTextPartial.cshtml")
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class=" card-header loginpanel text-white   ">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:left ">
+                                <i class="fa fa-layer-group "></i>
+                                &nbsp;&nbsp;&nbsp;
+                                <span id="LoginHeaderText">Appellant Login -  OTP Verification</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body " id="LoginDiv" style="min-height:250px;">
+                        <div class="row mt-2" id="dvOuterOTP">
+                            @using (Html.BeginForm("OTPVerification", "Home", FormMethod.Post, new { id = "OTPLoginVerification" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true)
+
+                                @Html.HiddenFor(m => m.txtMobile)
+                                @Html.HiddenFor(m => m.OTPID)
+
+                                <div class="text-danger mt-2">
+                                    Fields marked with * are mandatory
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <label class="form-label" for="form2Example17">
+                                            <span>
+                                                Enter OTP Sent on Mobile Number <b>xxxxxx</b><b>@Model.txtMobile.Substring(6, 4) </b> with OTP ID <b>
+                                                    <span id="otpshow">@Html.DisplayFor(m => m.OTPID,new { @id="otpshow" })</span>
+                                                </b>
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        @Html.TextBoxFor(m => m.OTP, new { @class = "form-control", maxlength = "4" })
+                                        @Html.ValidationMessageFor(x => x.OTP)
+                                    </div>
+                                    <div class="col-sm-8" style="text-align:left">
+                                        <a id="resendOTP" class="btn btn-primary " href="#">
+                                            Resend
+                                        </a>
+                                        <div id="WaitDiv" class="text-info"></div>
+                                    </div>
+                                   
+
+                                </div>
+                                <div class="mt-4 row">
+                                    <div class="col-md-9">
+                                        <label class="custom-input-label mb-1">Captcha<span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <img id="CaptchaImage" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                                                <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                                            </span>
+                                            @Html.TextBoxFor(x => x.Captcha, new { @id = "txtCaptcha", @class = "form-control DisabledInputs", placeholder = "Enter Captcha", autocomplete = "off", maxlength = "6" })
+                                        </div>
+                                        <div id="SpanCaptchaValidation">
+                                            @Html.ValidationMessageFor(x => x.Captcha)
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+
+                                <br />
+                                <div class="row">
+                                    <div class="col-3">
+                                        <input type="submit" id="btnVerify" class="btn btn-primary btn-block" style="width:75px;" value="Verify" />
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <a class="btn btn-primary btn-block"  style="width:75px;" href="@Url.Action("index", "Home", new { Area = "" })">Cancel</a>
+                                    </div>
+                                    <div class="col-sm-6"></div>
+                                </div>
+
+
+                            }
+                        </div>
+                    </div>
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</main>
+<style>
+    .morecontent span {
+        display: none;
+    }
+
+    .morelink {
+        display: block;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $("#resendOTP").hide();
+        var timeLeft = 30;
+        var timerId = setInterval(countdown, 1000);
+        function countdown() {
+            if (timeLeft == -1) {
+                clearInterval(timerId);
+                $("#resendOTP").show();
+                $("#WaitDiv").hide();
+            } else {
+                $("#resendOTP").hide();
+                $("#WaitDiv").show();
+                WaitDiv.innerHTML ='Option to resend OTP will appear after ' + timeLeft + ' seconds';
+                timeLeft--;
+            }
+        }
+    });
+    function RefreshCaptcha() {
+        $.ajax({
+            url: '@Url.Action("CaptchaImageNew", "Home", new { area = "" })',
+            data: {},
+            success: function (data) {
+                $("#CaptchaImage").html(data);
+            }
+        });
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };
+    function countdown() {
+        console.log(timeLeft);
+        if (timeLeft == -1) {
+            clearTimeout();
+            $("#resendOTP").show();
+            $("#WaitDiv").hide();
+        } else {
+            $("#resendOTP").hide();
+            $("#WaitDiv").show();
+            WaitDiv.innerHTML = 'Option to resend OTP will appear after ' + timeLeft + ' seconds';
+            timeLeft--;
+        }
+    }
+
+           $("#resendOTP").click(function() {
+             var url = "@resendOTP";
+
+
+            var dataValue = {};
+            $.ajax({
+                url: url,
+                type: 'POST',
+                cache: false,
+                data: dataValue,
+                async: true,
+                success: function (result) {
+                    $('#otpshow').text(result["MobileNoOTPID"]);
+                    $('#OTPID').val(result["MobileNoOTPID"]);
+                    var timeLeft = 30;
+                    var timerId = setInterval(countdown, 1000);
+                    function countdown() {
+                       // console.log(timeLeft);
+                        if (timeLeft == -1) {
+                            clearInterval(timerId);
+                            $("#resendOTP").show();
+                            $("#WaitDiv").hide();
+                        } else {
+                            $("#resendOTP").hide();
+                            $("#WaitDiv").show();
+                            WaitDiv.innerHTML = 'Option to resend OTP will appear after ' + timeLeft + ' seconds';
+                            timeLeft--;
+                        }
+                    }
+                },
+                error: function(xhr, x, e) {
+                alert(e);
+                },
+                complete: function() {
+                }
+            });
+        });
+
+</script>

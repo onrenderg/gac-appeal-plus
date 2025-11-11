@@ -1,0 +1,68 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACGridViewInbox_AppealDetails
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+<style>
+    .no-wrap {
+        white-space: nowrap;
+    }
+
+    .hide-gv {
+        display: none;
+    }
+</style>
+
+<div class="m-0 px-3 pb-3 pt-0 pt-lg-3 h5">
+    <div class="row">
+        <div class="col-lg-8">
+            <span class="font-xxxl">@LabelDictionary["AppealNumber"]</span> : <span class="font-hxl">@Model.GrievanceNo</span> <span class="font-xl">(@Model.Appeal_ReceiptDate)</span>
+        </div>
+        <div class="col-lg-4 text-end">
+            <a target="_blank" href="@Url.Action("AppealPDF", "Registration", new { Area = "Public", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="btn btn-secondary btn-sm mt-lg-n1 rounded-pill">
+                <i class="bx bx-file me-1 align-text-bottom"></i>@LabelDictionary["ViewAppeal"]
+            </a>
+        </div>
+    </div>
+</div>
+<hr class="m-0" />
+<div class="mb-4 overflow-auto px-3 py-3 font-xxxl" style="height:605px">
+    @if (Model.IntermediaryResponseNeeded == "N")
+    {
+        <div class="alert alert-danger mb-2" title="@Model.GroundTitle" style="line-height: 1.1rem; color: #7e2819"><i class="bx bx-error me-1 align-text-bottom text-danger"></i>@LabelDictionary["ThisAppealisundersection"] @Model.CorrespondingITRule</div>
+    }
+    @{ Html.RenderPartial("_ActionLinks", Model, new ViewDataDictionary { { "LabelDictionary", LabelDictionary } }); }
+    @{ Html.RenderPartial("_ActionsCompleted", Model, new ViewDataDictionary { { "LabelDictionary", LabelDictionary } }); }
+
+    <div class="gv-container-action-form"></div>
+    @if (Model.AdditionalInputList.Count > 0)
+    {
+        <div class="mb-1">
+            <a class="mb-1" href="javascript:void(0)" onclick="$('.gv-container-add-inputs').show('fast');"><i class="bx bx-info-circle align-text-bottom me-1"></i>@LabelDictionary["AdditionalInputSought"]</a>
+            <div style="display:none" class="gv-container-add-inputs mb-2">
+                <div class="text-end">
+                    <a href="javascript:void(0);" class="btn btn-secondary btn-xs mt-n5" data-bs-dismiss="modal" onclick="$('.gv-container-add-inputs').hide('fast');">@LabelDictionary["Close"]</a>
+                </div>
+                <div class="mt-n3">
+                    @{ Html.RenderPartial("PartialViews/_AdditionalInputs", Model, new ViewDataDictionary { { "LabelDictionary", LabelDictionary } }); }
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.ExpertOpinionList.Count > 0)
+    {
+        <div class="mb-1">
+            <a class="mb-1" href="javascript:void(0)" onclick="$('.gv-container-add-expert').show('fast');"><i class="bx bx-info-circle align-text-bottom me-1"></i>@LabelDictionary["AssistancefromSubjectExpert"]</a>
+            <div style="display:none" class="gv-container-add-expert mb-2">
+                <div class="text-end">
+                    <a href="javascript:void(0);" class="btn btn-secondary btn-xs mt-n5" data-bs-dismiss="modal" onclick="$('.gv-container-add-expert').hide('fast');">@LabelDictionary["Close"]</a>
+                </div>
+                <div class="mt-n3">
+                    @{ Html.RenderPartial("PartialViews/_ExpertOpinion", Model, new ViewDataDictionary { { "LabelDictionary", LabelDictionary } }); }
+                </div>
+            </div>
+        </div>
+    }
+    <hr />
+
+    @{ Html.RenderPartial("PartialViews/_AppealDetails", Model, new ViewDataDictionary { { "LabelDictionary", LabelDictionary } }); }
+</div>

@@ -1,0 +1,194 @@
+﻿@model DigitalNagrik.Areas.Masters.Data.PublicMenuMaster_Data
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+    Model.MenuType = string.IsNullOrWhiteSpace(Model.MenuType) ? "C" : Model.MenuType;
+}
+
+<div class="modal-header pt-3">
+    <h4 class="modal-title">
+        @if (Model.Mode == "ADD_LANG")
+        {
+            <span>Add Menu (<span class="text-primary">@Model.MenuName</span>) in Other language </span>
+        }
+        else
+        {
+            <span>Edit Menu</span>
+        }
+    </h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<hr class="mb-0 mt-2" />
+@using (Html.BeginForm("AddUpdateLanguage", "PublicMenuMaster", FormMethod.Post, new { id = "frm-menu-lang", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.qs)
+
+<div class="modal-body pb-0 pt-3 px-3">
+    <div class="row">
+        <div class="mb-3 col-lg-6">
+            <label class="form-label">Language <span class="text-danger">*</span></label>
+            @Html.DropDownListFor(m => m.LanguageCode, Model.LanguageList, "--Select--", new { @class = "form-select", id = "ddlLanguageList" })
+            @Html.ValidationMessageFor(x => x.LanguageCode)
+        </div>
+
+        <div class="mb-3 col-lg-6">
+            <label class="form-label">Menu Name <span id="lblMenuNameIn"></span> <span class="text-danger">*</span></label>
+            @Html.TextBoxFor(x => x.MenuName, new { @class = "form-control", placeholder = "Menu Name", maxlength = "200" })
+            @Html.ValidationMessageFor(x => x.MenuName)
+        </div>
+
+        <div class="mb-3 col-lg-6">
+            <label class="form-label">Menu Type <span class="text-danger">*</span></label>
+            <div class="form-control" readonly="readonly">
+                @if (Model.MenuType == "C")
+                {
+                    <span>Html Content</span>
+                }
+                else if (Model.MenuType == "A")
+                {
+                    <span>MVC Action</span>
+                }
+                else if (Model.MenuType == "H")
+                {
+                    <span>Hyperlink</span>
+                }
+                else if (Model.MenuType == "P")
+                {
+                    <span>Attachment</span>
+                }
+            </div>
+            @Html.HiddenFor(x => x.MenuType)
+        </div>
+
+        <div class="mb-3 col-lg-3">
+            <label class="form-label">Set Active <span class="text-danger">*</span></label>
+            @if (Model.Mode == "ADD_LANG" || (Model.Mode == "UPDATE_LANG" && Model.LanguageCode != "en-IN"))
+            {
+                <div class="form-control" readonly="readonly">@(Model.IsActive == "Y"  ? "Active" : "Inactive")</div>
+                @Html.HiddenFor(x => x.IsActive)
+            }
+            else
+            {
+                <div>
+                    <div class="form-check form-check-inline">
+                        @Html.RadioButtonFor(x => x.IsActive, "Y", new { @class = "form-check-input", id = "IsActive_Y" })
+                        <label class="form-check-label" for="IsActive_Y">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        @Html.RadioButtonFor(x => x.IsActive, "N", new { @class = "form-check-input", id = "IsActive_N" })
+                        <label class="form-check-label" for="IsActive_N">No</label>
+                    </div>
+                </div>
+                @Html.ValidationMessageFor(x => x.IsActive)
+            }
+        </div>
+
+        <div class="mb-3 col-lg-3">
+            <label class="form-label">Display Order <span class="text-danger">*</span></label>
+            @if (Model.Mode == "ADD_LANG" || (Model.Mode == "UPDATE_LANG" && Model.LanguageCode != "en-IN"))
+            {
+                <div class="form-control" readonly="readonly">@Model.DisplayOrder</div>
+                @Html.HiddenFor(x => x.DisplayOrder)
+            }
+            else
+            {
+                @Html.TextBoxFor(x => x.DisplayOrder, new { @class = "form-control", placeholder = "Display Order" })
+                @Html.ValidationMessageFor(x => x.DisplayOrder)
+            }
+        </div>
+    </div>
+
+    <div class="row content_MenuType" id="content_MenuType_A" style="display:none">
+        <div class="mb-3 col-lg-4">
+            <label class="form-label">Action Name <span class="text-danger">*</span></label>
+            @Html.TextBoxFor(x => x.ActionName, new { @class = "form-control", placeholder = "Action Name", maxlength = "200" })
+            @Html.ValidationMessageFor(x => x.ActionName)
+        </div>
+
+        <div class="mb-3 col-lg-4">
+            <label class="form-label">Controller Name <span class="text-danger">*</span></label>
+            @Html.TextBoxFor(x => x.ControllerName, new { @class = "form-control", placeholder = "Controller Name", maxlength = "200" })
+            @Html.ValidationMessageFor(x => x.ControllerName)
+        </div>
+
+        <div class="mb-3 col-lg-4">
+            <label class="form-label">Area Name</label>
+            @Html.TextBoxFor(x => x.AreaName, new { @class = "form-control", placeholder = "Area Name", maxlength = "200" })
+            @Html.ValidationMessageFor(x => x.AreaName)
+        </div>
+    </div>
+
+    <div class="row content_MenuType" id="content_MenuType_C" style="display:none">
+        <div class="mb-3 col-12">
+            <label class="form-label">Page Content <span class="text-danger">*</span></label>
+            @Html.TextAreaFor(x => x.MenuContent, new { id = "ed_MenuContent_Lang", @class = "form-control resize-vertical", placeholder = "Enter page content here", maxlength = "50" })
+            @Html.ValidationMessageFor(x => x.MenuContent)
+        </div>
+    </div>
+
+    <div class="row content_MenuType" id="content_MenuType_H" style="display:none">
+        <div class="mb-3 col-lg-6">
+            <label class="form-label">Link/URL <span class="text-danger">*</span></label>
+            @Html.TextBoxFor(x => x.HyperLink, new { @class = "form-control", placeholder = "Enter full URL/Link", maxlength = "1000" })
+            @Html.ValidationMessageFor(x => x.HyperLink)
+        </div>
+    </div>
+    <div class="row content_MenuType" id="content_MenuType_P" style="display:none">
+        <div class="mb-3 col-lg-6">
+            <label class="form-label">Attachment <span class="text-danger">*</span></label>
+            @Html.TextBoxFor(m => m.AttachmentFile, new { type = "file", @accept = ".pdf", @class = "form-control fileinput-button", @id = "AttachmentFile" })
+            @Html.ValidationMessageFor(x => x.AttachmentFile)
+        </div>
+    </div>
+</div>
+    <hr />
+    <div class="modal-footer justify-content-start">
+        <button type="button" class="btn btn-success" onclick="SubmitLang($(this));"><i class="fa fa-save me-1"></i>Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+}
+
+<script>
+    $.validator.unobtrusive.parse($("#frm-menu-lang"));
+    CKEDITOR.config.height = '300'; CKEDITOR.config.allowedContent = true; CKEDITOR.config.protectedSource.push(/<i[^>]*><\/i>/g); CKEDITOR.config.removePlugins = 'exportpdf'; CKEDITOR.config.removePlugins = 'uploadfile'; CKEDITOR.config.extraPlugins = 'wordcount';
+    CKEDITOR.config.toolbarGroups = [{ name: 'document', groups: ['mode', 'document', 'doctools'] }, { name: 'clipboard', groups: ['clipboard', 'undo'] }, { name: 'editing', groups: ['find', 'selection', 'spellchecker', 'editing'] }, { name: 'forms', groups: ['forms'] }, { name: 'basicstyles', groups: ['basicstyles', 'cleanup'] }, { name: 'paragraph', groups: ['list', 'indent', 'blocks', 'align', 'bidi', 'paragraph'] }, { name: 'links', groups: ['links'] }, { name: 'insert', groups: ['insert'] }, { name: 'styles', groups: ['styles'] }, { name: 'colors', groups: ['colors'] }, { name: 'tools', groups: ['tools'] }, { name: 'others', groups: ['others'] }, { name: 'about', groups: ['about'] }];
+    CKEDITOR.config.removeButtons = 'Save,NewPage,ExportPdf,Print,Templates,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,Language,Flash,About';
+    CKEDITOR.replace('ed_MenuContent_Lang');
+
+    function MenuTypeChange(MenuType) {
+        $(".content_MenuType").hide();
+        $("#content_MenuType_" + MenuType).show('fast');
+    }
+
+    function LanguageCodeChange(LanguageCode, LanguageCodeName) {
+        if (LanguageCode !== "") {
+            $("#lblMenuNameIn").html("in " + LanguageCodeName);
+        }
+        else { $("#lblMenuNameIn").html('');}
+    }
+
+    function SubmitLang(element) {
+        var form = element.closest('form');
+        if (form.valid()) {
+            var MenuType = "@Model.MenuType";
+            if (MenuType == "C") {
+                var wordCounts = CKEDITOR.instances["ed_MenuContent_Lang"].wordCount.wordCount;
+                if (wordCounts > 1) { $(".btn").attr("disabled", "disabled"); form.submit(); } else { alertify.alert("<h5 class='m-0'><i class='bx bx-help-circle me-1'></i> @LabelDictionary["TextEditorEmpty"]</h5>", "@LabelDictionary["TextEditorcannotbeempty"]", function () { }); }
+            }
+            else { $(".btn").attr("disabled", "disabled"); form.submit(); }
+        }
+    }
+
+    $(function () { MenuTypeChange('@Model.MenuType'); })
+
+    $(document).on('change', 'input[type=radio][name=MenuType]', function () {
+        var MenuType = $(this).val();
+        MenuTypeChange(MenuType);
+    });
+
+    $(document).on('change', '#ddlLanguageList', function () {
+        var LanguageCode = $(this).val();
+        var LanguageCodeName = $(this).find("option:selected").text();
+        LanguageCodeChange(LanguageCode, LanguageCodeName);
+    });
+</script>

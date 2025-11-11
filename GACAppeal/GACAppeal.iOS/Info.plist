@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+		<integer>2</integer>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>MinimumOSVersion</key>
+	<string>12.0</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>CFBundleDisplayName</key>
+	<string>GACAppeal</string>
+	<key>CFBundleIdentifier</key>
+	<string>in.nic.gacappeal</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>CFBundleName</key>
+	<string>GACApeal</string>
+	<key>NSCameraUsageDescription</key>
+	<string>The app needs access of Camera  to send the Photo of Appeal Documents. This Photo Will Be Helpful for Appeal.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>The app needs access of Camera  to send the Photo of Appeal Documents. This Photo Will Be Helpful for Appeal.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access of microphone For Camera usage.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>The app needs access of Camera  to send the Photo of Appeal Documents. This Photo Will Be Helpful for Appeal.</string>
+	<key>XSAppIconAssets</key>
+	<string>Assets.xcassets/AppIcon.appiconset</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+</dict>
+</plist>

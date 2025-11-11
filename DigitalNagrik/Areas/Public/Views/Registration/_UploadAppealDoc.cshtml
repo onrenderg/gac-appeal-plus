@@ -1,0 +1,142 @@
+﻿@model DigitalNagrik.Areas.Public.Models.UploadDocument
+@{
+    List<DigitalNagrik.Areas.Public.Models.DocumentFileTypeMaster> listtocheck = (List<DigitalNagrik.Areas.Public.Models.DocumentFileTypeMaster>)ViewData["DocumentFileType"];
+    var AppealDocumentType = (string)ViewData["AppealDocumentType"];
+    var sizeinmb = listtocheck.FindAll(x => x.AppealDocumentType == AppealDocumentType).Select(o => o.MaxFileSize).FirstOrDefault();
+    var URLUploadAppealDocs = Url.Action("UploadAppealDocs");
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+@using (Html.BeginForm("UploadAppealDocs", "Registration", FormMethod.Post, new { id = "UploadCorrespondanceMade", enctype = "multipart/form-data" }))
+
+{
+    <div class="row">
+        <div class="col-sm-12">
+
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.UserEmailMobile)
+            @Html.HiddenFor(m => m.GrievanceID)
+            @Html.HiddenFor(m => m.RegistrationYear)
+            @Html.HiddenFor(m => m.DocumentType)
+
+            <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                (@LabelDictionary["Maxsize"] @sizeinmb @LabelDictionary["MB"])
+            </label>
+            <br />
+            @if (listtocheck != null)
+            {
+                int count = 1;
+                string fileext = "";
+                string[] validExtension = (string[])listtocheck.FindAll(x => x.AppealDocumentType == AppealDocumentType).Select(o => o.FileExtension).ToArray();
+                foreach (string ext in validExtension)
+                {
+                    if (count != validExtension.Length)
+                    {
+                        fileext = fileext + ext + ",";
+                    }
+                    else
+                    {
+                        fileext = fileext + ext;
+                    }
+                    count++;
+                }
+                <label style="text-align:justify;font-size:13px;font-style :italic  ">
+                    @fileext.ToUpper()
+                </label>
+                @Html.TextBoxFor(m => m.fileUpload, new { @class = "form-control", type = "file" })
+                @Html.ValidationMessageFor(m => m.fileUpload, "", new { @class = "text-danger" })
+            }
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn  btn-secondary btn-block" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+            <input type="button" class="btn btn-loginpanel btn-block " value="@LabelDictionary["UploadDocumentbutton"]" id="btnFileUpload" />
+        </div>
+    </div>
+}
+<script>
+
+    $('#fileUpload').on('change', function () {
+
+        var filesize = @sizeinmb * 1024 * 1024;
+        console.log(filesize);
+        if (this.files[0].size > filesize) {
+            $('#fileUpload').val("");
+            alertify.error("Max file size is "+@sizeinmb+"MB is allowed");
+        }
+    });
+
+    $("#btnFileUpload").click(function (evt) {
+
+        var fileUpload = $("#fileUpload").get(0);
+        var files = fileUpload.files;
+        var data = new FormData();
+
+        for (var i = 0; i < files.length; i++) {
+            data.append("fileUpload", files[i]);
+        }
+
+        //Add the input element values
+        data.append("RegistrationYear", $("#RegistrationYear").val());
+        data.append("GrievanceID", $("#GrievanceID").val());
+        data.append("FileType", $("#FileType").val());
+        data.append("DocumentType", $("#DocumentType").val());
+        data.append("MobileNo", $("#MobileNo").val());
+
+        $.ajax({
+            type: "POST",
+            url: "@URLUploadAppealDocs",
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (message) {
+                if (message == "NotValidExtension")
+                    alertify.error("Please upload valid file");
+                else if (message == "MaxFilesize") {
+                    alertify.error("Max file size is "+@sizeinmb+"MB is allowed");
+                }
+                else if (message == "SuccessFileUpload")
+                {
+                    alertify.success("@LabelDictionary["Fileuploadedsuccessfully"]");
+                }
+                else if (message == "InvalidFile")
+                {
+                    alertify.error("@LabelDictionary["Pleaseuploadvalidfile"]");
+                }
+                else if (message == "AlreadyFileExists")
+                {
+                    alertify.error("@LabelDictionary["AlreadyFileExists"]");
+                }
+                else {
+                    alertify.error("@LabelDictionary["Pleaseuploadvalidfile"]");
+                }
+                console.log(message);
+                    $("#OpenModalUploadPopup").modal('hide');
+                    /////////////////////////
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("ViewAppealDocument", "Registration")",
+                        data: '{RegistrationYear:"' + $("#RegistrationYear").val() + '", GrievanceID: "' + $("#GrievanceID").val() + '" }',
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "html",
+                        success: function (response) {
+                           // console.log(response);
+                            $("#AppealDocuments").html(response);
+
+                            },
+                            failure: function (response) {
+                           // alert(response.responseText);
+                            },
+                            error: function (response) {
+                            //alert(response.responseText);
+                            }
+                    });
+                ///////////////////////////
+
+            },
+            error: function () {
+                alert("@LabelDictionary["Therewaserroruploadingfiles"]");
+            }
+        });
+
+    });
+</script>

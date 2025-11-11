@@ -1,0 +1,207 @@
+﻿@model DigitalNagrik.Models.AppealTrackDetModl
+@using DigitalNagrik.Areas.GridView.Data
+@using DigitalNagrik.Models
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<style>
+    .bg-primary-light-header {
+        background-color: #d6d6f2 !important;
+        color: #383a99 !important;
+        font-weight: bold;
+        text-shadow: 2px 2px #ececec;
+    }
+
+    .bg-success-light-header {
+        background-color: #b4ecb0 !important;
+        color: #318625 !important;
+        font-weight: bold;
+        text-shadow: 2px 2px #dbfdd3;
+    }
+
+    .bg-warning-light-header {
+        background-color: #ffeac0 !important;
+        color: #d09323 !important;
+        font-weight: bold;
+        text-shadow: 2px 2px #fff9ee;
+    }
+
+    .bg-danger-light-header {
+        background-color: #ffd1c6 !important;
+        color: #b72d0e !important;
+        font-weight: bold;
+        text-shadow: 2px 2px #ffe8e8;
+    }
+    /* The actual timeline (the vertical ruler) */
+    .timeline {
+        position: relative;
+        width: 100%;
+        margin: 0 auto;
+        background: #f4f4f4;
+    }
+
+        /* The actual timeline (the vertical ruler) */
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: white;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+        }
+
+    /* Container around content */
+    .container-track {
+        padding: 10px 30px;
+        position: relative;
+        background-color: inherit;
+        width: 50%;
+    }
+
+        /* The circles on the timeline */
+        .container-track::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -12px;
+            background-color: white;
+            border: 4px solid #FF9F55;
+            top: 20px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+    /* Place the container to the left */
+    .left {
+        left: 0;
+    }
+
+    /* Place the container to the right */
+    .right {
+        left: 50%;
+    }
+
+    /* Add arrows to the left container (pointing right) */
+    .left::before {
+        content: " ";
+        height: 0;
+        position: absolute;
+        top: 22px;
+        width: 0;
+        z-index: 1;
+        right: 20px;
+        border: medium solid white;
+        border-width: 10px 0 10px 10px;
+        border-color: transparent transparent transparent white;
+    }
+
+    /* Add arrows to the right container (pointing left) */
+    .right::before {
+        content: " ";
+        height: 0;
+        position: absolute;
+        top: 22px;
+        width: 0;
+        z-index: 1;
+        left: 20px;
+        border: medium solid white;
+        border-width: 10px 10px 10px 0;
+        border-color: transparent white transparent transparent;
+    }
+
+    /* Fix the circle for containers on the right side */
+    .right::after {
+        left: -13px;
+    }
+
+    /* The actual content */
+    .content {
+        /*        padding: 20px 30px;*/
+        background-color: white;
+        position: relative;
+        border-radius: 6px;
+    }
+
+    /* Media queries - Responsive timeline on screens less than 600px wide */
+    @@media screen and (max-width: 600px) {
+        /* Place the timelime to the left */
+        .timeline::after {
+            left: 31px;
+        }
+        /* Full-width containers */
+        .container-track {
+            width: 100%;
+            padding-left: 70px;
+            padding-right: 25px;
+        }
+            /* Make sure that all arrows are pointing leftwards */
+            .container-track::before {
+                left: 60px;
+                border: medium solid white;
+                border-width: 10px 10px 10px 0;
+                border-color: transparent white transparent transparent;
+            }
+        /* Make sure all circles are at the same spot */
+        .left::after, .right::after {
+            left: 15px;
+        }
+        /* Make all right containers behave like the left ones */
+        .right {
+            left: 0%;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>@LabelDictionary["AppealActionTrack"] (<span>@LabelDictionary["AppealNumber"]: </span><span class="h4 fw-bold">@Model.AppealTrackDetlst[0].GrieveID/@Model.AppealTrackDetlst[0].RegYear</span>)</h1>
+            @if (@Model.AppealTrackDetlst.Count > 0)
+            {
+                int counter = 0;
+                <div class="timeline py-4">
+                    @foreach (var row in Model.AppealTrackDetlst)
+                    {
+                        <div class="container-track @(counter%2==0?" left":"right")">
+                            <div class="content pb-3 shadow">
+                                @if (row.ActionID == GACGridViewInbox.AppealAction.Reject)
+                                {
+                                    <h4 class="p-3 bg-danger-light-header">@row.ActionTitle</h4>
+                                }
+                                else if (row.ActionID == GACGridViewInbox.AppealAction.DecisionGAC)
+                                {
+                                    <h4 class="p-3 bg-success-light-header">@row.ActionTitle</h4>
+                                }
+                                else if (row.ActionID == GACGridViewInbox.AppealAction.Submitted || row.ActionID == GACGridViewInbox.AppealAction.AssignedToGAC)
+                                {
+                                    <h4 class="p-3 bg-primary-light-header">@row.ActionTitle</h4>
+                                }
+                                else
+                                {
+                                    <h4 class="p-3 bg-warning-light-header">@row.ActionTitle</h4>
+                                }
+                                <div class="px-3 m-0">@LabelDictionary["Date"]: <span class="fw-bold">@row.ActionDate (@row.ActionTime)</span></div>
+                                @if (!string.IsNullOrWhiteSpace(row.Remarks))
+                                {
+                                    <div class="px-3 font-xxxl mt-2">@LabelDictionary["Remarks"]: @row.Remarks</div>
+                                }
+                            </div>
+                        </div>
+                        ++counter;
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-lighter"><h5>@LabelDictionary["NoRecordFound"]</h5></div>
+            }
+
+        </div>
+
+    </div>
+</div>
+

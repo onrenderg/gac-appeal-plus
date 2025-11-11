@@ -1,0 +1,94 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+@{
+    ViewBag.Title = "UpdateNewMobile";
+    Layout = "~/Views/Shared/_LayoutPublicCurrent.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+
+
+
+        <div class="row">
+
+            <div class="col-lg-8 logo-m">
+                @Html.Partial("~/Views/Home/_IndexImageContent.cshtml")
+            </div>
+
+
+
+            <div class="col-lg-4 mt-4">
+                <div class="card box-shadow">
+                    <div class=" card-header loginpanel text-white   ">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:left ">
+                                <i id="LoginIcon" class="bi bi-phone"></i>
+                                &nbsp;&nbsp;&nbsp;
+                                <span id="LoginHeaderText" class="fw-bold"> @LabelDictionary["UpdateMobile"]</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body " id="LoginDiv" style="min-height:250px;">
+                        @using (Html.BeginForm("UpdateNewMobile", "Home", FormMethod.Post, new { id = "UpdateNewMobile" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true)
+
+                            
+                            <div>
+                                @Html.ValidationMessage("validationMessage")
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-12 ">
+                                    <label class="fw-bold" for="form2Example17">@LabelDictionary["EnterNewMobileNumbertoRegister"]<span class="text-danger">*</span></label>
+                                    @Html.TextBoxFor(m => m.AppellantMobile, new { @class = "form-control", @maxlength = "10", @placeholder = @LabelDictionary["EnterMobileNumberPlaceHolder"] })
+                                    @Html.ValidationMessageFor(x => x.AppellantMobile)
+                                </div>
+                            </div>
+
+                            <div class="mt-4 row">
+                                <div class="col-md-9">
+                                    <label class="custom-input-label mb-1">@LabelDictionary["Captcha"]<span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <img id="CaptchaImage" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                                            <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                                        </span>
+                                        @Html.TextBoxFor(x => x.Captcha, new { @id = "txtCaptcha", @class = "form-control DisabledInputs", placeholder = @LabelDictionary["EnterCaptchaPlaceHolder"], autocomplete = "off", maxlength = "6" })
+                                    </div>
+                                    <div id="SpanCaptchaValidation">
+                                        @Html.ValidationMessageFor(x => x.Captcha)
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <br />
+                            <div class="row">
+                                <div class="col-3">
+                                    <a class="btn btn-loginpanel btn-block" style="width:75px;" href="@Url.Action("Index", "Home", new { Area = "" })">@LabelDictionary["Cancel"]</a>                                    
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <button type="submit" class="btn btn-loginpanel" id="btnSendOTP">@LabelDictionary["Update"]</button>
+                                </div>
+
+                            </div>
+
+
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+<script>
+
+
+    function RefreshCaptcha() {
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };
+
+</script>
+

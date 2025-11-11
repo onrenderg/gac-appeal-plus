@@ -1,0 +1,273 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.AdminDashboard_AppealList
+@using DigitalNagrik.Areas.GridView.Data
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+    string[] FromDateParts = Model.FromDt.Split('/');
+    string DateLabel = string.Empty;
+    switch (Model.Flag)
+    {
+        case GACGridViewInbox.MenuStatus.All:
+            DateLabel = LabelDictionary["AppealsReceived"];
+            break;
+        case GACGridViewInbox.MenuStatus.IntermediaryResponse:
+            DateLabel = LabelDictionary["AppealsReceived"];
+            break;
+        case GACGridViewInbox.MenuStatus.InProcess:
+            DateLabel = LabelDictionary["MatterSummaryprepared"];
+            break;
+        case GACGridViewInbox.MenuStatus.Disposed:
+            DateLabel = LabelDictionary["Disposedof"];
+            break;
+        case GACGridViewInbox.MenuStatus.Rejected:
+            DateLabel = LabelDictionary["NotAdmitted"];
+            break;
+    }
+}
+
+<style>
+    .datepicker {
+        z-index: 9999 !important
+    }
+
+    .highlight {
+        background-color: #fff1a5;
+    }
+</style>
+
+<div class="px-3 px-lg-4">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { id = "frmAppealListFilter" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(x => x.GACId)
+        @Html.HiddenFor(x => x.Flag)
+        @Html.HiddenFor(x => x.IntermediaryId)
+        @Html.HiddenFor(x => x.IsCompliance)
+        @Html.HiddenFor(x => x.IsIntermediaryResponse)
+        @Html.HiddenFor(x => x.AppealStatus)
+        @Html.HiddenFor(x => x.AssignmentStatus)
+        <div class="row mb-1">
+            <div class="col-lg-12 text-end">
+                <a class="btn btn-success btn-sm float-end me-2" onclick="DownloadExcel($(this));" href='javascript:void(0);'>
+                    <i class="fa fa-file-excel me-1"></i> @LabelDictionary["DownloadExcel"]
+                </a>
+                <a class="btn btn-danger float-end btn-sm me-2" onclick="DownloadPDF($(this));" href='javascript:void(0);'>
+                    <i class="bx me-1 bxs-file-pdf align-middle"></i>@LabelDictionary["DownloadPDF"]
+                </a>
+            </div>
+
+        </div>
+        <div class="row">
+            @if (Model.Flag != GACGridViewInbox.MenuStatus.AssignmentPending)
+            {
+                <div class="col-lg-3 mb-3">
+                    <label class="form-label"><span class="dateLabel">@DateLabel</span> (@LabelDictionary["fromDate"])</label>
+                    <div class="input-group">
+                        @Html.TextBoxFor(x => x.FromDt, new { id = "txtFromDt", placeholder = "From Date", @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                    </div>
+                </div>
+                <div class="col-lg-3 mb-3">
+                    <label class="form-label"><span class="dateLabel">@DateLabel</span> (@LabelDictionary["toDate"])</label>
+                    <div class="input-group">
+                        @Html.TextBoxFor(x => x.ToDt, new { id = "txtToDt", placeholder = "To Date", @class = "form-control", @readonly = "readonly" })
+                        <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 mb-3">
+                    <label class="form-label">@LabelDictionary["RespondentIntermediary"]</label>
+                    <span id="lblIntermediaryNm" class="form-control" data-bs-toggle="dropdown" aria-expanded="false">@LabelDictionary["SelectRespondentIntermediary"]</span>
+                    <div class="dropdown-menu py-2">
+                        <div><a href="javascript:void(0);" data-nm="@LabelDictionary["-All-"]" data-id="" onclick="ChangeIntermediary($(this));" class="dropdown-item">@LabelDictionary["-All-"]</a></div>
+                        <div class="px-3 mb-2"><input type="text" id="DashSearchIntermediary" name="DashSearchIntermediary" class="form-control" placeholder="Search Respondent Intermediary" /></div>
+                        <div style="max-height:280px" class="overflow-auto">
+                            <ul class="ps-0 mb-0" style="list-style:none">
+                                @if (Model.IntermediaryList != null && Model.IntermediaryList.Count() > 0)
+                                {
+
+                                    foreach (var Intermediary in Model.IntermediaryList)
+                                    {
+                                        <li><a href="javascript:void(0);" data-nm="@Intermediary.IntermediaryTitle" data-id="@Intermediary.IntermediaryId" onclick="ChangeIntermediary($(this));" class="dropdown-item searchable-intermediary">@Intermediary.IntermediaryTitle</a></li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @*@if (Model.Flag == GACGridViewInbox.MenuStatus.All)
+                {
+                    <div class="col-lg-3 mb-3">
+                        <label class="form-label">Appeal Status</label>
+                        <span id="lblAppealResponse" class="form-control" data-bs-toggle="dropdown" aria-expanded="false">Select Appeal Status</span>
+                        <ul class="dropdown-menu py-2">
+                            <li><a href="javascript:void(0);" data-nm="-All-" data-id="" onclick="ChangeAppealStatus($(this));" class="dropdown-item">-All-</a></li>
+                            <li><a href="javascript:void(0);" data-nm="In Process" data-id="@GACGridViewInbox.MenuStatus.InProcess" onclick="ChangeAppealStatus($(this));" class="dropdown-item">In Process</a></li>
+                            <li><a href="javascript:void(0);" data-nm="Disposed of" data-id="@GACGridViewInbox.MenuStatus.InProcess" onclick="ChangeAppealStatus($(this));" class="dropdown-item">Disposed of</a></li>
+                            <li><a href="javascript:void(0);" data-nm="Not Admitted" data-id="@GACGridViewInbox.MenuStatus.InProcess" onclick="ChangeAppealStatus($(this));" class="dropdown-item">Not Admitted</a></li>
+                        </ul>
+                    </div>
+                }*@
+
+            @if (Model.Flag == GACGridViewInbox.MenuStatus.AssignmentPending)
+            {
+                <div class="col-lg-3 mb-3">
+                    <label class="form-label">@LabelDictionary["AssignmentStatus"]</label>
+                    <span id="lblAssignmentStatus" class="form-control" data-bs-toggle="dropdown" aria-expanded="false">@LabelDictionary["PendingforAssignment"]</span>
+                    <ul class="dropdown-menu py-2">
+                        <li><a href="javascript:void(0);" data-nm="@LabelDictionary["-All-"]" data-id="" onclick="ChangeAssignmentStatus($(this));" class="dropdown-item">@LabelDictionary["-All-"]</a></li>
+                        <li><a href="javascript:void(0);" data-nm="@LabelDictionary["PendingforAssignment"]" data-id="N" onclick="ChangeAssignmentStatus($(this));" class="dropdown-item">@LabelDictionary["PendingforAssignment"]</a></li>
+                        <li><a href="javascript:void(0);" data-nm="@LabelDictionary["AssignedtoGAC"]" data-id="Y" onclick="ChangeAssignmentStatus($(this));" class="dropdown-item">@LabelDictionary["AssignedtoGAC"]</a></li>
+                    </ul>
+                </div>
+            }
+
+            @if (Model.Flag == GACGridViewInbox.MenuStatus.IntermediaryResponse)
+            {
+                <div class="col-lg-3 mb-3">
+                    <label class="form-label">@LabelDictionary["RespondentIntermediaryResponse"]</label>
+                    <span id="lblIntermediaryResponse" class="form-control" data-bs-toggle="dropdown" aria-expanded="false">@LabelDictionary["SelectResponseStatus"]</span>
+                    <ul class="dropdown-menu py-2">
+                        <li><a href="javascript:void(0);" data-nm="@LabelDictionary["-All-"]" data-id="" onclick="ChangeIntermediaryResponse($(this));" class="dropdown-item">@LabelDictionary["-All-"]</a></li>
+                        <li><a href="javascript:void(0);" data-nm="@LabelDictionary["ResponseAwaited"]" data-id="N" onclick="ChangeIntermediaryResponse($(this));" class="dropdown-item">@LabelDictionary["ResponseAwaited"]</a></li>
+                        <li><a href="javascript:void(0);" data-nm="@LabelDictionary["ResponseSubmitted"]" data-id="Y" onclick="ChangeIntermediaryResponse($(this));" class="dropdown-item">@LabelDictionary["ResponseSubmitted"]</a></li>
+                        <li><a href="javascript:void(0);" data-nm="@LabelDictionary["Overdue"]" data-id="X" onclick="ChangeIntermediaryResponse($(this));" class="dropdown-item">@LabelDictionary["Overdue"]</a></li>
+                    </ul>
+                </div>
+            }
+
+            @if (Model.Flag == GACGridViewInbox.MenuStatus.Disposed)
+            {
+                <div class="col-lg-3 mb-3">
+                    <label class="form-label">@LabelDictionary["ComplianceStatus"]</label>
+                    <span id="lblComplianceStatus" class="form-control" data-bs-toggle="dropdown" aria-expanded="false">@LabelDictionary["SelectComplianceStatus"]</span>
+                    <ul class="dropdown-menu py-2">
+                        <li><a href="javascript:void(0);" data-nm="@LabelDictionary["-All-"]" data-id="" onclick="ChangeComplianceStatus($(this));" class="dropdown-item">@LabelDictionary["-All-"]</a></li>
+                        <li><a href="javascript:void(0);" data-nm="@LabelDictionary["ComplianceGiven"]" data-id="Y" onclick="ChangeComplianceStatus($(this));" class="dropdown-item">@LabelDictionary["ComplianceGiven"]</a></li>
+                        <li><a href="javascript:void(0);" data-nm="@LabelDictionary["CompliancenotGiven"]" data-id="N" onclick="ChangeComplianceStatus($(this));" class="dropdown-item">@LabelDictionary["CompliancenotGiven"]</a></li>
+                    </ul>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<div style="height:750px; overflow:auto" class="px-3 px-lg-4" id="dash-appeallist-filtered-content">
+    @{ Html.RenderPartial("_FilteredAppealList", Model, new ViewDataDictionary { { "LabelDictionary", LabelDictionary } }); }
+</div>
+
+<script>
+    function GetFilteredAppealList() {
+        _Container = $("#dash-appeallist-filtered-content"); _Container.html(_LoadHtml);
+        setTimeout(function () { $.ajax({ url: '@Url.Action("GetAppealListFiltered_PV", "AdminDashboard", new { Area = "Dashboard" })', data: $("#frmAppealListFilter").serialize(), type: "POST", dataType: "HTML", async: false, success: function (data) { if (data) { _Container.html(data); } }, }); }, 400);
+    }
+    function DownloadExcel() {
+
+        $.ajax({
+            url: '@Url.Action("DownloadExcelAdminList", "AdminDashboard", new { Area = "Dashboard" })',
+            data: $("#frmAppealListFilter").serialize(),
+            type: "POST",
+            xhrFields: {
+                responseType: 'blob'  // Expecting a binary response (Excel file)
+            },
+            success: function (response) {
+                // Correct MIME type for Excel
+                var blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                var link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'FilteredAppealList.xlsx';  // Correct file extension
+                link.click();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            }
+        });
+    }
+    function DownloadPDF() {
+        $.ajax({
+            url: '@Url.Action("DownloadPDFAdminList", "AdminDashboard", new { Area = "Dashboard" })',
+            data: $("#frmAppealListFilter").serialize(),
+            type: "POST",
+            xhrFields: {
+                responseType: 'blob'  // Expecting a binary response (PDF file)
+            },
+            success: function (Reponse) {
+                var blob = new Blob([Reponse], { type: 'application/pdf' });
+                var link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'FilteredAppealList.pdf';
+                link.click();
+            }
+        });
+    }
+
+    $("#txtToDt").datepicker({ format: 'dd/mm/yyyy', autoclose: 1, endDate: new Date(), startDate: new Date('@FromDateParts[2]' + '-' + '@FromDateParts[1]' + '-' + '@FromDateParts[0]'), orientation: 'bottom', container: "#dash-appeallist-modal-content" }).on('changeDate', function () {
+        GetFilteredAppealList();
+    });
+
+    //$("#txtFromDt").datepicker({ format: 'dd/mm/yyyy', autoclose: 1, endDate: new Date(), orientation: 'bottom', container: "#dash-appeallist-modal-content" }).on('changeDate', function (selected) {
+    //    $('#txtToDt').datepicker('setStartDate', new Date(selected.date.valueOf())); $("#txtToDt").datepicker("setDate", new Date(selected.date.valueOf()));
+    //    var endDate = new Date(selected.date.valueOf()); endDate.setDate(endDate.getDate() + 30);
+    //    if (endDate > new Date()) { $('#txtToDt').datepicker('setEndDate', new Date()); } else { $('#txtToDt').datepicker('setEndDate', endDate); }
+    //    $("#txtToDt").val($(this).val());
+    //    GetFilteredAppealList();
+    //});
+    $("#txtFromDt").datepicker({ format: 'dd/mm/yyyy', autoclose: 1, endDate: new Date(), orientation: 'bottom', container: "#dash-appeallist-modal-content" }).on('changeDate', function (selected) {
+        $('#txtToDt').datepicker('setStartDate', new Date(selected.date.valueOf()));
+        //$("#txtToDt").datepicker("setDate", new Date(selected.date.valueOf()));
+        //var endDate = new Date(selected.date.valueOf()); endDate.setDate(endDate.getDate() + 30);
+        //if (endDate > new Date()) { $('#txtToDt').datepicker('setEndDate', new Date()); } else { $('#txtToDt').datepicker('setEndDate', endDate); }
+        //$("#txtToDt").val($(this).val());
+        GetFilteredAppealList();
+    });
+
+    function ChangeAppealStatus(element) {
+        var Id = element.data("id"); var Nm = element.data("nm");
+        $("#AppealStatus").val(Id); $("#lblAppealResponse").html(Nm);
+        GetFilteredAppealList();
+    }
+
+    function ChangeIntermediary(element) {
+        var Id = element.data("id"); var Nm = element.data("nm");
+        $("#IntermediaryId").val(Id); $("#lblIntermediaryNm").html(Nm);
+        GetFilteredAppealList();
+    }
+
+    function ChangeIntermediaryResponse(element) {
+        var Id = element.data("id"); var Nm = element.data("nm");
+        $("#IsIntermediaryResponse").val(Id); $("#lblIntermediaryResponse").html(Nm);
+        GetFilteredAppealList();
+    }
+
+    function ChangeAssignmentStatus(element) {
+        var Id = element.data("id"); var Nm = element.data("nm");
+        $("#AssignmentStatus").val(Id); $("#lblAssignmentStatus").html(Nm);
+        GetFilteredAppealList();
+    }
+
+    function ChangeComplianceStatus(element) {
+        var Id = element.data("id"); var Nm = element.data("nm");
+        $("#IsCompliance").val(Id); $("#lblComplianceStatus").html(Nm);
+        GetFilteredAppealList();
+    }
+
+    $(document).on("keyup paste", "#DashSearchIntermediary", function () {
+        var SearchText = $.trim($(this).val().toLowerCase());
+        if (SearchText !== "" && SearchText.length >= 2) {
+            $(".searchable-intermediary").filter(function (e, i) {
+                if ($(this).text().toLowerCase().indexOf(SearchText) > -1) {
+                    $(this).toggle(true); $(this).removeHighlight().highlight(SearchText);
+                }
+                else {
+                    $(this).toggle(false); $(this).removeHighlight();
+                }
+            });
+        }
+        else {
+            $('.searchable-intermediary').removeHighlight(); $(".searchable-intermediary").filter(function (e, i) { $(this).toggle(true); });
+        }
+    });
+</script>
+
+

@@ -1,0 +1,270 @@
+﻿@model DigitalNagrik.Areas.Public.Models.mIntermediaryDetailPart
+@{
+    Layout = null;
+    List<DigitalNagrik.Areas.Public.Models.mAppealDocument> list = (List<DigitalNagrik.Areas.Public.Models.mAppealDocument>)ViewData["AppealDocList"];
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@LabelDictionary["AppealDetails"]</title>
+    <style>
+        body {
+            font-family: "Open Sans", sans-serif;
+            font-size: 16px;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; height: 100px;">
+        <img src="~/assets/img/logo.png" />
+    </div>
+    <br />
+    <table style="width:100%;font-weight:bold;">
+        <tr>
+            <td style="width:10%">@LabelDictionary["To"]:</td>
+            <td style="width:90%"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>@LabelDictionary["GrievanceAppellateCommittee"]</td>
+        </tr>
+        <tr>
+            <td> @LabelDictionary["Madamsir"],</td>
+        </tr>
+        <tr>
+            <td colspan="2"> @LabelDictionary["Ihereby"]</td>
+        </tr>
+    </table>
+    <br />
+    <div style="text-align:center;">
+        <h2>@LabelDictionary["AppealDetails"]</h2>
+    </div>
+
+
+    <table style="width: 100%;">
+        <tr>
+            <td style="width: 80%; text-align: left">
+                <h3>@LabelDictionary["AppellantDetail"]</h3>
+            </td>
+
+            <td style="width: 20%;  ">@LabelDictionary["AppealNumber"] : <b>@Model.GrievanceID/@Model.RegistrationYear</b> </td>
+        </tr>
+    </table>
+    <hr />
+    <table style="width :100%;">
+        <tr>
+            <td style="width: 33%; font-weight: bold;">@LabelDictionary["Name"]</td>
+            <td style="width: 33%; font-weight: bold;">@LabelDictionary["Mobile"]</td>
+            <td style="width: 33%; font-weight: bold;">@LabelDictionary["Email"]</td>
+
+        </tr>
+        <tr>
+            <td>@Model.CitizenName</td>
+            <td> @Model.MobileNo</td>
+            <td> @Model.txtEmail </td>
+        </tr>
+    </table>
+
+
+
+    <div style="text-align: left">
+        <hr />
+        <h3>@LabelDictionary["RespondentIntermediaryDetail"]</h3>
+        <hr />
+    </div>
+
+    <table style="width :100%;">
+        <tr>
+            <td style="width: 10%; font-weight: bold;">@LabelDictionary["AppealDate"]</td>
+            <td style="width: 80%; font-weight: bold;">@LabelDictionary["Status"]</td>
+            <td style="width: 10%; font-weight: bold;"></td>
+        </tr>
+        <tr>
+
+
+            <td style="vertical-align: top;"> @Model.ReceiptDate  </td>
+            <td style=" vertical-align: top;">
+                @if (@Model.StatusTitle.ToString() == "Expired")
+                {
+                    <span class="text-danger ">@Model.StatusTitle.ToString() </span>
+                }
+                else
+                {
+                    @Model.StatusTitle
+                }
+
+            </td>
+
+        </tr>
+    </table>
+    <table style="width :100%;">
+        <tr>
+            <td style="width: 35%; font-weight: bold;">@LabelDictionary["DateofComplaintregisteredwiththeintermediary"]</td>
+            <td style="width: 32%; font-weight: bold;">@LabelDictionary["DateofDecisiongivenbytheintermediary"]</td>
+            <td style="width: 33%; font-weight: bold;">@LabelDictionary["TicketDocketNumberMsg"]</td>
+
+        </tr>
+        <tr>
+            <td>@Model.txtDateofComplaint</td>
+            <td>@Model.txtdateofDecision</td>
+            <td>@Model.TicketDocketNumber </td>
+        </tr>
+    </table>
+    <table style="width:100%">
+        <tr>
+
+            <td style="width: 30%; font-weight: bold;">@LabelDictionary["NameoftheRespondentIntermediary"]</td>
+            <td style="width: 30%; font-weight: bold;">@LabelDictionary["URLoftheRespondentIntermediary"]</td>
+            <td style="width: 30%; font-weight: bold;">@LabelDictionary["IntermediaryEmail"] </td>
+        </tr>
+        <tr>
+            <td>@Model.txtIntermediary</td>
+            <td>@Model.txturlofintermediary</td>
+            <td>@Model.GROIntermediaryEmail  </td>
+        </tr>
+    </table>
+
+    <br />
+    <table style="width:100%">
+        <tr>
+            <td style="width: 70%; font-weight: bold;">@LabelDictionary["IntermediaryAddress"]</td>
+        </tr>
+        <tr>
+            <td>@Model.txtCorrespondenceAddress </td>
+        </tr>
+    </table>
+    <br />
+    <table style="width:100%">
+        <tr>
+            <td style="width: 50%; font-weight: bold;">@LabelDictionary["BriefofComplaintPreview"]</td>
+            <td style="width: 50%; font-weight: bold;">@LabelDictionary["SubjectKeyword"]</td>
+
+        </tr>
+        <tr>
+            <td style="vertical-align: top;">@Model.BriefofComplaint      </td>
+            <td style="vertical-align:top; ">@Model.Keyword</td>
+        </tr>
+    </table>
+    <br />
+    <table style="width:100%">
+        <tr>
+
+            <td style="width: 50%; font-weight: bold;">@LabelDictionary["ReliefSoughtPreview"] </td>
+        </tr>
+        <tr>
+
+            <td style="vertical-align: top;">@Model.ReliefSoughtSpecification</td>
+        </tr>
+    </table>
+    <br />
+
+    <table style="width:100%">
+        <tr>
+            <td style="width: 100%; font-weight: bold;">@LabelDictionary["JustificationPreview"]</td>
+        </tr>
+        <tr>
+            <td>@Model.txtJustification   </td>
+        </tr>
+    </table>
+
+
+    <div style="text-align: left">
+        <hr />
+        <h3>@LabelDictionary["DocumentUploaded"]</h3>
+        <hr />
+    </div>
+    <table style="width :100%;">
+        <tr>
+            <td style="width: 50%; font-weight: bold;">@LabelDictionary["CCIntermediary"]</td>
+            <td style="width: 50%; font-weight: bold;">@LabelDictionary["Anyotherrelevantinformation"]</td>
+
+        </tr>
+        <tr>
+            <td>
+                @if (list != null)
+                {
+                    var tmplist = list.Where(x => x.DocumentType == "CC" && x.EvidenceType == "F").ToList();
+                    if (tmplist.Count > 0)
+                    {
+                        int srno = 1;
+                        <table style="width:100%;">
+                            @foreach (var tmp in tmplist)
+                            {
+                                <tr>
+                                    <td style="width:5%">
+                                        @srno.ToString().
+                                    </td>
+                                    <td style="width:95%">
+
+                                        <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                                            @tmp.FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/CopyofComplaint/", "")
+                                        </label><i class="fa fa-download text-info"></i>
+
+                                    </td>
+                                </tr>
+                                srno += 1;
+                            }
+                        </table>
+                    }
+                }
+            </td>
+            <td>
+                @if (list != null)
+                {
+                    var tmplist = list.Where(x => x.DocumentType == "CD" && x.EvidenceType == "F").ToList();
+                    if (tmplist.Count > 0)
+                    {
+
+                        <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                            @tmplist.FirstOrDefault().FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/CopyofDecision/", "")
+                        </label>
+                        <i class="fa fa-download text-info"></i>
+
+                    }
+                }
+            </td>
+
+        </tr>
+    </table>
+
+    <br />
+
+
+
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-check">
+                @if ((Model.GrievnaceStatus == "1" && Model.StatusTitle != "Expired") || Model.GrievnaceStatus == "4")
+                {
+                    @Html.CheckBox("declaration", new { @class = "form-check-input" })
+                }
+
+
+                <label class="form-check-label" for="flexCheckIndeterminate" style="font-weight :bold ;font-size:20px;">
+                    @LabelDictionary["IherebySubmit"]
+                </label>
+
+                <div>
+                    @Model.CitizenName [@LabelDictionary["NameofAppellant"] ]
+                </div>
+                <div>
+                    @LabelDictionary["DateandTime"] :   @if (Model.GrievnaceStatus != "1")
+                    {@Model.SubmitDate}
+                else
+                { <span>_____________</span>} <span>[@LabelDictionary["Indianstandardtime"]]</span>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>

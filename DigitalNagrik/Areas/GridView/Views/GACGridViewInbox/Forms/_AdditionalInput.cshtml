@@ -1,0 +1,55 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACAppealAdditionalInput
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<div class="modal-header pt-3">
+    <h4 class="modal-title">@LabelDictionary["SeekadditionalinputsfromRespondentIntermediary"] (<span class="h5">@LabelDictionary["AppealNumber"]: </span><span>@Model.GrievanceId/@Model.RegistrationYear</span>)</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<hr class="mb-0 mt-2" />
+@using (Html.BeginForm("GACAdditionalInput", "GACGridViewInbox", FormMethod.Post, new { @class = "frmGACAdditionalInput" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(x => x.GrievanceId)
+    @Html.HiddenFor(x => x.RegistrationYear)
+
+    <div class="modal-body pb-0 pt-3 px-3">
+        <div class="row gx-3">
+            <div class="col-xl-6">
+                <div class="mb-3">
+                    <label class="form-label">@LabelDictionary["Detailsofinformationrequired"]</label><span class="font-sm ms-1">(@LabelDictionary["Max.characters"]: 2000)</span><span class="text-danger ms-1">*</span>
+                    @Html.TextAreaFor(x => x.SeekQuery, new { @class = "form-control", placeholder = "Enter details of information required here ...", maxlength = "2000", rows = 6 })
+                    @Html.ValidationMessageFor(x => x.SeekQuery)
+                </div>
+                <hr class="mt-0" />
+                <div class="mb-3">
+                    <button type="button" class="btn btn-success" onclick="Submit($(this))">@LabelDictionary["Submit"]</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="bg-white gv-container-comparison-doc"></div>
+
+                <div class="mb-2 ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["AppealDetails"]</div>
+                    <div style="height:300px" class="overflow-auto">
+                        @{ Html.RenderAction("GetAppealDetailsGrid_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+                <hr />
+                <div class="ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["RespondentIntermediaryResponse"]</div>
+                    <div style="height:300px" class="overflow-auto">
+                        @{ Html.RenderAction("IntermediaryResponseView", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $.validator.unobtrusive.parse($(".frmGACAdditionalInput"));
+</script>

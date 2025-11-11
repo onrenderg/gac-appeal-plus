@@ -1,0 +1,210 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    var ActionFromIndex = "A";
+    if (Session["ActionFromIndex"] != null)
+    {
+        ActionFromIndex = Session["ActionFromIndex"].ToString();
+        Session["ActionFromIndex"] = "A";
+    }
+}
+<script src=@Url.Content("~/assets/js/sha256.js")></script>
+
+<main id="main">
+    @*<div class="container " style="background-image: url('assets/img/backimage.jpg');background-repeat:no-repeat;background-size:100%; " >*@
+    <div class="container ">
+        <div class="row">
+            @Html.Partial("~/Views/Home/_PublicChartPartial.cshtml")
+
+
+            <div class="col-lg-4 mt-4 mb-2">
+                <div style=" text-align: justify;">
+                    Users may file appeals through the “Appellant Login” window and may also track its status. Respondent intermediaries too may submit their responses to appeals through the “Respondent Intermediary Login” window and track status of appeal. As per rule 3A(7), the respondent intermediary concerned is to upload on its website a report of compliance with the GAC’s order on the appeal.
+                </div>
+                <div class="card box-shadow">
+                    <div class=" card-header loginpanel text-white   ">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:left ">
+                                <i id="LoginIcon" class="bi bi-dash-square-dotted"></i>
+                                &nbsp;&nbsp;&nbsp;
+                                <span id="LoginHeaderText" class="fw-bold"> Appellant Login (File appeal / View status)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body " id="LoginDiv" style="min-height:250px;">
+                        @Html.Partial("~/Views/Home/_AppellantLogin.cshtml")
+                    </div>
+                </div>
+                <div class="card box-shadow">
+                    <div class=" card-header IntermediaryLoginPanel text-white   " style="background-color: #28a736">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:left ">
+                                <i id="IntermediaryIcon" class="bi bi-plus-square-dotted"></i>
+                                &nbsp;&nbsp;&nbsp;
+                                <span class="fw-bold"> Respondent Intermediary Login</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body " id="IntermediaryLoginDiv" style="min-height:250px;display:none;">
+
+                        @Html.Partial("~/Views/Home/_IntermediaryLogin.cshtml")
+                    </div>
+                </div>
+                <div class="card box-shadow">
+                    <div class=" card-header GACLoginPanel text-white" style="background-color: #1a6c94">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:left ">
+                                <i id="GACIcon" class="bi bi-plus-square-dotted"></i>
+                                &nbsp;&nbsp;&nbsp;
+                                <span class="fw-bold"> GAC Login</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body " id="GACLoginDiv" style="display:none;">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12">Grievance Appellate Committee Officials having  Government email</div>
+                                    <div class="col-md-12" style="text-align:right;"><a id="btnAdminLogin" class="btn btn-primary text-white"><i class="fa fa-lock me-1"></i>Sign in with Parichay (SSO)</a></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">In case you do not have Government email,<br /> Sign In with registered Email ID</div>
+                                    <div class="col-md-12" style="text-align:right;"><a href="#" class="btn btn-primary" id="GACLoginFormLink"><i class="fa fa-user me-1"></i>Sign in with Email ID</a></div>
+                                </div>
+                                @*<div class="row">
+                                        <div class="col-md-12"></div>
+                                    </div>*@
+                                <hr />
+                                <div class="row">
+                                    <div class="col-md-12">Expert members may login using registered Mobile Number / OTP</div>
+                                    <div class="col-md-12" style="text-align:right;"><a href="#" class="btn btn-primary" id="GACExpertLoginFormLink"><i class="fa fa-user me-1"></i>Sign in with Mobile Number</a></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-body " id="GACLoginFormDiv" style="min-height:250px;display:none;">
+                        @Html.Partial("~/Views/Home/_GACLoginForm.cshtml")
+                    </div>
+                    <div class="card-body " id="ExpertMemberFormDiv" style="min-height:250px;display:none;">
+                        @Html.Partial("~/Views/Home/_ExpertMembers.cshtml")
+                    </div>
+                </div>
+
+            </div>
+            @Html.Partial("~/Views/Home/_PublicHomeTextPartial.cshtml")
+        </div>
+    </div>
+
+</main>
+<style>
+    .morecontent span {
+        display: none;
+    }
+
+    .morelink {
+        display: block;
+    }
+</style>
+
+<script>
+     function RefreshCaptcha() {
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+         $("#CaptchaImageInter").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+           $("#CaptchaImageGAC").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+         $("#CaptchaImageMExp").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };
+    $(document).ready(function () {
+        if ("@ActionFromIndex" == "A") {
+            $(".loginpanel").click();
+        }
+        else if ("@ActionFromIndex" == "I")
+        {
+            $(".IntermediaryLoginPanel").click();
+        }
+        else if ("@ActionFromIndex" == "G")
+        {
+            $("#GACLoginFormLink").click();
+        }
+        else {
+            $("#GACExpertLoginFormLink").click();
+        }
+    })
+
+    $(".loginpanel").click(function () {
+        $("#LoginDiv").show();
+        $("#LoginIcon").addClass("bi-dash-square-dotted");
+        $("#LoginIcon").removeClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").removeClass("bi-dash-square-dotted");
+        $("#GACIcon").addClass("bi-plus-square-dotted");
+        $("#GACIcon").removeClass("bi-dash-square-dotted");
+        $("#GACLoginDiv").hide();
+        $("#IntermediaryLoginDiv").hide();
+        $("#GACLoginFormDiv").hide();
+        $("#ExpertMemberFormDiv").hide();
+
+    })
+    $(".IntermediaryLoginPanel").click(function () {
+        $("#LoginDiv").hide();
+        $("#GACLoginDiv").hide();
+        $("#GACLoginFormDiv").hide();
+        $("#ExpertMemberFormDiv").hide();
+        $("#IntermediaryLoginDiv").show();
+        $("#LoginIcon").removeClass("bi-dash-square-dotted");
+        $("#LoginIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").removeClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").addClass("bi-dash-square-dotted");
+        $("#GACIcon").addClass("bi-plus-square-dotted");
+        $("#GACIcon").removeClass("bi-dash-square-dotted");
+    })
+    $(".GACLoginPanel").click(function () {
+        $("#LoginDiv").hide();
+        $("#GACLoginDiv").show();
+        $("#IntermediaryLoginDiv").hide();
+        $("#GACLoginFormDiv").hide();
+        $("#ExpertMemberFormDiv").hide();
+        $("#LoginIcon").removeClass("bi-dash-square-dotted");
+        $("#LoginIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").removeClass("bi-dash-square-dotted");
+        $("#GACIcon").removeClass("bi-plus-square-dotted");
+        $("#GACIcon").addClass("bi-dash-square-dotted");
+    })
+
+    $("#GACLoginFormLink").click(function () {
+        $("#LoginDiv").hide();
+        $("#GACLoginDiv").hide();
+        $("#IntermediaryLoginDiv").hide();
+        $("#GACLoginFormDiv").show();
+        $("#ExpertMemberFormDiv").hide();
+        $("#LoginIcon").removeClass("bi-dash-square-dotted");
+        $("#LoginIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").removeClass("bi-dash-square-dotted");
+        $("#GACIcon").removeClass("bi-plus-square-dotted");
+        $("#GACIcon").addClass("bi-dash-square-dotted");
+        return false;
+    })
+    $("#GACExpertLoginFormLink").click(function () {
+        $("#LoginDiv").hide();
+        $("#GACLoginDiv").hide();
+        $("#IntermediaryLoginDiv").hide();
+        $("#GACLoginFormDiv").hide();
+        $("#ExpertMemberFormDiv").show();
+        $("#LoginIcon").removeClass("bi-dash-square-dotted");
+        $("#LoginIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").removeClass("bi-dash-square-dotted");
+        $("#GACIcon").removeClass("bi-plus-square-dotted");
+        $("#GACIcon").addClass("bi-dash-square-dotted");
+        return false;
+    })
+</script>
+
+
+
+
+
+

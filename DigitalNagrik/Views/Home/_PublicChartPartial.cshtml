@@ -1,0 +1,69 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+<div class="col-lg-4 mt-4" style="margin-top: 20px; background-color: #fafcfa; border-radius: 12px;">
+   
+    <div style="text-align: center; ">
+        @*<img class="mt-4 mb-4 img-fluid" src="~/assets/img/icon3.png" />*@
+        @*<div class="card box-shadow">
+            <div class=" card-header  text-white  fw-bold " style="background-color: #196d95">
+                Grievance Appellate Committee
+            </div>
+            <div class="card-body ">
+
+
+            </div>
+
+        </div>*@
+        <div class="fw-bold mb-2" style="text-align:left;">
+            Grievance Appellate Committee
+        </div>
+        <div style="text-align: justify; margin-bottom: 0px; ">
+            
+            The Grievance Appellate Committee (GAC) is established under the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 [“IT Rules”], made under the Information Technology Act, 2000. The IT Rules and GAC aim to ensure a Safe & Trusted and Accountable Internet for Indian users. The GAC deals with the appeals of users (Digital Nagriks) aggrieved by decisions of Grievance Officers of social media intermediaries and other intermediaries on complaints of users or victims against violation of the IT Rules and any other matters pertaining to the computer resources made available by the intermediaries.
+            <br />
+            The GAC is an online dispute resolution mechanism. The entire appeal process, from filing to decision, is in digital mode. GAC endeavours to resolve appeals within 30 days.
+            <br />
+            
+            <div style="text-align:right;">
+                <a id="anMorelefttext" href="#" onclick="$('#dvlefttext').show();$('#anMorelefttext').hide();">More..</a>
+            </div>
+
+            <div id="dvlefttext" style="display: none; text-align: justify; ">
+                <div style="text-align:right;">
+                    <a href="#" onclick="$('#dvlefttext').hide();$('#anMorelefttext').show();">Less..</a>
+                </div>
+
+                The IT Rules require social media and other intermediaries to observe due diligence by making reasonable efforts to cause their users not to host,display, upload, modify, publish, transmit, store, update or share any information as specified in rule 3(1)(b). Further, rule 3(2) provides for a grievance redressal mechanism by which users or victims may complain to the Grievance Officer of the intermediary against violation of the rules and any other matters pertaining to the computer resources made available by it, for timebound resolution. Rule 3(2)(b) also provides for timebound action by the intermediary upon a complaint in the nature of request for removal of information or communication link. Any person aggrieved by a decision of the Grievance Officer may prefer an appeal to GAC within 30 days of receipt of communication from the Grievance Officer.
+                <a href="#" onclick="$('#dvlefttext').hide();$('#anMorelefttext').show();">Less..</a>
+            </div>
+
+
+
+            @*The policies of the Government are aimed at ensuring an Open, Safe & Trusted and Accountable Internet for its users. For achieving this aim and protecting the rights of users, the Grievance Appellate Committee (GAC) has been established under the provisions of the
+        @Html.ActionLink("Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021", "PressRelease", "Home")  that allow users to appeal against the inaction of or decisions taken by intermediaries on user complaints.  &nbsp;&nbsp; @Html.ActionLink("More..", "About", "Home", new { @style = "font-style:italic;" })*@
+        </div>
+        <div class="row" style="margin-top:75px">
+            <div class="col-lg-6 col-sm-6">                
+                <div style="background-color: #e2f3f7; height: 40px; text-align: center; font-size: 30px; vertical-align: middle; font-weight: 900;">
+                    @Model.Submitted<br />
+                </div>
+                <div style="background-color: #e2f3f7; text-align: center; font-size: 15px; vertical-align: middle; font-weight: bold;">
+                    Appeals Received<br />
+                </div>
+                <div style="background-color: #1f6e98; height:2px; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; ">@*<img class="img-fluid" style="width:100%!important;margin-top: -4px;" src="~/assets/img/arbottom.png" />*@</div>
+            </div>
+            <div class="col-lg-6 col-sm-6">                
+                <div style="background-color: #cfe8d2; height: 40px; text-align: center; font-size: 30px; vertical-align: middle; font-weight: 900;">
+                    @Model.Disposed<br />
+                </div>
+                <div style="background-color: #cfe8d2; text-align: center; font-size: 15px; vertical-align: middle; font-weight: bold; ">
+                    Disposed of
+                </div>
+                <div style="background-color: #0e6c37; height: 2px; border-bottom-left-radius: 5px; border-bottom-right-radius: 5px; ">@*<img class="img-fluid" style="width:100%!important;margin-top: -4px;" src="~/assets/img/adbottom.png" />*@</div>
+            </div>
+        </div>
+    </div>
+        <div class="row" style="height:4px;">
+
+        </div>
+
+    </div>

@@ -1,0 +1,177 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.AdminDashboard
+@using DigitalNagrik.Areas.GridView.Data
+@using DigitalNagrik.Models
+
+@{
+    ViewBag.Title = "Dashboard";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+    if (UserSession.RoleID == UserRoles.Admin)
+    {
+        Layout = "~/Views/Shared/_LayoutDash.cshtml";
+    }
+    else if (UserSession.RoleID == UserRoles.Secretariat)
+    {
+        Layout = "~/Views/Shared/_LayoutDashGAC.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_LayoutDashGAC.cshtml";
+    }
+}
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/js/search-highlight.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+<link href="@Url.Content("~/assets/css/bootstrap-datepicker.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/js/bootstrap-datepicker.js")"></script>
+<script>
+    let config = { colors: { primary: '#696cff', secondary: '#8592a3', success: '#71dd37', info: '#03c3ec', warning: '#ffab00', danger: '#ff3e1d', dark: '#233446', black: '#000', white: '#fff', body: '#f4f5fb', headingColor: '#566a7f', axisColor: '#000', borderColor: '#eceef1' } };
+
+    let cardColor, headingColor, axisColor, shadeColor, borderColor;
+    cardColor = config.colors.white;
+    headingColor = config.colors.headingColor;
+    axisColor = config.colors.axisColor;
+    borderColor = config.colors.borderColor;
+
+    function RenderGACPie(_containerId, _labels, _data) {
+        var ChartOptions = {
+            chart: { height: 240, type: 'pie' },
+            labels: _labels,
+            series: _data,
+            colors: [config.colors.primary, config.colors.success, config.colors.info, config.colors.warning],
+            stroke: { width: 10 },
+            dataLabels: { enabled: true, formatter: function (val, opt) { return parseInt(val); } },
+            legend: { show: true },
+            grid: { padding: { top: 0, bottom: 0 } },
+            plotOptions: {}
+        };
+        var Chart = new ApexCharts(document.querySelector('#' + _containerId), ChartOptions); Chart.render();
+    }
+</script>
+<style>
+    .highcharts-drilldown-axis-label {
+        font-weight: normal !important;
+        text-decoration: none !important;
+    }
+
+    .highcharts-data-label text, .highcharts-drilldown-data-label text {
+        text-decoration: none !important;
+        font-weight: normal !important;
+        color: red !important;
+    }
+</style>
+
+<div class="modal fade" id="dash-action-modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-fullscreen" role="document">
+        <div class="modal-content" id="dash-action-modal-content"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="dash-appeallist-modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-fullscreen" role="document">
+        <div class="modal-content">
+            <div class="modal-header pt-3">
+                <h4 class="modal-title" id="dash-appeallist-modal-title"></h4>
+                <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal" aria-label="Close">@LabelDictionary["Close"]</button>
+            </div>
+            <hr class="mb-3 mt-2">
+            <div id="dash-appeallist-modal-content" class="pb-4"></div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid flex-grow-1 px-3 pt-3">
+    <h3 class="fw-bold mb-3">
+        <span class="align-text-bottom"><i class="bi bi-speedometer me-2"></i><span class="me-2">@LabelDictionary["Dashboard"]</span></span>
+        @if (Model.GACList != null && Model.GACList.Count() > 0)
+        {
+            int gac_counter = 1;
+            foreach (var GAC in Model.GACList)
+            {
+                <button type="button" id="btn-dash-gac-@GAC.Value" class="btn btn-light" data-qs="@SecureQueryString.SecureQueryString.Encrypt("GACId=" + GAC.Value)" onclick="LoadStatsGrid($(this))">@GAC.Text</button>
+                ++gac_counter;
+            }
+        }
+        @if (UserSession.RoleID != UserRoles.Admin)
+        {
+            if (UserSession.RoleID == UserRoles.Secretariat)
+            {
+                <div class="float-end">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="me-1 align-middle bx bx-plus-circle"></i></button>
+                    <ul class="dropdown-menu py-2" style="">
+                        <li><a href="javascript:void(0)" class="dropdown-item" data-title="Pending for Assignment" data-qs="@SecureQueryString.SecureQueryString.Encrypt("GACId=0&Flag=" + GACGridViewInbox.MenuStatus.AssignmentPending)" onclick="GetAppealList($(this))"><i class="me-2 align-text-bottom bx bx-time"></i>@LabelDictionary["AppealsPendingforAssignment"]</a></li>
+                        <li><a href="@Url.Action("AddNewIntermediary", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 align-text-bottom bx bx-user"></i>@LabelDictionary["Add/UpdateRespondentIntermediary"]</a></li>
+                        <li><a href="@Url.Action("AddNewReliefSought", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 align-text-bottom bx bx-list-ol"></i>@LabelDictionary["Add/UpdateReliefSought"]</a></li>
+                        <li><a href="@Url.Action("AddNewGroundforAppeal", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 bx bx-list-ol align-text-bottom"></i>@LabelDictionary["Add/UpdateGroundforAppeal"]</a></li>
+                        <li><a href="@Url.Action("AddNewExpert", "SubjectExpert", new { Area = "SubjectExpert" })" class="dropdown-item"><i class="me-2 bx bx-user align-text-bottom"></i>@LabelDictionary["Add/UpdateExpert"]</a></li>
+                        <li><a href="@Url.Action("DecisionLog_List", "GACGridViewInbox", new { Area = "GridView" })" class="dropdown-item"><i class="me-2 bx bx-file align-text-bottom"></i>Unlock Draft Decision</a></li>
+                        <li><a href="@Url.Action("IntermediaryExtensionTime_List", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 bx bx-time-five align-text-bottom"></i>Time Extension Sought Requests</a></li>
+                        <li><a href="@Url.Action("Index", "LogAuditTrail", new { Area = "Reports" })" class="dropdown-item"><i class="me-2 bx bx-file align-text-bottom"></i>Log Audit Trail Report</a></li>
+                        <li><a href="@Url.Action("Index", "AppealHistoryReport", new { Area = "GridView" })" class="dropdown-item"><i class="me-2 bx bx-time-five align-text-bottom"></i>Appeal History Report</a></li>
+                            <li><a href="@Url.Action("Index", "AppealBackTrack", new { Area = "GridView" })" class="dropdown-item"><i class="me-2 bx bx-arrow-back align-text-bottom"></i>Appeal Withdraw</a></li>
+                    </ul>
+                </div>
+            }
+            <a class="btn btn-primary float-end me-1" href="@Url.Action("Index", "GACGridViewInbox", new { Area = "GridView" })"><i class="bx bx-table me-2 align-text-bottom"></i>@LabelDictionary["Gridview"]</a>
+            <a class="btn btn-info float-end me-1" href="@Url.Action("SearchAppeal", "AppealHistoryReport", new { Area = "GridView" })"><i class="bx bx-search me-2 align-text-bottom"></i>Search Appeal</a>
+            <a class="btn btn-warning float-end me-1" href="#" onclick='printDiv();'><i class="bx bx-printer"></i></a>
+        }
+    </h3>
+    <hr class="mt-2 mb-3" />
+
+    <div id="dash_container_admindashboard">
+    </div>
+</div>
+
+<script>
+    var _LoadHtml = '<div class="px-4 py-5 text-center" style="min-height:40rem;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><br>@LabelDictionary["FetchingData"]</div>';
+
+    function LoadStatsGrid(element) {
+        _StatsContainer = $("#dash_container_admindashboard"); _StatsContainer.html(_LoadHtml);
+        element.siblings('button').removeClass('btn-primary').addClass("btn-light"); element.removeClass('btn-light').addClass("btn-primary");
+        var qs = element.data("qs");
+        if (qs) { setTimeout(function () { $.ajax({ url: '@Url.Action("GetDashboardStats_PV", "AdminDashboard", new { Area = "Dashboard" })' + '?qs=' + qs, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { _StatsContainer.html(data); } }, }); }, 400); }
+    }
+
+    LoadStatsGrid($("#btn-dash-gac-@Model.GACId"));
+
+    function TakeAction(element) {
+        var URL = element.data("url"); var ActionContainer = $("#dash-action-modal-content");
+        ActionContainer.html('').html(_LoadHtml);
+        var ModalSizeClass = element.data('modalclass');
+        $("#dash-action-modal").find('.modal-dialog').removeClass().addClass('modal-dialog modal-' + ModalSizeClass); $("#dash-action-modal").modal('show');
+        setTimeout(function () { $.ajax({ url: URL, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { ActionContainer.html(data); } } }); }, 400);
+    }
+
+    function Submit(element) {
+        var form = element.closest('form');
+        if (form.valid()) {
+            $(".btn").attr("disabled", "disabled"); form.submit();
+        }
+    }
+</script>
+<script>
+    //function printDiv() {
+    //    var divToPrint = document.getElementById('dash_container_admindashboard');
+    //    var newWin = window.open('', 'Print-Window');
+    //    newWin.document.open();
+    //    newWin.document.write('<html><body onload="window.print()">' + divToPrint.innerHTML + '</body></html>');
+    //    newWin.document.close();
+    //    setTimeout(function () { newWin.close(); }, 10);
+    //}
+
+    function printDiv() {
+        var content = document.getElementById('dash_container_admindashboard').innerHTML;
+        var printWindow = window.open('', 'Print-Window');
+        printWindow.document.write('<html><head>');
+        printWindow.document.write('<title>Print</title>');
+        printWindow.document.write('<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">');
+        printWindow.document.write('<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">');
+        printWindow.document.write('</head><body onload="window.print()">');
+        printWindow.document.write(content);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        setTimeout(function () { printWindow.close(); }, 10);
+    }
+
+</script>

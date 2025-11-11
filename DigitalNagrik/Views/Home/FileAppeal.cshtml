@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewBag.Title = "FileAppeal";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+
+<section class="breadcrumbs">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h2><b>Grievance Appellate Committee (GAC) ePortal</b></h2>
+            <ol>
+                <li><a href=@Url.Action("Index","Home" ,new {Area=""})>Home</a></li>
+                <li>Online Appeals</li>
+                <li>File Appeal</li>
+            </ol>
+        </div>
+
+    </div>
+</section>
+<section class="inner-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-7">
+                <p style="text-align: justify">
+                <p>The Digital Nagrik can file an appeal on GAC ePortal either through the web-interface or by using the GAC Appeals mobile application. </p>
+                <p style="font-weight: 700">Pre-requisites before filing an Appeal on GAC ePortal:</p>
+                <ol type="1">
+                    <li>A complaint should have been sent to the intermediary (Grievance officer/ Resident Grievance Officer of the portal/media/app etc.)</li>
+                    <li>The decision of the intermediary must have been received. </li>
+                    <li>Appeal must be filed within 30 days of receiving the decision of the Intermediary.</li>
+                    <li>The Digital Nagrik is not satisfied by the decision of the Intermediary.</li>
+                </ol>
+                <p style="font-weight: 700">Steps for Online Appeal Filing:</p>
+                <ol type="1">
+                    <li>Visit the link/ Download mobile App. <a href="@Url.Action("Index","Registration",new {Area="Public"})" class="btn btn-sm btn-primary"><i class="fa fa-file me-1"></i> File Appeal</a> </li>
+                    <li>Tick the relevant options and enter date of receiving final decision from intermediary. Enter</li>
+                    <ol type="a">
+                        <li>Mobile Number.</li>
+                        <li>Receive OTP on mobile and enter in GAC ePortal for verification.</li>
+                    </ol>
+                    <li>After OTP verification, set your PIN for future access without OTP. Enter</li>
+                    <ol type="a">
+                        <li>Name</li>
+                        <li>Address</li>
+                        <li>Email</li>
+                    </ol>
+                    <li>Enter following details related to the Appeal:</li>
+                    <span class="ms-1">Part-I:<b> Intermediary Details</b></span>
+                    <ol type="a">
+                        <li>Name of Intermediary</li>
+                        <li>URL of website/media/image/app</li>
+                        <li>Language of content</li>
+                        <li>Name/Designation of Grievance Officer of Intermediary </li>
+                        <li>Email of Grievance Officer or Intermediary as available on website/mobile app</li>
+                        <li>Correspondence address of Intermediary, if available</li>
+                    </ol>
+
+
+
+                    <span class="ms-1">Part-II:<b> Appeal Details</b></span>
+                    <ol type="a">
+                        <li>Platform Type (Web/App)</li>
+                        <li>Grounds for appeal</li>
+                        <li>Relief sought with relevant details</li>
+                        <li>Justification for invoking the ground for the appeal </li>
+                    </ol>
+
+                    <span class="ms-1"> Part-III:<b> Appeal Documents</b></span>
+                    <ol type="a">
+                        <li>Copy of the complaint made to intermediary (mandatory PDF/image file maximum size 4 MB)</li>
+                        <li>Copy of decision received from intermediary (mandatory PDF/image file maximum size 1MB)</li>
+                        <li>Proof of making complaint, if not part of the complaint (PDF/image file maximum 4MB)</li>
+                        <li>Any other correspondence made with the Grievance Officer (PDF/image file maximum 1MB up to 3 files) </li>
+                        <li>URL/Website link, if any, of the information in respect of which complaint was made (maximum 300 character with option to add up to 10 links)</li>
+                    </ol>
+                    <span class="ms-1">Part-IV:<b>  Evidence Details</b></span>
+                    <ol type="a">
+                        <li>URL of image as evidence</li>
+                        <li>Image up to 1MB as evidence</li>
+                        <li>URL of voice note as evidence</li>
+                        <li>Voice note up to 2MB as evidence </li>
+                        <li>URL of video as evidence</li>
+                        <li>Video up to 10MB as evidence</li>
+                    </ol>
+                    <li>Confirm/ View/ Download appeal details</li>
+                    <li>Once satisfied with the entries made, accept self declaration</li>
+                    <li>Submit the Appeal</li>
+                    <li>An Appeal Number will be generated for future reference/interaction with GAC. Keep it safe. The Appeal number will also be available in the downloaded Appeal PDF file. The Digital Nagrik can visit the portal again to view status of Appeal by entering the Appeal number and Mobile Number. An OTP will be sent to verify details before allowing access.</li>
+                    <li>The Appeal will be forwarded to intermediary for necessary declarations within 72 hours. Appeal received in the corresponding GAC Secretariat based on the grounds of appeal for further action. GAC Secretariat can refer back the appeal to appellant in case of minor issue so that it can be corrected and re-submitted. This will be visible to the appellants in their web-interface after Login based on the Mobile number and PIN set by them. </li>
+                    <li>GAC may seek additional information from both Digital Nagrik and Intermediary and take appropriate decision. <a href="@Url.Action("PinLogin","Registration",new {Area="Public"})" class="btn btn-sm btn-primary"><i class="fa fa-lock me-1"></i> Citizen Login (Existing User)</a></li>
+                    <li>The Intermediary will be directed to take corrective action. The Digital Nagrik will be informed of the Decision by Email/SMS and web/mobile interface.</li>
+                </ol>
+            </div>
+            <div class="col-5">
+                <p class="mt-3 pt-0  border-1">
+                    <b>The workflow is given below:</b>
+                    <img src="~/assets/img/Appeal_workflow.png" class="img-fluid img-thumbnail mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal" />
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Appeals Workflow</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="~/assets/img/Appeal_workflow.png" class="img-fluid" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

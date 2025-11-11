@@ -1,0 +1,95 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.DecisionLog
+@{
+    ViewBag.Title = "DecisionLog";
+    Layout = "~/Views/Shared/_LayoutDashGAC.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+<style>
+    .min-vh-50 {
+        min-height: 70vh !important;
+    }
+</style>
+<div class="col-lg-12 min-vh-50">
+    <div class="row p-3">
+        <div class="col-6">
+            <h3> <i class="bx bx-file text-primary align-middle me-1"></i>Unlock Draft Decision</h3>
+        </div>
+        <div class="col-6">
+            <a class="btn btn-warning float-end me-2" href='@Url.Action("Index", "GACGridViewInbox", new {Area="Gridview"})'>
+                <i class="bx bx-arrow-back align-middle"></i> @LabelDictionary["Back"]
+            </a>
+        </div>
+    </div>
+    <hr class="m-0" />
+    <div class="row">
+        <div class="col-12 overflow-auto">
+            <table id="tableAppList" class="table table-bordered align-top table-responsive">
+                <thead style="font-size:18px">
+                    <tr class="table-primary">
+                        <th scope="col" width="1%"> @LabelDictionary["Sl.No"]</th>
+                        <th scope="col" width="30%">@LabelDictionary["AppealDetails"]</th>
+                        <th scope="col" width="30%">Opened With</th>
+                        <th scope="col" width="30%">Open On</th>
+                        <th class="text-center" width="5%" scope="col">@LabelDictionary["Action"]</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-light" style="font-size:18px;">
+                    @{
+                        int counter = 1;
+                    }
+                    @foreach (var row in Model.DecisionLogList)
+                    {
+                        <tr id="tr_@counter">
+                            <td class="text-center">@counter</td>
+                            <td>
+                                <b>@LabelDictionary["AppealNumber"]:</b> @row.GrievanceID/ @row.RegistrationYear
+                            </td>
+                            <td>
+                                @row.UserID
+                            </td>
+                            <td class="text-left">
+                                <i class="bx bx-calendar me-2"></i>: @row.CreatedDateTime (<span class=text-danger>@Html.Raw(@row.TimeDifference) ago</span> )<br />
+                                <i class="bx bx-laptop me-2"></i>: @row.CreationIP
+                            </td>
+                            <td class="text-center">
+                                <a class="text-success" href="javascript:void(0);" title="Unlock Draft Decision" data-tr="tr_@counter" data-url="@Url.Action("DeleteDraftDecisionLog", "GACGridViewInbox" , new { Area="GridView" , qs=SecureQueryString.SecureQueryString.Encrypt("GrievanceId="+row.GrievanceID +" &RegistrationYear="+row.RegistrationYear+" &UserID="+row.UserID) })" onclick="DeleteDraftDecision($(this))"><i class="bx bxs-lock-open h3 align-middle"></i></a>
+                            </td>
+
+                        </tr>
+                        counter = counter + 1;
+                    }
+                    <script>
+                        $(document).ready(function () {
+                            $("#tableAppList").DataTable()
+                        });
+                    </script>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    function DeleteDraftDecision(element) {
+        var URL = element.data("url");
+        var tr = element.data("tr");
+        $.ajax({
+            url: URL,
+            type: "get",
+            datatype: "json",
+            success: function (data) {
+                if (data.Status == "S") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-check-circle me-1'></i> Successfully Saved </div>", "success", 5, function () { });
+                    $("#" + tr).remove();
+                }
+                else if (data.Status == "F") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-window-close me-1'></i> Error while saving the record </div>", "error", 5, function () { });
+                }
+            }
+        });
+    }
+
+</script>
+

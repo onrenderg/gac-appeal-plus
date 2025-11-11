@@ -1,0 +1,71 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.mIntermediaryReply
+@{
+    ViewBag.Title = "IntermediaryReply";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+
+<div class="container no-padding">
+    <div class="row pt-3">
+        <div class="card p-3">
+            <div class="row">
+                <div class="col-lg-11">
+                    <h1 style="font-size: 26px; color: black;margin-left:10px; margin-top: 10px;"><i class="fa fa-user"></i>&nbsp;Appeal List (Reply time more than 96 Hours)</h1>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12 overflow-auto">
+                            <table id="tableAppealGACIntermediaryReplyList" class="table table-bordered">
+                                <thead>
+                                    <tr class="table-primary text-secondary">
+                                        <th scope="col" class="align-text-top">Sl.No</th>
+                                        <th scope="col" class="align-text-top">Appeal Description</th>
+                                        <th scope="col" class="align-text-top">Content Classification</th>
+                                        <th scope="col" class="align-text-top">User Details</th>
+                                        <th scope="col" class="align-text-top">Intermediary Title/Type</th>
+                                        <th scope="col" class="align-text-top">Reason for Appeal</th>
+                                        <th scope="col" class="align-text-top">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int counter = 1;
+                                    }
+                                    @foreach (var row in Model.IntermediaryReplyList)
+                                    {
+                                        <tr>
+                                            <td class="align-text-top">@counter</td>
+                                            <td class="align-text-top">
+                                                <b>Appeal Number  : </b> @row.GrievanceId/@row.RegistrationYear<br />
+                                                <b>Appeal Date  : </b> @row.ReceiptDate<br />
+                                                <b>Description :</b> @row.GrievanceDesc
+                                            </td>
+                                            <td class="align-text-top">
+                                                <b>GAC :  </b> @row.GACTitle                                           
+                                            </td>
+                                            <td class="align-text-top"><i class="fa fa-user me-1"></i>- @row.UserName<br /><i class="fa fa-mobile me-1"></i>- @row.UserMobile <br /><i class="fa fa-envelope me-1"></i>- @row.UserEmail </td>
+                                            <td class="align-text-top"><b>Title: </b>@row.IntermediaryTitle<br /><b>Type: </b>@row.IntermediaryType</td>
+                                            <td class="align-text-top">@row.ReasonForAppeal</td>
+                                            <td class="text-center align-text-top">
+                                                @Html.Raw(row.ReplyPendingTimeInMInutes)
+                                            </td>
+                                        </tr>
+                                        counter = counter + 1;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#tableAppealGACIntermediaryReplyList").DataTable()
+    });
+</script>

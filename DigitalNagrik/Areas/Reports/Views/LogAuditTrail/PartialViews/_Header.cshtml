@@ -1,0 +1,104 @@
+﻿@model DigitalNagrik.Areas.Reports.Data.LogAuditTrailParams
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<link href="~/assets/css/bootstrap-datepicker.css" rel="stylesheet" />
+<script src="~/assets/js/bootstrap-datepicker.js"></script>
+@*<style>
+        .datepicker {
+            z-index: 9999 !important
+        }
+    </style>*@
+@using (Html.BeginForm("DataList", "LogAuditTrail", FormMethod.Post, new { id = "frm_LogAuditTrail", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="col-xl-12">
+        <div class="row gx-3">
+            <div class="col-lg-11">
+                <div class="row">
+                    <div class="col-lg-1">
+                        <label class="custom-input-label float-end">@LabelDictionary["FromDate"]<span class="text-danger"> *</span></label>
+                    </div>
+                    <div class="col-lg-2">
+                        @Html.TextBoxFor(x => x.FromDate, new { @id = "FromDate", @class = "form-control DisabledInputs", placeholder = @LabelDictionary["FromDate"], @autocomplete = "off" })
+                        @Html.ValidationMessageFor(x => x.FromDate)
+                    </div>
+                    <div class="col-lg-1">
+                        <label class="custom-input-label float-end">@LabelDictionary["ToDate"] <span class="text-danger float-end"> *</span></label>
+                    </div>
+                    <div class="col-lg-2">
+                        @Html.TextBoxFor(x => x.ToDate, new { @id = "ToDate", @class = "form-control DisabledInputs", placeholder = @LabelDictionary["ToDate"], @autocomplete = "off" })
+                        @Html.ValidationMessageFor(x => x.ToDate)
+                    </div>
+                    <div class="col-lg-1">
+                        <label class="custom-input-label float-end">@LabelDictionary["UserType"]<span class="text-danger"> *</span></label>
+                    </div>
+                    <div class="col-lg-2">
+                        @Html.DropDownListFor(m => m.UserTypeID, Model.UserTypeList, "All", new { @class = "form-select" })
+                        @Html.ValidationMessageFor(x => x.UserTypeID)
+                    </div>
+                    <div class="col-lg-1">
+                        <label class="custom-input-label float-end">@LabelDictionary["UserName"]<span class="text-danger"> *</span></label>
+                    </div>
+                    <div class="col-lg-2">
+                        @Html.DropDownListFor(m => m.UserID, Model.UserList,"All", new { @class = "form-select" })
+                        @Html.ValidationMessageFor(x => x.UserID)
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <a class="btn btn-success" href="javascript:void(0);" onclick="ViewAppeals($(this))" data-url="@Url.Action("DataList", "LogAuditTrail", new { Area = "Reports"})"><i class="bx bx-search me-1 align-middle"></i>Search</a>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $('#FromDate').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            format: 'dd/mm/yyyy',
+            orientation: 'bottom',
+            endDate: new Date(),
+            autoclose: true
+        }).attr('readonly', 'readonly');
+        $('#ToDate').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            format: 'dd/mm/yyyy',
+            orientation: 'bottom',
+            endDate: new Date(),
+            autoclose: true
+        }).attr('readonly', 'readonly');
+    });
+    $("#UserTypeID").change(function () {
+        var UserTypeID = $(this).val();
+        $('#UserID').empty();
+        $.ajax({
+            url: '@Url.Action("GetUsers", "LogAuditTrail", new { Area = "Reports" })',
+            type: "GET",
+            dataType: "JSON",
+            data: { UserTypeID: UserTypeID },
+            success: function (data) {
+                if (data) {
+                    $("#UserID").empty();
+                    $("#UserID").append("<option value=''>All</option>");
+                    $.each(data, function (Index, d) {
+                        $("#UserID").append("<option value='" + d.Value + "'>" + d.Text + "</option>")
+                            });
+                        }
+            },
+            error: function () {
+                $("#UserID").empty();
+                $("#UserID").append("<option value=''>All</option>");
+              }
+           });
+    });
+
+</script>

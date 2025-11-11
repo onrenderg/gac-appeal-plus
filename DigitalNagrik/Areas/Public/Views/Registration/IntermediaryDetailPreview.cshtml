@@ -1,0 +1,385 @@
+﻿@model DigitalNagrik.Areas.Public.Models.mIntermediaryDetailPart
+@{
+    ViewBag.Title = "IntermediaryDetailPreview";
+    Layout = "~/Views/Shared/_LayoutCitizen.cshtml";
+    List<DigitalNagrik.Areas.Public.Models.mAppealDocument> list = (List<DigitalNagrik.Areas.Public.Models.mAppealDocument>)ViewData["AppealDocList"];
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<style>
+    tbody, td, tfoot, th, thead, tr {
+        border-color: inherit;
+        border-style: none;
+        border-width: 0;
+    }
+</style>
+@using (Html.BeginForm("IntermediaryFinalSubmit", "Registration", FormMethod.Post, new { id = "IntermediaryDetail", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <section >
+        <div class="container  h-100">
+            
+            <div class="card" style="border-radius: 1rem;">
+                
+                <div class="row g-0">
+
+                    <div class="col-md-12 col-lg-12 align-items-center">
+                        <div class="card-body p-4 p-lg-5 text-black">
+
+                   
+                            @Html.HiddenFor(m => m.MobileNo)
+
+                            @Html.HiddenFor(m => m.GrievanceID)
+                            @Html.HiddenFor(m => m.RegistrationYear)
+                            @Html.HiddenFor(m => m.txtIntermediary)
+
+                            @Html.HiddenFor(m => m.GrievnaceStatus)
+                            <div class="card">
+
+                                <div class=" card-header loginpanel text-white   ">
+                                    <div class="row">
+                                        <div class="col-sm-11">
+                                            <i class="fa fa-layer-group "></i>&nbsp;&nbsp;&nbsp; @LabelDictionary["AppealPreview"]
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <a href="@Url.Action("CitizenDashboard", "Registration")" style="padding:5px;" class="btn btn-warning  btn-block">@LabelDictionary["Back"]</a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <br />
+                                <div class="row ">
+                                    <div class="col-sm-10"></div>
+                                    <div class="col-sm-1">
+                                        @if ((Model.GrievnaceStatus == "1" && Model.StatusTitle != "Expired") || Model.GrievnaceStatus == "4")
+                                        {
+                                            <a href="@Url.Action("NewIntermediaryDetail", "Registration",new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID),from = "dashboard"})" title="Edit"><i class="fa fa-2x  fa-edit text-warning "></i></a>
+                                        }
+
+                                    </div>
+                                    <div class="col-sm-1">
+
+                                        @*<a href="@Url.Action("AppealPDFNew", "Registration",new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID) })" target="_blank" title="Download as PDF"><i class="fa fa-2x  fa-file-pdf text-danger "></i></a>*@
+                                        <a href="@Url.Action("AppealPDF", "Registration",new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID) })" target="_blank" title="Download as PDF"><i class="fa fa-2x  fa-file-pdf text-danger "></i></a>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="card-body table table-responsive" id="DivIdToPrint">
+                                    <table style="width:100%;font-weight:bold;">
+                                        <tr>
+                                            <td style="width:7%">@LabelDictionary["To"]:</td>
+                                            <td style="width:93%"></td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td>@LabelDictionary["GrievanceAppellateCommittee"]</td>
+                                        </tr>
+                                        <tr>
+                                            <td> @LabelDictionary["Madamsir"],</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2"> @LabelDictionary["Ihereby"] </td>
+                                        </tr>
+                                    </table>
+                                    <br />
+                                    <table style="width: 100%;">
+                                        <tr>
+                                            <td style="width: 80%; text-align: left">
+                                                <h3>@LabelDictionary["AppellantDetail"]</h3>
+                                            </td>
+
+                                            <td style="width: 20%;  ">@LabelDictionary["AppealNumber"] : <b>@Model.GrievanceID/@Model.RegistrationYear</b> </td>
+                                        </tr>
+                                    </table>
+                                    <hr />
+                                    <table style="width :100%;">
+                                        <tr>
+                                            <td style="width: 33%; font-weight: bold;">@LabelDictionary["Name"]</td>
+                                            <td style="width: 33%; font-weight: bold;">@LabelDictionary["Mobile"]</td>
+                                            <td style="width: 33%; font-weight: bold;">@LabelDictionary["Email"]</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>@Model.CitizenName</td>
+                                            <td> @Model.MobileNo</td>
+                                            <td> @Model.txtEmail.ToString().Replace("@", "[at]").Replace(".", "[dot]")  </td>
+                                        </tr>
+                                    </table>
+
+
+
+                                    <div style="text-align: left">
+                                        <hr />
+                                        <h3>@LabelDictionary["RespondentIntermediaryDetail"]</h3>
+                                        <hr />
+                                    </div>
+
+                                    <table style="width :100%;">
+                                        <tr>
+                                            <td style="width: 10%; font-weight: bold;">@LabelDictionary["AppealDate"]</td>
+                                            <td style="width: 80%; font-weight: bold;">@LabelDictionary["Status"]</td>
+                                            <td style="width: 10%; font-weight: bold;"></td>
+                                        </tr>
+                                        <tr>
+
+
+                                            <td style="vertical-align: top;"> @Model.ReceiptDate  </td>
+                                            <td style=" vertical-align: top;">
+                                                @if (@Model.StatusTitle.ToString() == "Expired")
+                                                {
+                                                    <span class="text-danger ">@Model.StatusTitle.ToString() </span>
+                                                }
+                                                else
+                                                {
+                                                    @Model.StatusTitle
+                                                }
+
+                                            </td>
+
+                                        </tr>
+                                    </table>
+                                    <table style="width :100%;">
+                                        <tr>
+                                            <td style="width: 35%; font-weight: bold;">@LabelDictionary["DateofComplaintregisteredwiththeintermediary"]</td>
+                                            <td style="width: 32%; font-weight: bold;">@LabelDictionary["DateofDecisiongivenbytheintermediary"]</td>
+                                            <td style="width: 33%; font-weight: bold;">@LabelDictionary["TicketDocketNumberMsg"]</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>@Model.txtDateofComplaint</td>
+                                            <td>@Model.txtdateofDecision</td>
+                                            <td>@Model.TicketDocketNumber </td>
+                                        </tr>
+                                    </table>
+                                    <table style="width:100%">
+                                        <tr>
+
+                                            <td style="width: 30%; font-weight: bold;">@LabelDictionary["NameoftheRespondentIntermediary"]</td>
+                                            <td style="width: 30%; font-weight: bold;">@LabelDictionary["URLoftheRespondentIntermediary"]</td>
+                                            <td style="width: 30%; font-weight: bold;">@LabelDictionary["IntermediaryEmail"] </td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Model.txtIntermediary</td>
+                                            <td>@Model.txturlofintermediary</td>
+                                            <td>@Model.GROIntermediaryEmail.ToString().Replace("@", "[at]").Replace(".", "[dot]")   </td>
+                                        </tr>
+                                    </table>
+
+                                    <br />
+                                    <table style="width:100%">
+                                        <tr>
+                                            <td style="width: 70%; font-weight: bold;">@LabelDictionary["IntermediaryAddress"]</td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Model.txtCorrespondenceAddress </td>
+                                        </tr>
+                                    </table>
+                                    <br />
+                                    <table style="width:100%">
+                                        <tr>
+                                            <td style="width: 50%; font-weight: bold;">@LabelDictionary["BriefofComplaintPreview"]</td>
+                                            <td style="width: 50%; font-weight: bold;">@LabelDictionary["SubjectKeyword"]</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td style="vertical-align: top;">@Model.BriefofComplaint      </td>
+                                            <td style="vertical-align:top; ">@Model.Keyword</td>
+                                        </tr>
+                                    </table>
+                                    <br />
+                                    <table style="width:100%">
+                                        <tr>
+
+                                            <td style="width: 50%; font-weight: bold;">@LabelDictionary["ReliefSoughtPreview"] </td>
+                                        </tr>
+                                        <tr>
+
+                                            <td style="vertical-align: top;">@Model.ReliefSoughtSpecification</td>
+                                        </tr>
+                                    </table>
+                                    <br />
+
+                                    <table style="width:100%">
+                                        <tr>
+                                            <td style="width: 100%; font-weight: bold;">@LabelDictionary["JustificationPreview"]</td>
+                                        </tr>
+                                        <tr>
+                                            <td>@Model.txtJustification   </td>
+                                        </tr>
+                                    </table>
+
+
+                                    <div style="text-align: left">
+                                        <hr />
+                                        <h3>@LabelDictionary["DocumentUploaded"]</h3>
+                                        <hr />
+                                    </div>
+                                    <table style="width :100%;">
+                                        <tr>
+                                            <td style="width: 50%; font-weight: bold;">@LabelDictionary["CCIntermediary"]</td>
+                                            <td style="width: 50%; font-weight: bold;">@LabelDictionary["Anyotherrelevantinformation"]</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                @if (list != null)
+                                                {
+                                                    var tmplist = list.Where(x => x.DocumentType == "CC" && x.EvidenceType == "F").ToList();
+                                                    if (tmplist.Count > 0)
+                                                    {
+                                                        int srno = 1;
+                                                        <table style="width:100%;">
+                                                            @foreach (var tmp in tmplist)
+                                                            {
+                                                                <tr>
+                                                                    <td style="width:5%">
+                                                                        @srno.ToString().
+                                                                    </td>
+                                                                    <td style="width:95%">
+                                                                        <a href="@Url.Action("DownloadDocument", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID+"&FilePath=" + tmp.FilePath + "&FileType=" + tmp.FileType+"&FileID="+ tmp.FileId) })" title="Download">
+                                                                            <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                                                                                @tmp.FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/CopyofComplaint/", "")
+                                                                            </label><i class="fa fa-download text-info"></i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                                srno += 1;
+                                                            }
+                                                        </table>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (list != null)
+                                                {
+                                                    var tmplist = list.Where(x => x.DocumentType == "CD" && x.EvidenceType == "F").ToList();
+                                                    if (tmplist.Count > 0)
+                                                    {
+                                                        <a href="@Url.Action("DownloadDocument", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID+"&FilePath=" + tmplist.FirstOrDefault().FilePath + "&FileType=" + tmplist.FirstOrDefault().FileType+"&FileID="+ tmplist.FirstOrDefault().FileId) })" title="Download">
+                                                            <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                                                                @tmplist.FirstOrDefault().FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/CopyofDecision/", "")
+                                                            </label>
+                                                            <i class="fa fa-download text-info"></i>
+                                                        </a>
+                                                    }
+                                                }
+                                            </td>
+
+                                        </tr>
+                                    </table>
+
+                                    <br />
+
+
+                                </div>
+
+                                <hr />
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-check">
+                                            @if ((Model.GrievnaceStatus == "1" && Model.StatusTitle != "Expired") || Model.GrievnaceStatus == "4")
+                                            {
+                                                @Html.CheckBox("declaration", new { @class = "form-check-input" })
+                                            }
+
+
+                                            <label class="form-check-label" for="flexCheckIndeterminate" style="font-weight :bold ;font-size:20px;">
+                                                @LabelDictionary["IherebySubmit"] 
+                                            </label>
+                                           
+                                            <div>
+                                                @Model.CitizenName [@LabelDictionary["NameofAppellant"] ]
+                                            </div>
+                                                <div>
+                                                   @LabelDictionary["DateandTime"] :   @if (Model.GrievnaceStatus != "1"){@Model.SubmitDate}else { <span>_____________</span>} <span>[@LabelDictionary["Indianstandardtime"]]</span>
+                                                </div>
+                                            
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <br />
+                                @if ((Model.GrievnaceStatus == "1" && Model.StatusTitle != "Expired") || Model.GrievnaceStatus == "4")
+                                {
+
+
+
+                                    <div class="row">
+                                        <div class="col-sm-5"></div>
+                                        <div class="col-sm-1">
+                                            <input type="Submit" class="btn btn-loginpanel  btn-block" value="@LabelDictionary["Submit"]" onclick="return CheckValidation();" />
+                                            <div class="modal fade" id="confirmModalSubmit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">@LabelDictionary["Confirm"]</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div id="confirmMessageText"></div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-sm btn-secondary btn-block" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+                                                            <button type="submit" id="SubmitAction" class="btn btn-sm btn-success  btn-block">@LabelDictionary["Submit"]</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <a href="@Url.Action("CitizenDashboard", "Registration")" class="btn btn-dark  btn-block">@LabelDictionary["CancelPreview"]</a>
+                                        </div>
+                                        <div class="col-sm-5"></div>
+                                    </div>
+                                }
+
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+@if (ViewData["SuccessMessage"] != null)
+{
+    <script type="text/javascript">
+                window.onload = function () {
+                    alertify.success('@ViewData["SuccessMessage"]');
+                 };
+    </script>
+}
+@if (ViewData["ErrorMessage"] != null)
+{
+    <script type="text/javascript">
+                window.onload = function () {
+                    alertify.error('@ViewData["ErrorMessage"]');
+                 };
+    </script>
+}
+<script>
+    function CheckValidation() {
+        if ($('#declaration').is(":checked")) {
+            var txtIntermediary = $('#txtIntermediary').val();
+            var RegistrationYear = $('#RegistrationYear').val();
+            var GrievanceID = $('#GrievanceID').val();
+            var msg = "@LabelDictionary["AppealNumber"] : <b>" + GrievanceID + "/" + RegistrationYear + "</b>  @LabelDictionary["againstrespondentintermediary"] <b>" + txtIntermediary + "</b>  @LabelDictionary["isbeingsubmitted"]<br/>@LabelDictionary["AreyousuretoProceedSubmittheappeal"]";
+            $("#confirmMessageText").html(msg);
+            $("#confirmModalSubmit").modal('show');
+            return false;
+
+        }
+        else {
+            alertify.error("@LabelDictionary["Declaration"]");
+            return false;
+        }
+    }
+
+</script>

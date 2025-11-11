@@ -1,0 +1,104 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.ExtendResponseTimeforAppeal_List
+@{
+    ViewBag.Title = "ExtendResponseTimeforAppeal_List";
+    Layout = "~/Views/Shared/_LayoutDashGAC.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+<style>
+    .min-vh-50 {
+        min-height: 70vh !important;
+    }
+</style>
+<div class="col-lg-12 min-vh-50">
+    <div class="row p-3">
+        <div class="col-6">
+            <h3>@LabelDictionary["SeekExtensionTimeRequests"]</h3>
+        </div>
+        <div class="col-6">
+            <a class="btn btn-warning float-end me-2" href='@Url.Action("Index", "GACGridViewInbox", new {Area="Gridview"})'>
+                <i class="bx bx-arrow-back align-middle"></i> @LabelDictionary["Back"]
+            </a>
+        </div>
+    </div>
+    <hr class="m-0" />
+    <div class="row">
+        <div class="col-12 overflow-auto">
+            <table id="tableAppList" class="table table-bordered align-top table-responsive">
+                <thead style="font-size:18px">
+                    <tr class="table-primary">
+                        <th scope="col" width="1%"> @LabelDictionary["Sl.No"]</th>
+                        <th scope="col" width="20%">@LabelDictionary["AppealDetails"]</th>
+                        <th scope="col" width="20%">@LabelDictionary["IntermediaryDetails"]</th>
+                        <th scope="col" width="50%">@LabelDictionary["ExtensionDetails"]</th>
+                        <th class="text-center" width="5%" scope="col">@LabelDictionary["Action"]</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-light" style="font-size:18px;">
+                    @{
+                        int counter = 1;
+                    }
+                    @foreach (var row in Model.ExtendResponseTimeforAppealList)
+                    {
+                        <tr>
+                            <td class="text-center">@counter</td>
+                            <td>
+                                <b>@LabelDictionary["AppealNumber"]:</b> @row.GrievanceID/ @row.RegistrationYear
+                            </td>
+                            <td>
+                                @row.IntermediaryTitle (@row.IntermediaryGROEmail.ToString().Replace("@", "[at]").Replace(".", "[dot]") )<br />
+                                <i class="bx bx-calendar me-1"></i>@row.CreationDateTime
+                            </td>
+                            <td class="text-left">
+                                <b> @LabelDictionary["ExtensionTime"]:</b> @row.ResponseTimeDesc <br />
+                                <b>@LabelDictionary["Remarks"]:</b> @row.Remarks<br />
+                                <b>@LabelDictionary["Status"]:</b> <span class="badge @(row.ApprovalStatus == "P" ? "bg-primary": row.ApprovalStatus == "N" ? "bg-danger": "bg-success") ">
+                                    @row.ApprovalStatusDesc
+                                    @if (row.ApprovalStatus != "P")
+                                    {
+                                        <span>on @row.ApprovalDateTime (Remarks: @row.ApprovalRemarks)</span>
+                                    }
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                @if (row.ApprovalStatus == "P")
+                                {
+                                    <a class="text-success" href="javascript:void(0);" onclick="TakeAction($(this),'M')" data-modalclass="xl" data-url="@Url.Action("OpenApproveRejectPopup", "IntermediaryDashboard", new { Area = "Intermediary",qs= SecureQueryString.SecureQueryString.Encrypt("RegistrationYear="+ row.RegistrationYear + "&GrievanceId=" +row.GrievanceID+ "&OpenFrom=" + "LI")})"><i class="bx bxs-plus-circle h3 align-middle"></i></a>
+                                }
+                            </td>
+
+                        </tr>
+                        counter = counter + 1;
+                    }
+                    <script>
+                        $(document).ready(function () {
+                            $("#tableAppList").DataTable()
+                        });
+                    </script>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="gv-action-modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content" id="gv-action-modal-content"></div>
+    </div>
+</div>
+<script>
+    var _AppealModalActionFormContainer = $("#gv-action-modal-content");
+    var _FormLoadHtml_Modal = '<div class="px-4 py-4 my-4 h-100 font-lg text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">@LabelDictionary["FetchingData"]</span></div><br>@LabelDictionary["FetchingData"]</div>';
+
+    function TakeAction(element, ActionContainerType) {
+        var URL = element.data("url"); var ActionContainer;
+        if (ActionContainerType == "M") {
+            var ModalSizeClass = element.data('modalclass');
+            $("#gv-action-modal").find('.modal-dialog').removeClass().addClass('modal-dialog modal-' + ModalSizeClass); $("#gv-action-modal").modal('show');
+            ActionContainer = _AppealModalActionFormContainer; ActionContainer.html(_FormLoadHtml_Modal);
+        }
+        setTimeout(function () { $.ajax({ url: URL, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { ActionContainer.html(data); } } }); }, 400);
+    }
+</script>
+

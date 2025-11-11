@@ -1,0 +1,382 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.Intermediary_AppealList
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+<script src="@Url.Content("~/assets/js/jquery.validate.min.js")"></script>
+<script src="@Url.Content("~/assets/js/jquery.validate.unobtrusive.min.js")"></script>
+<script src="@Url.Content("~/assets/js/jquery.validate.custom.js")"></script>
+<style>
+    .lh-1_1 {
+        line-height: 1.1rem;
+    }
+
+    .font-xxxl {
+        font-size: 17px;
+    }
+
+    .font-xxl {
+        font-size: 16px;
+    }
+
+    .font-xl {
+        font-size: 15px;
+    }
+
+    .font-lg {
+        font-size: 14px;
+    }
+
+    .font-md {
+        font-size: 13px;
+    }
+
+    .font-sm {
+        font-size: 12px;
+    }
+
+    .font-xs {
+        font-size: 11px;
+    }
+
+    .font-xxs {
+        font-size: 10px;
+    }
+
+    hr {
+        color: #eee;
+    }
+
+    .vr {
+        background-color: #eee;
+    }
+
+    .min-vh-75 {
+        min-height: 75vh !important;
+    }
+
+    .badge {
+        text-transform: initial;
+    }
+
+    .field-validation-error {
+        font-size: 0.75rem;
+        color: #ff8f4c;
+    }
+
+    .input-validation-error {
+        border: 1px solid #ffccae;
+    }
+
+    .HSashThumb {
+        position: absolute;
+        top: 60%;
+    }
+
+    .ImgHSash_thumb {
+        background: url('https://email.gov.in/img/zimbra.png?v=210728065637') 0px -2230px no-repeat;
+        overflow: hidden;
+        width: 3px !important;
+        height: 15px !important;
+    }
+
+    @@media (min-width:992px) {
+        .modal-xxl {
+            max-width: 980px
+        }
+    }
+
+    @@media (min-width:1200px) {
+        .modal-xxl {
+            max-width: 1300px
+        }
+    }
+
+    :root {
+        --scroll-bar-color: #d7d7d7;
+        --scroll-bar-bg-color: #f6f6f6;
+    }
+
+    ::-webkit-scrollbar-corner {
+        background: rgba(0,0,0,0.5);
+    }
+
+    body, div {
+        scrollbar-width: thin;
+        scrollbar-color: var(--scroll-bar-color) var(--scroll-bar-bg-color);
+    }
+
+    /* Works on Chrome, Edge, and Safari */
+    *::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: var(--scroll-bar-bg-color);
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: var(--scroll-bar-color);
+        border-radius: 20px;
+        border: 1px solid var(--scroll-bar-bg-color);
+    }
+
+    .cke_chrome {
+        border: 1px solid #dddddd !important;
+        box-shadow: none !important;
+    }
+
+    #gv-container-appeallist {
+        width: 48%;
+    }
+
+    .gv-container-comparison-doc {
+        width: 49%;
+        height: 100%;
+        top: 0;
+        right: 12px;
+        position: absolute;
+        display: none;
+        overflow: auto;
+        z-index: 1;
+    }
+
+    @@media (max-width:991px) {
+        #gv-container-appeallist {
+            width: 100% !important;
+        }
+
+        .gv-container-comparison-doc {
+            width: 95% !important;
+        }
+    }
+
+    .attachment-container .attach-separator:last-child {
+        display: none;
+    }
+</style>
+<div class="col-xl-12">
+    <div class="row gx-3">
+        <div class="col-lg-8">
+            <h3>@Model.ListName</h3>
+        </div>
+    </div>
+    <div class="row gx-3">
+        <div class="col-12 overflow-auto">
+            <table class="table table-bordered table-responsive align-top tablePaging">
+                <thead>
+                    <tr class="table-primary">
+                        <th style="font-size:18px!important" scope="col" width="1%"> @LabelDictionary["Sl.No"]</th>
+                        <th style="font-size:18px!important" scope="col" width="10%">@LabelDictionary["AppealNumber"]</th>
+                        <th style="font-size:18px!important" scope="col" width="15%">@LabelDictionary["AppellantDetails"]</th>
+                        <th style="font-size:18px!important" scope="col" width="25%">@LabelDictionary["Justification/GroundforAppeal"]</th>
+                        <th style="font-size:18px!important" scope="col" width="20%">@LabelDictionary["ReliefSought"]</th>
+                        <th style="font-size:18px!important" scope="col" width="15%">
+
+
+                            @if (Model.ListName == LabelDictionary["NoticeReceived"])
+                            {
+                                <span class="text-danger">@LabelDictionary["TimeLeft"]</span> <span>/</span> <span class="text-success">@LabelDictionary["TimeTaken"]</span>
+                            }
+                            else if (Model.ListName == LabelDictionary["PendingforResponse"])
+                            {
+                                <span class="text-danger">@LabelDictionary["TimeLeft"]</span>
+                            }
+                            else if (Model.ListName == @LabelDictionary["ResponseSubmitted"])
+                            {
+                                <span class="text-success">@LabelDictionary["TimeTaken"]</span>
+                            }
+                            else if (Model.ListName == @LabelDictionary["Decided"] || Model.ListName == @LabelDictionary["Compliance(Pending)"])
+                            {
+                                <span>@LabelDictionary["Decision"]</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger">@LabelDictionary["TimeLeft"]</span> <span>/</span> <span class="text-success">@LabelDictionary["TimeTaken"]</span>
+                            }
+                        </th>
+                        <th style="font-size:18px!important" scope="col" width="4%" class="text-center">@LabelDictionary["Action"]</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-light" style="font-size:18px;">
+                    @if (Model.AppealforIntermediary.Count > 0)
+                    {
+                        int counter = 1;
+                        foreach (var row in Model.AppealforIntermediary)
+                        {
+                            <tr style="@(Convert.ToInt32(row.ResponseTime) < 0 ? "background-color: #ffe0db !important;" : "")">
+                                <td>@counter</td>
+                                <td>
+                                    <span style="white-space:nowrap;">@LabelDictionary["AppealNumber"]: @row.GrievanceId/@row.RegistrationYear</span><br />
+                                    <span style="white-space:nowrap;">@LabelDictionary["AppealDate"]: @row.ReceiptDate</span>
+                                    <span style="white-space:nowrap;">@LabelDictionary["IntermediaryTitle"]: @row.IntermediaryTitle  </span>
+                                </td>
+                                <td>
+                                    <span style="white-space:nowrap;">@LabelDictionary["Name"]: @row.CitizenName</span><br />
+                                    @*<span>Mobile: @row.UserMobile</span><br />
+                                        <span>Email Id: @row.UserEmail</span>*@
+                                </td>
+                                <td>
+                                    <span>@LabelDictionary["GroundforAppeal"]: @row.GroundTitle</span><br />
+                                    <span>@LabelDictionary["CorrespondingITRule"]: @row.CorrespondingITRule</span><br />
+                                    <span data-bs-toggle="popover" data-bs-html="true" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-content="@row.Justification">@LabelDictionary["Justification"]: @(row.Justification.Length > 60 ? row.Justification.Substring(0, 60) + "..." : row.Justification)</span>
+                                </td>
+                                <td>
+                                    @*<span>@row.ReliefTitle</span><br />*@
+                                    <span style="word-break:break-all" data-bs-toggle="popover" data-bs-html="true" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-content="@row.RelieftSoughtSpecification">@(row.RelieftSoughtSpecification.Length > 60 ? row.RelieftSoughtSpecification.Substring(0, 60) + "..." : row.RelieftSoughtSpecification)</span>
+                                </td>
+                                <td>
+                                    @if (Model.ListName == @LabelDictionary["Decided"] || Model.ListName == @LabelDictionary["Compliance(Pending)"])
+                                    {
+                                        <span>@LabelDictionary["Decision"]:@row.DecisionDesc</span><br />
+                                        @*<span>Remarks : @row.DecisionRemarks</span><br />*@
+                                        <span style="word-break:break-all" data-bs-toggle="popover" data-bs-html="true" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-content="@row.DecisionRemarks">@LabelDictionary["Remarks"] :@(row.DecisionRemarks.Length>60?row.DecisionRemarks.Substring(0,60)+"...":row.DecisionRemarks)</span><br />
+                                        <span>@LabelDictionary["Date"]: @row.DecisionDate</span><br />
+                                        <a class="btn btn-sm btn-primary" target="_blank" href="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + row.FilePath + "&FileType=pdf") })"><i class="bx bxs-file-pdf text-danger align-middle me-1"></i> @LabelDictionary["DecisionCopy"]</a>
+                                        @*<a target="_blank" class="btn btn-sm btn-primary" href="@Url.Action("ViewDecision_Doc", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + row.RegistrationYear + "&GrievanceId=" + row.GrievanceId) })"><i class="bx bxs-file-pdf text-danger align-middle me-1"></i> Decision Copy</a>*@
+
+                                    }
+                                    else
+                                    {
+                                        if (row.IsResponded == "N")
+                                        {
+                                            if (Convert.ToInt32(row.ResponseTime) < 0)
+                                            {
+
+                                                <span class="text-danger"><i class="bx bx-error align-middle me-1"></i>@LabelDictionary["Noresponsein96hrs."]</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">@Html.Raw(DigitalNagrik.Models.BALCommon.ConvertMinToDHM(row.ResponseTime))</span>
+                                                <br />
+                                                if (row.ApprovalStatusofTimeExtended == "Y")
+                                                {
+                                                    <span class="badge bg-success">Response Time extended to @row.NewReceiptDate</span>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-success ">@Html.Raw(DigitalNagrik.Models.BALCommon.ConvertMinToDHM(row.ResponseTime))</span>
+                                        }
+                                    }
+                                </td>
+
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bx bx-cog align-middle me-1 text-white"></i> @LabelDictionary["Action"]
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="javascript:void(0);" class="dropdown-item" data-url="@Url.Action("GetAppealDetailsGrid_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + row.RegistrationYear + "&GrievanceId=" + row.GrievanceId), IsDocGrid = "N" })" onclick="ViewAppeal($(this))"><i class="bx bxs-file-pdf text-danger align-middle me-1"></i> @LabelDictionary["ViewAppeal"]</a></li>
+                                            @if (row.IsResponded == "N")
+                                            {
+                                                if (row.Is72hrs == "N")
+                                                {
+                                                    <li>
+                                                        <a class="dropdown-item" href="javascript:void(0);" onclick="TakeAction($(this),'M')" data-modalclass="xl" data-url="@Url.Action("OpenIntermediaryResponseDetails", "Intermediary", new { Area = "Intermediary", RegistrationYear = row.RegistrationYear, GrievanceId = row.GrievanceId, OpenInModal = "Y", HeaderText = @LabelDictionary["AddResponse"] })"> <i class="bx bx-check-circle text-success align-middle me-1"></i> @LabelDictionary["AddResponse"]</a>
+                                                    </li>
+                                                }
+                                                else
+                                                {
+                                                    <li>
+                                                        <a class="dropdown-item" href="javascript:void(0);" onclick="TakeAction($(this),'M')" data-modalclass="xl" data-url="@Url.Action("ExtendResponseTime", "IntermediaryDashboard", new { Area = "Intermediary", qs= SecureQueryString.SecureQueryString.Encrypt("RegistrationYear="+ row.RegistrationYear +"&GrievanceId=" +row.GrievanceId) })"> <i class="bx bxs-time-five text-success align-middle me-1"></i> @LabelDictionary["ExtendTimeforResponse"]</a>
+                                                    </li>
+                                                    if (row.ApprovalStatusofTimeExtended == "Y")
+                                                    {
+                                                        <li>
+                                                            <a class="dropdown-item" href="javascript:void(0);" onclick="TakeAction($(this),'M')" data-modalclass="xl" data-url="@Url.Action("OpenIntermediaryResponseDetails", "Intermediary", new { Area = "Intermediary", RegistrationYear = row.RegistrationYear, GrievanceId = row.GrievanceId, OpenInModal = "Y", HeaderText = @LabelDictionary["AddResponse"] })"> <i class="bx bx-check-circle text-success align-middle me-1"></i> @LabelDictionary["AddResponse"]</a>
+                                                        </li>
+                                                    }
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                <li>
+                                                    <a class="dropdown-item" href="javascript:void(0);" onclick="TakeAction($(this),'M')" data-modalclass="xl" data-url="@Url.Action("OpenIntermediaryResponseDetails", "Intermediary", new { Area = "Intermediary", RegistrationYear = row.RegistrationYear, GrievanceId = row.GrievanceId, OpenInModal = "Y",HeaderText = @LabelDictionary["ViewResponse"] })"><i class="bx bx-street-view text-primary align-middle me-1"></i> @LabelDictionary["ViewResponse"]</a>
+                                                </li>
+                                            }
+                                            @if (row.IsComplianceAdded == "N")
+                                            {
+                                                <li>
+                                                    <a class="dropdown-item" href="javascript:void(0);" onclick="TakeAction($(this),'M')" data-modalclass="xl" data-url="@Url.Action("OpenComplianceDetails", "IntermediaryDashboard", new { Area = "Intermediary", RegistrationYear = row.RegistrationYear, GrievanceId = row.GrievanceId, HeaderText=@LabelDictionary["AddCompliance"] })"> <i class="bx bx-check-circle text-success align-middle me-1"></i>@LabelDictionary["AddCompliance"]</a>
+                                                </li>
+                                            }
+
+                                        </ul>
+                                    </div>
+                                    @if (row.IntermediaryResponseNeeded == "N")
+                                    {
+                                        <div class="text-danger mt-2" title="@row.GroundTitle" style="font-size: 15px; line-height: 1rem;"><i class="bx bx-error align-middle me-1" style="font-size:13px;"></i>@LabelDictionary["ThisAppealisundersection"] @row.CorrespondingITRule.</div>
+                                    }
+                                </td>
+                            </tr>
+                            counter = counter + 1;
+                        }
+                        <script>
+                            $(document).ready(function () {
+                                $(".tablePaging").DataTable();
+                            });
+                        </script>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7">
+                                @LabelDictionary["NoRecordFound"]
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="gv-action-modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content" id="gv-action-modal-content"></div>
+    </div>
+</div>
+<div class="modal fade" id="gv-modal-viewappeal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">@LabelDictionary["ViewAppeal"]</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <hr />
+            <div class="modal-body">
+                <div id="gv-modal-viewappealdetails"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("[data-bs-toggle='popover']").popover();
+    });
+    var _AppealModalActionFormContainer = $("#gv-action-modal-content");
+    var _FormLoadHtml_Modal = '<div class="px-4 py-4 my-4 h-100 font-lg text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">@LabelDictionary["FetchingData"]</span></div><br>@LabelDictionary["FetchingData"]</div>';
+
+    function TakeAction(element, ActionContainerType) {
+        var URL = element.data("url"); var ActionContainer;
+        if (ActionContainerType == "M") {
+            var ModalSizeClass = element.data('modalclass');
+            $("#gv-action-modal").find('.modal-dialog').removeClass().addClass('modal-dialog modal-' + ModalSizeClass); $("#gv-action-modal").modal('show');
+            ActionContainer = _AppealModalActionFormContainer; ActionContainer.html(_FormLoadHtml_Modal);
+        }
+        setTimeout(function () { $.ajax({ url: URL, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { ActionContainer.html(data); } } }); }, 400);
+    }
+
+    function ViewAppeal(element) {
+        var Url = element.data("url");
+        if (Url) { $.ajax({ url: Url, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { $("#gv-modal-viewappealdetails").html(data); $("#gv-modal-viewappeal").modal('show'); } }, }); }
+    }
+</script>

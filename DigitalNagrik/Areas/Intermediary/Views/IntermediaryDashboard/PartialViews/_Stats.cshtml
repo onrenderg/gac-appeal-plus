@@ -1,0 +1,250 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.IntermediaryDash_Stats
+@using DigitalNagrik.Models
+@{
+    string CD = "MeityStats";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<script>
+    function RenderPercent_@(CD)(_containerId, _labels, _data, _colors) {
+        const ChartOptions = {
+            series: _data,
+            labels: _labels,
+            chart: { height: 140, width: 125, type: 'radialBar' },
+            plotOptions: {
+                radialBar: {
+                    size: 100, offsetY: 20, startAngle: -90, endAngle: 90, hollow: { size: '40%' },
+                    track: { background: _colors, strokeWidth: '10%', opacity: 0.3, },
+                    dataLabels: {
+                        name: { offsetY: 15, color: headingColor, fontSize: '10px', fontWeight: '600' },
+                        value: { offsetY: -15, color: headingColor, fontSize: '12px', fontWeight: '500' }
+                    }
+                }
+            },
+            colors: _colors,
+            fill: { type: 'gradient', gradient: { shade: 'dark', shadeIntensity: 0.6, gradientToColors: _colors, inverseColors: true, opacityFrom: 1, opacityTo: 0.8, stops: [30, 70, 100] } },
+            stroke: { dashArray: 3 },
+            grid: { padding: { top: -35, bottom: -10, right: -40 } },
+            states: { hover: { filter: { type: 'none' } }, active: { filter: { type: 'none' } } }
+        };
+        var Chart = new ApexCharts(document.querySelector('#' + _containerId), ChartOptions); Chart.render();
+    }
+</script>
+
+<div class="col-xl-12">
+    <div class="row gx-3">
+        <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+            <div class="card h-100 cursor-pointer" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "RECEIVED"})">
+                <div class="card-body pb-3">
+                        <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                                <span class="avatar-initial rounded bg-label-primary">
+                                    <i class="bx bx-envelope-open"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <h4 class="d-block fw-light mb-1">@LabelDictionary["NoticeReceived"]</h4>
+                        @if (Model.AppealsReceived == "0")
+                        {
+                            <h1 class="card-title mb-0">@Model.AppealsReceived</h1>
+                        }
+                        else
+                        {
+                            <a class="alert-link card-title mb-0 h1" href="javascript:void(0);" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "RECEIVED"})">@Model.AppealsReceived</a>
+                        }
+                    <div class="font-lg mt-1 text-end">
+
+                        <span data-bs-placement="bottom" data-bs-html="true" class="me-2 fw-semibold ms-1 h6 text-orange"></span>
+
+                        <span data-bs-placement="bottom" data-bs-html="true" class="me-2 fw-semibold ms-1 h6 text-orange"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+            <div class="card h-100 cursor-pointer">
+                <div class="card-body pb-3">
+                    <div onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "PENDING"})">
+                        <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                                <span class="avatar-initial rounded bg-label-info">
+                                    <i class="bx bx-time-five"></i>
+                                </span>
+                            </div>
+                            <div id="CC_Percent_Pending@(CD)" class="position-absolute" style="right: -10px;top:-12px">
+                                <script>
+                                var _labels = ['']; var _data = [parseFloat('@Model.Pending_Percent')]; var _colors = [config.colors.info]; RenderPercent_@(CD)('CC_Percent_Pending@(CD)', _labels, _data, _colors);
+                                </script>
+                            </div>
+                        </div>
+                        <h4 class="d-block fw-light mb-1 text-primary">@LabelDictionary["PendingforResponse"]</h4>
+                        @if (Model.AppealsPending == "0")
+                        {
+                            <h1 class="card-title mb-0">@Model.AppealsPending</h1>
+                        }
+                        else
+                        {
+                            <a class="alert-link card-title mb-0 h1" href="javascript:void(0);" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "PENDING"})">@Model.AppealsPending</a>
+                        }
+                    </div>
+                    <div class="h5 mb-0 mt-1 text-end" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "OVERDUE"})">
+                        @LabelDictionary["Overdue"]:
+                        <span data-bs-placement="bottom" data-bs-html="true" class="me-2 fw-semibold ms-1 @(Convert.ToInt32(Model.AppealsOverdue) > 0 ? " badge bg-danger text-white ":" text-orange")">@Model.AppealsOverdue </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+            <div class="card  h-100 cursor-pointer">
+                <div class="card-body pb-3">
+                    <div onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "SUBMITTED"})">
+                        <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                                <span class="avatar-initial rounded bg-label-success">
+                                    <i class="bx bx-message-check"></i>
+                                </span>
+                            </div>
+                            <div id="CC_Percent_Submit@(CD)" class="position-absolute" style="right: -10px;top:-12px">
+                                <script>
+                                var _labels = ['']; var _data = [parseFloat('@Model.Submit_Percent')]; var _colors = [config.colors.success]; RenderPercent_@(CD)('CC_Percent_Submit@(CD)', _labels, _data, _colors);
+                                </script>
+                            </div>
+                        </div>
+                        <h4 class="d-block fw-light mb-1">@LabelDictionary["ResponseSubmitted"]</h4>
+                        @if (Model.AppealsSubmitted == "0")
+                        {
+                            <h1 class="card-title mb-0">@Model.AppealsSubmitted</h1>
+                        }
+                        else
+                        {
+                            <a class="alert-link card-title mb-0 h1" href="javascript:void(0);" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "SUBMITTED"})">@Model.AppealsSubmitted</a>
+                        }
+                    </div>
+                    <div class="h5 mb-0 mt-1 text-end" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "NOTADMIT"})">
+                        Appeals considered & replied:
+                        <span data-bs-placement="bottom" data-bs-html="true" class="me-2 fw-semibold ms-1 @(Convert.ToInt32(Model.AppealsOverdue) > 0 ? " badge bg-danger text-white ":" text-orange")">@Model.AppealsNotAdmitted </span>
+                    </div>
+                  
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+            <div class="card  h-100 cursor-pointer">
+                <div class="card-body pb-3">
+                    <div onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "QUERY"})">
+                        <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                                <span class="avatar-initial rounded bg-label-danger">
+                                    <i class="bx bx-question-mark"></i>
+                                </span>
+                            </div>
+                            <div id="CC_Percent_Query@(CD)" class="position-absolute" style="right: -10px;top:-12px">
+                                <script>
+                                var _labels = ['']; var _data = [parseFloat('@Model.Query_Percent')]; var _colors = [config.colors.danger]; RenderPercent_@(CD)('CC_Percent_Query@(CD)', _labels, _data, _colors);
+                                </script>
+                            </div>
+                        </div>
+                        <h4 class="d-block fw-light mb-1 text-primary">@LabelDictionary["AdditionalInputSought"]</h4>
+                        @if (Model.AppealsQuery == "0")
+                        {
+                            <h1 class="card-title mb-0">@Model.AppealsQuery</h1>
+                        }
+                        else
+                        {
+                            <a class="alert-link card-title mb-0 h1" href="javascript:void(0);" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "QUERY"})">@Model.AppealsQuery</a>
+                        }
+                    </div>
+                    <div class="row mt-1 mb-0 h5 text-end">
+                        <div class="col-12">
+                            <div class="float-start" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "QUERY_Y"})">
+                                @LabelDictionary["Replied"]:
+                                <span data-bs-placement="bottom" data-bs-html="true" class="me-1  fw-semibold ms-1 @(Convert.ToInt32(Model.AppealsQueryY) > 0 ? " badge bg-success text-white ":" text-orange")">@Model.AppealsQueryY </span>
+                            </div>
+                            <div class="float-end" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "QUERY_N"})">
+                                @LabelDictionary["Pending"]:
+                                <span data-bs-placement="bottom" data-bs-html="true" class="fw-semibold ms-1 @(Convert.ToInt32(Model.AppealsQueryN) > 0 ? " badge bg-danger text-white ":" text-orange")">@Model.AppealsQueryN  </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+            <div class="card  h-100 cursor-pointer">
+                <div class="card-body pb-3">
+                    <div onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "DISPOSED"})">
+
+
+                        <div class="card-title d-flex align-items-start justify-content-between">
+                            <div class="avatar flex-shrink-0">
+                                <span class="avatar-initial rounded bg-label-success">
+                                    <i class="bx bx-check-circle"></i>
+                                </span>
+                            </div>
+                            <div id="CC_Percent_Disposed@(CD)" class="position-absolute" style="right: -10px;top:-12px">
+                                <script>
+                                var _labels = ['']; var _data = [parseFloat('@Model.Disposed_Percent')]; var _colors = [config.colors.success]; RenderPercent_@(CD)('CC_Percent_Disposed@(CD)', _labels, _data, _colors);
+                                </script>
+                            </div>
+                        </div>
+                        <h4 class="d-block fw-light mb-1 text-primary">@LabelDictionary["Decided"]</h4>
+                        @if (Model.AppealsDisposed == "0")
+                        {
+                            <h1 class="card-title mb-0">@Model.AppealsDisposed</h1>
+                        }
+                        else
+                        {
+                            <a class="alert-link card-title mb-0 h1" href="javascript:void(0);" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "DISPOSED"})">@Model.AppealsDisposed</a>
+                        }
+                    </div>
+                    <div class="h5 mb-0 mt-1 text-end" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "COMPLIANCE_P"})">
+                        @LabelDictionary["PendingforCompliance"]:
+                        <span data-bs-placement="bottom" data-bs-html="true" class="fw-semibold ms-1 @(Convert.ToInt32(Model.AppealsImplementedN) > 0 ? " badge bg-danger text-white ":" text-orange")">@Model.AppealsImplementedN  </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-2 col-lg-4 col-md-6 mb-3">
+            <div class="card  h-100 cursor-pointer" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "COMPLIANCE"})">
+                <div class="card-body pb-3">
+                    <div class="card-title d-flex align-items-start justify-content-between">
+                        <div class="avatar flex-shrink-0">
+                            <span class="avatar-initial rounded bg-label-warning">
+                                <i class="bx bx-mail-send"></i>
+                            </span>
+                        </div>
+                        <div id="CC_Percent_Compliance@(CD)" class="position-absolute" style="right: -10px;top:-12px">
+                            <script>
+                                var _labels = ['']; var _data = [parseFloat('@Model.Implemented_Percent')]; var _colors = [config.colors.warning]; RenderPercent_@(CD)('CC_Percent_Compliance@(CD)', _labels, _data, _colors);
+                            </script>
+                        </div>
+                    </div>
+                    <h4 class="d-block fw-light mb-1">@LabelDictionary["Compliance"]</h4>
+                    @if (Model.AppealsImplemented == "0")
+                    {
+                        <h1 class="card-title mb-0">@Model.AppealsImplemented</h1>
+                        @*<a class="alert-link card-title mb-0 h1" href="javascript:void(0);" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "COMPLIANCE"})">@Model.AppealsImplemented</a>*@
+                    }
+                    else
+                    {
+                        <a class="alert-link card-title mb-0 h1" href="javascript:void(0);" onclick="ViewAppeals($(this))" data-url="@Url.Action("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary", ListType = "COMPLIANCE"})">@Model.AppealsImplemented</a>
+                    }
+                    <div class="h5 mb-0 mt-1 text-end">
+                        <span data-bs-placement="bottom" data-bs-html="true" class="me-2 fw-semibold ms-1 h5 text-orange"> </span>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr class="mt-2 mb-3" />
+<script>
+    $(document).ready(function () {
+        if ('@Model.IsVerified' == "N") {
+            NewAction('@Model.IntermediaryId','V');
+        }
+    });
+</script>
+

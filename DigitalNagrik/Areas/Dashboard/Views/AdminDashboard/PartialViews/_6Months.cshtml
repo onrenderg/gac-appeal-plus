@@ -1,0 +1,53 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.Dashboard_6Months
+@using Newtonsoft.Json
+@{
+    string CD = "ContentClassification";
+    string[] SeriesData_Received = { };
+    string[] SeriesData_Resolved = { };
+    string[] SeriesData_Rejected = { };
+    string[] XAxis_MonthYear = { };
+    if (Model.DataList != null && Model.DataList.Count > 0)
+    {
+        SeriesData_Received = Model.DataList.Select(x => x.Received).ToArray();
+        SeriesData_Resolved = Model.DataList.Select(x => x.Resolved).ToArray();
+        SeriesData_Rejected = Model.DataList.Select(x => x.Rejected).ToArray();
+        XAxis_MonthYear = Model.DataList.Select(x => x.MonthYearNm).ToArray();
+    }
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<div class="card h-100">
+    <div class="card-header d-flex align-items-center justify-content-between pb-0">
+        <div class="card-title mb-0">
+            <h4 class="m-0 me-2">@LabelDictionary["AppealsReceived/Disposedof"] <span class="font-xxl">(@LabelDictionary["Last6Months"])</span></h4>
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="CC_ResolvedReceived@(CD)">
+            <script>
+                $(function () {
+                    const chartResolvedReceived = document.querySelector('#CC_ResolvedReceived@(CD)'),
+                        chartResolvedReceived_Config = {
+                            series: [
+                                { name: "Received", color: config.colors.primary, data: JSON.parse('@Html.Raw(JsonConvert.SerializeObject(SeriesData_Received))') },
+                                { name: "Disposed of", color: config.colors.success, data: JSON.parse('@Html.Raw(JsonConvert.SerializeObject(SeriesData_Resolved))') },
+                                { name: "Not Admitted", color: config.colors.danger, data: JSON.parse('@Html.Raw(JsonConvert.SerializeObject(SeriesData_Rejected))') }
+                            ],
+                            tooltip: { enabled: true, style: { fontSize: '15px' } },
+                            chart: { height: 230, stacked: false, toolbar: { show: false }, type: 'line' },
+                            dataLabels: { enabled: false },
+                            stroke: { width: 2, curve: 'smooth' },
+                            legend: { show: false },
+                            grid: { borderColor: borderColor, strokeDashArray: 3, padding: { top: 0, bottom: 0, left: 10, right: 0 } },
+                            xaxis: {
+                                categories: JSON.parse('@Html.Raw(JsonConvert.SerializeObject(XAxis_MonthYear))'),
+                                axisBorder: { show: false }, axisTicks: { show: true }, labels: { show: true, style: { fontSize: '18px', colors: axisColor } }
+                            },
+                            yaxis: { labels: { formatter: function (val) { return val.toFixed(0); }, show: true, style: { fontSize: '16px', colors: axisColor } } }
+                        };
+                    const __chartResolvedReceived = new ApexCharts(chartResolvedReceived, chartResolvedReceived_Config); __chartResolvedReceived.render();
+                });
+            </script>
+        </div>
+    </div>
+</div>

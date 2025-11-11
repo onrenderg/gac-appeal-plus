@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+@if (IsSectionDefined("cssSection"))
+{
+    @RenderSection("cssSection")
+}
+
+@if (IsSectionDefined("jsSection"))
+{
+    @RenderSection("jsSection")
+}
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Grievance Appellate Committee</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <link href=@Url.Content("~/assets/img/favicon.png") rel="icon">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Roboto:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/fontawesome-free/css/all.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/animate.css/animate.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/aos/aos.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/bootstrap/css/bootstrap.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/bootstrap-icons/bootstrap-icons.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/boxicons/css/boxicons.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/glightbox/css/glightbox.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/swiper/swiper-bundle.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/css/jquery.dataTables.min.css") rel="stylesheet" />
+    <link href=@Url.Content("~/assets/alertifyjs/css/alertify.min.css") rel="stylesheet" />
+    <link href=@Url.Content("~/assets/css/style.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/css/customstyle.css") rel="stylesheet">
+    <script src=@Url.Content("~/assets/js/jquery.min.js")></script>
+    <script src=@Url.Content("~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js")></script>
+    <script src=@Url.Content("~/assets/js/jquery.validate.min.js")></script>
+    <script src=@Url.Content("~/assets/js/jquery.validate.unobtrusive.min.js")></script>
+    <script src=@Url.Content("~/assets/js/jquery.validate.custom.js")></script>
+    <script src=@Url.Content("~/assets/js/bootstrap-datepicker.js")></script>
+    <script src=@Url.Content("~/assets/js/jquery.datatable.min.js")></script>
+    <script src=@Url.Content("~/assets/alertifyjs/alertify.min.js")></script>
+    <style>
+        .form-control:disabled, .form-control[readonly] {
+            background-color: #e9ecef;
+            opacity: 1;
+        }
+
+        .validation-summary-errors {
+            color: red;
+        }
+
+        .field-validation-error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body class="globe1">
+    <div id="particles-js"></div>
+    <div class="main-m">
+
+
+    </div>
+
+
+
+    <div class="jumbotron jumbotron-main" id="home">
+        <div class=" container ">
+            @RenderBody()
+        </div>
+        <div class="footer fixed-bottom" style="background-color: #fff;padding-top: 30px;    padding-bottom: 30px;">
+            <div class="container">
+                <div class="footer-c" style="text-align: center">
+                    <div stlyle="d-flex">
+                        @Html.ActionLink("About Us", "About", "Home") |
+                        @Html.ActionLink("Rules", "Documents", "CMSData") |
+                        @Html.ActionLink("FAQs", "FAQs", "CMSData") |
+                        @Html.ActionLink("Contact Us", "ContactUs", "Home")
+                    </div>
+                    <br>
+
+                    Content on this website is owned & provided by Grievance Appellate Committee
+                    <br>
+                    Designed, Developed and Hosted by National Informatics Centre
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+    <!-- Vendor JS Files -->
+    <script src=@Url.Content("~/assets/vendor/purecounter/purecounter_vanilla.js")></script>
+    <script src=@Url.Content("~/assets/vendor/aos/aos.js")></script>
+    <script src=@Url.Content("~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js")></script>
+    <script src=@Url.Content("~/assets/vendor/glightbox/js/glightbox.min.js")></script>
+    <script src=@Url.Content("~/assets/vendor/swiper/swiper-bundle.min.js")></script>
+    <script src=@Url.Content("~/assets/vendor/php-email-form/validate.js")></script>
+    <script src=@Url.Content("~/assets/js/particles.min.js")></script>
+    <script src=@Url.Content("~/assets/js/particlesRun.js")></script>
+    <script>
+    $('#btnAdminLogin').click(function () {
+       window.location.href = '@Url.Action("ParichayCall", "SSOLogin", new { Area = "" })';
+    });
+    </script>
+
+    <!-- Template Main JS File -->
+    <script src=@Url.Content("~/assets/js/main.js")></script>
+    @if (!string.IsNullOrEmpty(Convert.ToString(TempData["Status"])))
+    {
+        string AlertFlag = Convert.ToString(TempData["Status"]);
+        string AlertMessage = !string.IsNullOrWhiteSpace(Convert.ToString(TempData["Status_Msg"])) ? Convert.ToString(TempData["Status_Msg"]) : string.Empty;
+        string AlertType = !string.IsNullOrWhiteSpace(Convert.ToString(TempData["Status_Type"])) ? Convert.ToString(TempData["Status_Type"]) : string.Empty;
+        string IconClass = "fa-check-circle";
+        switch (AlertFlag)
+        {
+            case "S":
+                AlertMessage = "Successfully Saved"; AlertType = "success";
+                break;
+            case "U":
+                AlertMessage = "Successfully Updated"; AlertType = "success";
+                break;
+            case "D":
+                AlertMessage = "Successfully Deleted"; AlertType = "success";
+                break;
+            case "O":
+                IconClass = "fa-info-circle";
+                break;
+            default:
+                IconClass = "fa-window-close";
+                AlertMessage = "Failed to process your request. Please contact your administrator if problem persists"; AlertType = "error"; IconClass = "fa-window-close";
+                break;
+        }
+        if (!string.IsNullOrEmpty(AlertMessage) && !string.IsNullOrEmpty(AlertType))
+        {
+            <script type="text/javascript">
+                $(function () {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa @IconClass me-1'></i> @AlertMessage </div>", "@AlertType", 5, function () { });
+                });
+            </script>
+        }
+    }
+
+    @if (TempData["AlertStatus"] != null)
+    {
+        DigitalNagrik.Models.BALCommon.CustomClientAlerts Alert = (DigitalNagrik.Models.BALCommon.CustomClientAlerts)TempData["AlertStatus"];
+        <script type="text/javascript">
+            $(function () { alertify.alert("<h5 class='m-0'><i class='fa @Alert.AlertIcon @Alert.AlertColor me-1'></i> @Alert.AlertTitle</h5>", "@Html.Raw(Alert.AlertMessage)", function () { }); });
+        </script>
+    }
+
+</body>
+
+</html>

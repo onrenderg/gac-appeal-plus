@@ -1,0 +1,192 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.LoginviaOTP
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+
+<section class="inner-page">
+    <div class="container">
+        @using (Html.BeginForm("LoginViaOTP", "IntermediaryDashboard", new { Area = "Intermediary" }, FormMethod.Post, new { id = "frm_Login", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @*@Html.HiddenFor(x => x.HashPassword)
+                @Html.HiddenFor(x => x.Seed)*@
+
+
+            <div class="row">
+                <div class="card mb-3">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <img src=@Url.Content("~/assets/img/Intermediary-Login.png") class="img-fluid" />
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card-body">
+                                <div class="mb-2 text-center row">
+                                    <h5 class="card-title text-primary"><i class="fa fa-user fa-2x"></i></h5>
+                                    <h3 class="card-title text-dark">Intermediary Sign In</h3>
+                                    <div class="small">
+                                        Use your Email on which Notice has been sent to generate OTP for Login to your account to file response
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="mb-2 row">
+                                    <div class="col-12">
+                                        <label class="custom-input-label mb-1">Email ID<span class="text-danger">*</span></label>
+                                        @Html.TextBoxFor(x => x.EmailID, new { @id = "EmailID", @class = "form-control DisabledInputs", maxlength = "100", placeholder = "Email ID", @autocomplete = "off" })
+                                        @Html.ValidationMessageFor(x => x.EmailID)
+                                    </div>
+                                </div>
+                                <div id="divCaptcha">
+                                    <div class="mb-4 row">
+                                        <div class="col-12">
+                                            <label class="custom-input-label mb-1">Captcha<span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text" id="basic-addon1">
+                                                    <img id="CaptchaImage" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                                                    <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                                                </span>
+                                                @Html.TextBoxFor(x => x.Captcha, new { @id = "txtCaptcha", @class = "form-control DisabledInputs", placeholder = "Enter Captcha", autocomplete = "off", maxlength = "6" })
+                                            </div>
+                                            <div id="SpanCaptchaValidation">
+                                                @Html.ValidationMessageFor(x => x.Captcha)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-12 text-center">
+                                            <button type="button" class="btn btn-primary" id="btnSendOTP"><i class="fa fa-paper-plane"></i>&nbsp;Send OTP</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="divVerify" style="display:none;">
+                                    <div class="mb-3 row">
+                                        <div class="col-12">
+                                            <label class="custom-input-label mb-1">OTP<span class="text-danger">*</span></label>
+                                            @Html.TextBoxFor(x => x.OTP, new { @id = "OTP", @class = "form-control DisabledInputs", @type = "Password", maxlength = "6", placeholder = "OTP", @autocomplete = "off" })
+                                            @Html.ValidationMessageFor(x => x.OTP)
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-12 text-center">
+                                            <button type="button" class="btn btn-success" id="btnVerify"><i class="fa fa-lock"></i>&nbsp;Login</button>
+                                            <a href="@Url.Action("Login","IntermediaryDashboard",new { Area = "Intermediary" })" class="btn btn-danger" id="btnCancel"><i class=" fa fa-close"></i>&nbsp;Cancel </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-muted">
+                                <div class="bg-light radius-2 text-center mb-1" style="font-size:12px;">
+                                    <i class="fa fa-exclamation-triangle me-1 blink text-danger"></i>
+                                    Your IP <span class="text-orange fw-600 mx-1">@DigitalNagrik.Models.BALCommon.GetIPAddress()</span> is being monitored for security purpose
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+<script>
+     function RefreshCaptcha() {
+        $.ajax({
+            url: '@Url.Action("CaptchaImageNew", "Home", new { area = "" })',
+            data: {},
+            success: function (data) {
+                $("#CaptchaImage").html(data);
+            }
+        });
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };
+
+     function ValidateCaptcha(Captcha) {
+        var Result = false;
+         var CaptchaCD = Captcha;
+        $.ajax({
+            url: '@Url.Action("CheckCaptcha", "Home", new { area = "" })',
+            type: "GET", async: false,
+            data: { CaptchaCD: CaptchaCD },
+            dataType: "JSON",
+            success: function (result) {
+                if (result == true) {
+                    Result = true;
+                }
+            }
+        });
+        return Result;
+    };
+     $("#btnSendOTP").click(function () {
+         var UserID = $('#EmailID').val();
+         var Captcha = $('#txtCaptcha').val();
+         if (ValidateCaptcha(Captcha)) {
+            if (UserID != null && UserID != "") {
+                $.ajax({
+                    url: '@Url.Action("IntermediarySendOTP", "IntermediaryDashboard", new { area = "Intermediary" })', //VerifyOTPForApplicationRegistration
+                    type: "GET",
+                    dataType: "JSON",
+                    data: { UserID: UserID },
+                    success: function (data) {
+                        if (data.Result != "") {
+                            if (data.Result == "S") {
+                                alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-check-circle me-1'></i> OTP sent successfully. </div>", "success", 5, function () { });
+                                $("#divCaptcha").hide('fast');
+                                $("#divVerify").show('fast');
+                                $("#EmailID").attr('readonly','readonly');
+                                $('#OTP').val('');
+                            }
+                            else {
+                                $("#divCaptcha").show('fast');
+                                $("#divVerify").hide('fast');
+                                alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-times-circle me-1'></i> Some Error occured. Please try again Later </div>", "error", 5, function () { });
+                            }
+                        }
+                    }
+                });
+            }
+            else {
+                alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-times-circle me-1'></i> Enter Email ID</div>", "error", 5, function () { });
+            }
+
+        }
+        else {
+            RefreshCaptcha();
+            alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-times-circle me-1'></i> Enter Captcha</div>", "error", 5, function () { });
+        }
+
+    });
+     $("#btnVerify").click(function () {
+       var UserID = $('#EmailID').val();
+         var OTPData = $('#OTP').val();
+           if (OTPData != null && OTPData != "" && UserID != null && UserID != "") {
+               $.ajax({
+                   url: '@Url.Action("IntermediaryVerifyOTP", "IntermediaryDashboard", new { area = "Intermediary" })', //VerifyOTPForApplicationRegistration
+                   type: "GET",
+                   dataType: "JSON",
+                   data: { OTPData: OTPData, UserID: UserID },
+                   success: function (data) {
+                       if (data.Result != "") {
+                           if (data.Result == "Y") {
+                              /* alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa fa-check-circle me-1'></i> OTP matched. </div>", "success", 5, function () { });*/
+                               Login();
+                           }
+                           else {
+                               $('#OTP').val('');
+                               alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa fa-times-circle me-1'></i> OTP Mismatched. Please try using valid OTP </div>", "error", 5, function () { });
+                           }
+                       }
+                   }
+               });
+           }
+           else {
+               alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa fa-times-circle me-1'></i> Enter OTP</div>", "error", 5, function () { });
+           }
+       });
+    function Login() {
+        if ($("#frm_Login").valid()) {
+                $('#frm_Login').submit();
+        }
+    }
+</script>
+
+
+

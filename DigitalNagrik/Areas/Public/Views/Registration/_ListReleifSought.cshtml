@@ -1,0 +1,79 @@
+﻿@{ 
+    List<DigitalNagrik.Areas.Public.Models.mAppealReliefMaster> AppealReliefs = ViewData["AppealReliefMaster"] as List<DigitalNagrik.Areas.Public.Models.mAppealReliefMaster>;
+
+}
+<div class="modal fade" id="ModalRelief" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Choose relevant Relief sought</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mt-1" style="width:100%;overflow-x:auto;" id="ddlGrond">
+                    <table class="table table-striped">
+                        @if (ViewData["AppealReliefMaster"] != null)
+                        {
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th>Relief sought</th>
+                                </tr>
+                            </thead>
+                            foreach (var item in AppealReliefs)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.ReliefId
+                                    </td>
+                                    <td>
+                                        <input id="checkboxRelief_@item.ReliefId" type="checkbox" value="@item.ReliefId" class="ReliefCheckBox" />&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span id="titleRelief_@item.ReliefId" class="ReliefCheckBox">@item.ReliefTitle</span>
+                                        <span id="Specfication_@item.ReliefId" class="ReliefCheckBox" style="display:none">@item.SpecificationLabel</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    $('.ReliefCheckBox').click(function () {
+        $('#ReliefSoughtSpecification').val("");
+        var ReliefId = $(this).parent().find("input").val();
+        if (ReliefId == $("#ddlReliefSought").val()) {
+            $('.ReliefCheckBox').prop("checked", false);
+            $('#ModalRelief').modal('hide');
+            $("#ReliefSought").val("");
+            $("#ddlReliefSought").val("0");
+            $('#dvReliefSoughtSpecification').hide();
+            $("#lblReliefSoughtSpecification").text("");
+        }
+        else {
+
+            populateReliefSought(ReliefId);
+        }
+    });
+    function populateReliefSought(ReliefId) {
+
+        var checkBoxFieldRelief = "#checkboxRelief_" + ReliefId;
+        var titleFieldRelief = "#titleRelief_" + ReliefId;
+        var SpecficationLabel = "#Specfication_" + ReliefId;
+        //console.log(titleFieldRelief);
+        $("#ReliefSought").val($(titleFieldRelief).html());
+        $("#ddlReliefSought").val(ReliefId);
+        $("#lblReliefSoughtSpecification").html($(SpecficationLabel).html() + '<span class="Mandatory">*</span>');
+        $('.ReliefCheckBox').prop("checked", false);
+        $(checkBoxFieldRelief).prop("checked", true);
+        $('#ModalRelief').modal('hide');
+
+        $('#dvReliefSoughtSpecification').hide();
+        if (ReliefId != "0") {
+            $('#dvReliefSoughtSpecification').show();
+        }
+    }
+</script>

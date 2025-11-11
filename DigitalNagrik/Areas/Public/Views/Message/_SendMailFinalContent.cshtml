@@ -1,0 +1,20 @@
+﻿@model DigitalNagrik.Areas.Public.Models.mIntermediaryDetailPart
+<div style="background-image:@Url.Content("~/assets/img/logoGAC.png")">
+    <div>
+        Dear &nbsp;@Model.CitizenName,
+    </div>
+    <br />    
+   
+    <div>
+        Your appeal against <b>@Model.txtIntermediary</b> with appeal number  <b>@Model.GrievanceID/@Model.RegistrationYear</b> dated <b>@Model.ReceiptDate @Model.ReceiptDateTime   </b>    has been successfully
+        submitted. You may login using your mobile number and OTP at https://gac.gov.in to check the status of your appeal.
+    </div>
+    <br />
+    <div>
+        If you have any technical issues filing an appeal, please write to us at  <b>support-gac[at]gov[dot]in.</b>
+    </div>
+    <br />  
+    <div>
+        Grievance Appellate Committee
+    </div>
+</div>

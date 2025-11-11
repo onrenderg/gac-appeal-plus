@@ -1,0 +1,139 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.Intermediarys
+@{
+    ViewBag.Title = "AddNewIntermediary";
+    Layout = "~/Views/Shared/_LayoutDashGAC.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+<div class="col-lg-12">
+    <div class="row p-3 mb-0">
+        <div class="col-6">
+            <h3> <i class="bx bx-user text-primary align-middle me-1"></i> @LabelDictionary["Add/UpdateRespondentIntermediary"]</h3>
+        </div>
+        <div class="col-6">
+            <a class="btn btn-warning float-end me-2" href='@Url.Action("Index", "GACGridViewInbox", new {Area="Gridview"})'>
+                <i class="bx bx-arrow-back align-middle"></i> @LabelDictionary["Back"]
+            </a>
+            <a class="btn btn-success float-end me-2" href="javascript:void(0);" title="Add New Respondent Intermediary" data-url="@Url.Action("AddUpdateIntermediaryShowPopUp", "IntermediaryDashboard", new { Area = "Intermediary", qs=SecureQueryString.SecureQueryString.Encrypt("IntermediaryId=0" + "&Type=" + "") })" onclick="NewAction($(this))">
+                <i class="bx bx-plus-circle me-1 align-middle"></i>@LabelDictionary["AddNewRespondentIntermediary"]
+            </a>
+        </div>
+    </div>
+    <div class="row mt-0 mb-2 me-2">
+        <div class="col-12">
+            <a class="btn btn-success btn-sm  float-end me-2" target="_blank" rel="noopener noreferrer" href='@Url.Action("IntermediaryDownloadExcel", "IntermediaryDashboard", new {Area="Intermediary"})'>
+                <i class="fa fa-file-excel me-1"></i> @LabelDictionary["DownloadExcel"]
+            </a>
+            <a class="btn btn-danger float-end btn-sm me-2" target="_blank" rel="noopener noreferrer" href='@Url.Action("IntermediaryDownloadPDF", "IntermediaryDashboard", new {Area="Intermediary"})'>
+                <i class="bx me-1 bxs-file-pdf align-middle"></i>@LabelDictionary["DownloadPDF"]
+            </a>
+        </div>
+    </div>
+    <hr class="m-0" />
+    <div class="row">
+        <div class="col-12 overflow-auto">
+            <table id="tableAppList" class="table table-bordered align-top table-responsive">
+                <thead style="font-size:18px">
+                    <tr class="table-primary">
+                        <th scope="col" width="1%"> @LabelDictionary["Sl.No"]</th>
+                        <th scope="col" width="30%">@LabelDictionary["RespondentIntermediaryTitle"]/ @LabelDictionary["URL"]</th>
+                        <th scope="col" width="30%">@LabelDictionary["GrievanceOfficerName"]/ @LabelDictionary["EmailID"]</th>
+                        <th scope="col" width="30%">@LabelDictionary["HelpLink"]/ @LabelDictionary["Address"]</th>
+                        <th scope="col" width="4%">@LabelDictionary["IsActive"]</th>
+                        <th class="text-center" width="5%" scope="col">@LabelDictionary["Action"]</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-light" style="font-size:18px;">
+                    @{
+                        int counter = 1;
+                    }
+                    @foreach (var row in Model.List)
+                    {
+                        <tr>
+                            <td class="text-center">@counter</td>
+                            <td>
+                                @row.IntermediaryTitle<br />
+                                @LabelDictionary["URL"]: <a class="alert-link" target="_blank" rel="noopener noreferrer" href="@row.URL">@row.URL</a>
+                            </td>
+                            <td>
+                                @LabelDictionary["Name"]: @row.GOName<br />
+                                @LabelDictionary["EmailID"]: @row.GOEmail<br />
+                                @LabelDictionary["LoginEmail"]: @row.LoginEmail
+
+                            </td>
+                            <td>
+                                @LabelDictionary["HelpLink"]: <a class="alert-link" target="_blank" rel="noopener noreferrer" href="@row.HelpLink">@row.HelpLink</a><br />
+                                @LabelDictionary["Address"]: @row.Address
+                            </td>
+                            <td class="text-center">
+                                @if (@row.IsActive == "Y")
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeisActive('@row.IntermediaryId', 'N')" role="switch" id="flexisActive" checked>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeisActive('@row.IntermediaryId', 'Y')" role="switch" id="flexisActive">
+                                    </div>
+                                }
+
+                            </td>
+                            <td class="text-center">
+                                @*<a class="text-success" href="javascript:void(0);" title="Edit Respondent Intermediary" onclick="NewAction(@row.IntermediaryId)"><i class="bx bx-edit h3 align-middle"></i></a>*@
+                                <a class="text-success" href="javascript:void(0);" title="Edit Respondent Intermediary" data-url="@Url.Action("AddUpdateIntermediaryShowPopUp", "IntermediaryDashboard", new { Area = "Intermediary", qs=SecureQueryString.SecureQueryString.Encrypt("IntermediaryId=" + @row.IntermediaryId +"&Type=" + "") })" onclick="NewAction($(this))"><i class="bx bx-edit h3 align-middle"></i></a>
+                            </td>
+
+                        </tr>
+                        counter = counter + 1;
+                    }
+                    <script>
+                        $(document).ready(function () {
+                            $("#tableAppList").DataTable()
+                        });
+                    </script>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="gv-action-modal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="gv-action-modal-content"></div>
+    </div>
+</div>
+<script>
+    function changeisActive(IntermediaryID, Command) {
+        $.ajax({
+            url: '@Url.Action("ChangeStatusisActive", "IntermediaryDashboard", new { Area = "Intermediary" })',
+            type: "get",
+            data: { IntermediaryID: IntermediaryID, Command: Command},
+            datatype: "json",
+            success: function (data) {
+                if (data.Status == "S") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-check-circle me-1'></i> Successfully Saved </div>", "success", 5, function () { });
+                }
+                else if (data.Status=="F") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-window-close me-1'></i> Error while saving the record </div>", "error", 5, function () { });
+                }
+            }
+        });
+    }
+    var _FormLoadHtml_Modal = '<div class="px-4 py-4 my-4 h-100 font-lg text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">@LabelDictionary["FetchingData"]</span></div><br>@LabelDictionary["FetchingData"]</div>';
+    function NewAction(element) {
+            var URL = element.data("url");
+            $.ajax({
+                 url: URL,
+                type: "GET",
+                dataType: "HTML",
+            success: function (data) {
+                if (data) { $("#gv-action-modal-content").html('').html(_FormLoadHtml_Modal).html(data); }
+            }
+          }).done(function () { $("#gv-action-modal").modal('toggle'); });
+    }
+
+</script>
+

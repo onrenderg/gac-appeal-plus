@@ -1,0 +1,210 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.Dashboard_GACStats
+@using Newtonsoft.Json
+@{
+    string CD = "MeityGACStats";
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<script>
+    function RenderGACDonut@(CD)(_containerId, _labels, _data, _colors, _totalLabel, _totalValue) {
+        var ChartOptions = {
+            chart: { height: 160, width: 140, type: 'donut' },
+            labels: _labels,
+            series: _data,
+            colors: _colors,
+            stroke: { width: 4 },
+            dataLabels: { enabled: false },
+            legend: { show: false },
+            grid: { padding: { top: 0, bottom: 0, right: -20 } },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '70%',
+                        labels: {
+                            show: true, value: { fontSize: '18px', color: axisColor, offsetY: -15, }, name: { offsetY: 14 },
+                            total: { show: true, fontSize: '13px', color: axisColor, label: _totalLabel, formatter: function (w) { return _totalValue; } }
+                        }
+                    }
+                }
+            }
+        };
+        var Chart = new ApexCharts(document.querySelector('#' + _containerId), ChartOptions); Chart.render();
+    }
+</script>
+
+@if (Model.DataList != null && Model.DataList.Count > 0)
+{
+    int gac_counter = 1;
+    <div class="card h-100">
+        <div class="px-3 pt-3">
+            <ul class="nav nav-pills mb-0" role="tablist">
+                @foreach (var GAC in Model.DataList)
+                {
+                    <li class="nav-item"><button type="button" class="nav-link @(gac_counter == 1 ? "active" : "")" role="tab" data-bs-toggle="tab" data-bs-target="#dash_meity_gacstats-@GAC.GACId" aria-controls="navs-pills-top-home" aria-selected="false">@GAC.GACAbbr</button></li>
+                    ++gac_counter;
+                }
+            </ul>
+        </div>
+        @{ gac_counter = 1;}
+        <div class="tab-content p-0">
+            @foreach (var GAC in Model.DataList)
+            {
+                int PendingToProcess = Convert.ToInt32(GAC.Assigned) - (Convert.ToInt32(GAC.InProcess) + Convert.ToInt32(GAC.Decided) + Convert.ToInt32(GAC.Rejected));
+                <div class="tab-pane fade @(gac_counter == 1 ? "show active" : "")" id="dash_meity_gacstats-@GAC.GACId" role="tabpanel">
+                    <div class="card-header d-flex align-items-center justify-content-between pb-0 pt-3">
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h4 class="mb-2">@LabelDictionary["AppealsReceived"]</h4>
+                                <h2 class="mb-0 mt-1">@GAC.Assigned</h2>
+                            </div>
+                            <div style="height:100px !important" class="mt-n5">
+                                <div id="CC_GAC@(GAC.GACId)_AssignStats@(CD)">
+                                    <script>
+                                        var _labels = ['@LabelDictionary["Disposedof"]', '@LabelDictionary["NotAdmitted"]', '@LabelDictionary["InProcess"]', '@LabelDictionary["NoAction"]']; var _data = [parseInt('@GAC.Decided'), parseInt('@GAC.Rejected'), parseInt('@GAC.InProcess'), parseInt('@PendingToProcess')]; var _colors = [config.colors.success, config.colors.danger, config.colors.warning, config.colors.secondary]; RenderGACDonut@(CD)('CC_GAC@(GAC.GACId)_AssignStats@(CD)', _labels, _data, _colors, '@LabelDictionary["Disposedof"]', '@(GAC.Decided_Percent)%');
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="p-0 m-0">
+                            <li class="d-flex">
+                                <div class="avatar flex-shrink-0 me-3">
+                                    <span class="avatar-initial rounded bg-label-info"><i class="bx bx-user-check"></i></span>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h4 class="mb-0">@LabelDictionary["ResponsefromRespondentIntermediary"]</h4>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h4 class="fw-semibold mb-0">@GAC.ResponseFromIntermediary</h4>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex">
+                                <div class="avatar flex-shrink-0 me-3"></div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <div class="mb-0 fw-light font-xxxl">@LabelDictionary["ResponseAwaited"]</div>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h4 class="fw-normal mb-0">@GAC.ResponseFromIntermediary_NoResponse</h4>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex mb-3 mt-n2">
+                                <div class="avatar flex-shrink-0 me-3"></div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <div class="mb-0 fw-light font-xxxl"> <span class="text-danger">@LabelDictionary["NoResponse"]</span></div>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h4 class="fw-normal mb-0">@GAC.ResponseIntermediary_ResponseTimeExceeded  </h4>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex">
+                                <div class="avatar flex-shrink-0 me-3">
+                                    <span class="avatar-initial rounded bg-label-warning"><i class="bx bx-time"></i></span>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h4 class="mb-0">@LabelDictionary["InProcess"]</h4>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h4 class="fw-semibold mb-0">@GAC.InProcess</h4>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex">
+                                <div class="avatar flex-shrink-0 me-3"></div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <div class="mb-0 fw-light font-xxxl">@LabelDictionary["MatterSummaryprepared"]</div>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h4 class="fw-normal mb-0">@GAC.InProcess_MatterSummary</h4>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex mt-n2">
+                                <div class="avatar flex-shrink-0 me-3"></div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <div class="mb-0 fw-light font-xxxl">@LabelDictionary["Member(s)Opinions"]</div>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h4 class="fw-normal mb-0">@GAC.OpinionAwaited  </h4>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex mt-n2 mb-3">
+                                <div class="avatar flex-shrink-0 me-3"></div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <div class="mb-0 fw-light font-xxxl">@LabelDictionary["ChairpersonDecision"]</div>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h4 class="fw-normal mb-0">@GAC.ChairpersonDecision  </h4>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="d-flex mb-3">
+                                <div class="avatar flex-shrink-0 me-3">
+                                    <span class="avatar-initial rounded bg-label-success"><i class="bx bx-check-circle"></i></span>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h4 class="mb-0">@LabelDictionary["Disposedof"]</h4>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h4 class="fw-semibold mb-0">@GAC.Decided</h4>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="d-flex">
+                                <div class="avatar flex-shrink-0 me-3">
+                                    <span class="avatar-initial rounded bg-label-danger"><i class="bx bx-message-x"></i></span>
+                                </div>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h4 class="mb-0">@LabelDictionary["NotAdmitted"]</h4>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h4 class="fw-semibold mb-0">@GAC.Rejected</h4>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="d-flex alert alert-warning mb-2 mt-3">
+                                <i class="bx bxs-calendar-week me-2"></i>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h4 class="mb-0 fw-light font-xxxl fw-semibold">@LabelDictionary["AverageDisposalDays"]</h4>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h4 class="fw-semibold mb-0">@(GAC.AverageDisposalDays == "0" ? LabelDictionary["lessthan1"] : GAC.AverageDisposalDays) <small class="fw-light">@LabelDictionary["day(s)"]</small></h4>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="d-flex alert alert-danger mb-0">
+                                <i class="bx bx-error me-2 align-middle"></i>
+                                <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                    <div class="me-2">
+                                        <h4 class="mb-0 fw-light font-xxxl fw-semibold">@LabelDictionary["Pending>=25Days"]</h4>
+                                    </div>
+                                    <div class="user-progress">
+                                        <h4 class="fw-semibold mb-0">0</h4>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                ++gac_counter;
+            }
+        </div>
+    </div>
+}

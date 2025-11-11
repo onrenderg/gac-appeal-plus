@@ -1,0 +1,187 @@
+﻿@model DigitalNagrik.Models.mHome
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+
+<div class="container no-padding">
+    <div class="row pt-3" style="background: white; margin: 0 auto; min-height: 550px; box-shadow: 0px 0px 17px 1px #d6d4d4;">
+        <div class="col-lg-7 px-4">
+            <div style="text-align:justify">
+                <h2>Desktop Based Notifications</h2>
+                <p>Only DigitalNagrik mobile application registered users can Login into this web interface to avail of Desktop based notifications. Therefore, you must have downloaded the Mobile Application (NIC DigitalNagrik) and registered in this App after verification of your mobile phone number.
+                The web interface can be opened in any web browser except Safari. DigitalNagrik Desktop notification work best in Google Chrome.
+                </p>
+                <br />
+                <b>Pre-requisites:</b>
+                <ul>
+                    <li>Download and install NIC DigitalNagrik mobile application from Google, Apple stores.</li>
+                    <li>Enter your mobile number for registration and verification.</li>
+                    <li>Set your PIN (password).</li>
+                    <li>Register your name.</li>
+                    <li>Set auto-store and auto-clear options for notifications.</li>
+                    <li>Select applications and associated options for auto-notifications on your mobile phone (for other mobile numbers/ emails too, subject to OTP authentication of mobile/Email).</li>
+                    <li>Select option to receive desktop-based notifications in the mobile app.</li>
+                    <li>You will be redirected to the web URL which you have to access through a desktop with your Mobile app registered mobile number.</li>
+                </ul>
+                <p>Instead of an SMS based alert from different software applications of a single user, DigitalNagrik app allows registration of different mobiles/emails (after OTP authentication) also. This implies that multiple software applications and multiple family members can be registered for receiving notifications on a single mobile phone.</p>
+            </div>
+        </div>
+
+        <div class="col-lg-5 px-4">
+            <div class=" margin-top-10" style="height: auto;">
+                <div class="text-center">
+                    <a href="#" rel = "noopener noreferrer" target="_blank"><img style="margin-top: 35px;" class="img-fluid" src="~/Content/assets/img/mobile-app.png"></a>
+                </div>
+                <main id="main">
+                    <section class="contact">
+                        <div data-aos="fade-up">
+                            <div style="margin-left: auto; margin-right: auto;">
+                                @using (Html.BeginForm("Login", "Home", FormMethod.Post, new { id = "frmApp_CitizenLogin", enctype = "multipart/form-data" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <div class="section-title">
+                                        <h1>Citizen Login</h1>
+                                    </div>
+                                    <div id="divCitizenLoginDetails">
+                                        <div class="row">
+                                            <span id="SpanUserIDEmailValidationMsg" style="color: red"></span>
+                                        </div>
+                                        <div class="row">
+                                            <label for="inputPassword">Mobile No.<span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(x => x.UserID, new { @id = "UserID", @class = "form-control", maxlength = "100", placeholder = "Mobile No.", @autocomplete = "off" })
+                                            </div>
+                                            @Html.ValidationMessageFor(x => x.UserID)
+                                        </div>
+                                        <div class="row mt-3">
+                                            <label for="inputPassword">Captcha<span class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text" id="basic-addon1">
+                                                    <img id="CaptchaImage" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                                                    <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="link-fa fa fa-refresh btn no-margin" aria-hidden="true"></i></a>
+                                                </span>
+                                                @Html.TextBoxFor(x => x.Captcha, new { @id = "txtCaptcha", @class = "form-control", placeholder = "Enter Captcha", autocomplete = "off", maxlength = "6" })
+                                            </div>
+                                            <div id="SpanCaptchaValidation"></div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="text-center">
+                                                <button class="btn btn-success" type="button" id="btnLogin"><i class="fa fa-paper-plane"></i>&nbsp;Send OTP</button>
+                                                <button class="btn btn-danger" type="button" id="btnCancelLogin">Reset</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="divUserDetailsGrid" style="padding:0px;"></div>
+                                    <div id="divConsent" style="padding:0px;"></div>
+                                }
+                            </div>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#btnCancelLogin').click(function () {
+            var url = '@Url.Action("CitizenLogin", "Home", new { area = "" })';
+            window.location.href = url;
+        });
+    });
+    function RefreshCaptcha() {
+        $.ajax({
+            url: '@Url.Action("CaptchaImageNew", "Home", new { area = "" })',
+            data: {},
+            success: function (data) {
+                $("#CaptchaImage").html(data);
+            }
+        });
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    }
+    function ValidateCaptcha() {
+        var Result = false;
+        var CaptchaCD = $("#txtCaptcha").val();
+        $.ajax({
+            url: '@Url.Action("CheckCaptcha", "Home", new { area = "" })',
+            type: "GET", async: false,
+            data: { CaptchaCD: CaptchaCD },
+            dataType: "JSON",
+            success: function (result) {
+                if (result == true) {
+                    Result = true;
+                }
+            }
+        });
+        return Result;
+    }
+    var loadhtml = "<div class='padding-vert-10 text-muted padding-horiz-10 text-center'><i class='fa fa-2x fa-spinner fa-spin'></i><br /> Sending OTP. Please wait ...</div>";
+    $(document).ready(function () {
+    });
+
+    $("#btnLogin").click(function () {
+        if ($("#frmApp_CitizenLogin").valid()) {
+            if (ValidateCaptcha()) {
+                $('#SpanCaptchaValidation').html('');
+                CheckUserIDExists();
+            }
+            else {
+                $('#SpanCaptchaValidation').html("Invalid Captcha.");
+                $('#SpanCaptchaValidation').addClass("text-danger");
+                $('#SpanCaptchaValidation').removeClass("alert alert-danger mt-1");
+                RefreshCaptcha();
+            }
+        }
+        return false;
+    });
+    function DisplayOTPGrid() {
+        var UserID = $('#UserID').val();
+        $("#divUserDetailsGrid").html(loadhtml);
+        if (UserID != "" && UserID != null) {
+            $('#btnLogin').hide();
+            $('#btnCancelLogin').hide();
+            $.ajax({
+                url: '@Url.Action("GetCitizenLoginOTPGrid", "Home", new { area = "" })',
+                type: "GET",
+                dataType: "html",
+                data: { UserID: UserID },
+                success: function (data) {
+                    if (data) {
+                        $("#divUserDetailsGrid").html('');
+                        $("#divUserDetailsGrid").html(data);
+                        $('#divUserDetailsGrid').focus();
+                        //$('html, body').animate({ scrollTop: $('#divUserDetailsGrid').offset().top - 10 }, 'slow');
+                    }
+                },
+                error: function () {
+                    $("#divUserDetailsGrid").html('');
+                }
+            });
+        }
+    }
+    function CheckUserIDExists() {
+        var UserID = $('#UserID').val();
+        $.ajax({
+            url: '@Url.Action("CheckCitizenUserIDExists", "Home", new { area = "" })',
+            type: "GET",
+            data: { UserID: UserID },
+            dataType: "JSON",
+            success: function (data) {
+                if (data == "N") {
+                    $('#SpanCaptchaValidation').html("Email ID/ Mobile No. not registered with DigitalNagrik Portal.");
+                    $('#SpanCaptchaValidation').addClass("alert alert-danger mt-1");
+                    $('#txtCaptcha').val('');
+                }
+                else if (data == "Y") {
+                    DisplayOTPGrid();
+                }
+            }
+        });
+    }
+</script>
+<script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js" type="text/javascript"></script>
+<script src="https://www.gstatic.com/firebasejs/8.3.0/firebase-messaging.js" type="text/javascript"></script>
+<script src="~/Content/assets/js/fb.js"></script>
+

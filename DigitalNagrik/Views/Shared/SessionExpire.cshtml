@@ -1,0 +1,19 @@
+﻿<link rel="stylesheet" href="@Url.Content("~/Content/font-awesome/css/font-awesome.min.css")" type="text/css">
+
+@{
+    string LoginRedirectURL = string.Empty;
+     LoginRedirectURL = Url.Action("Index", "Home", new { Area = "" });
+}
+
+<div class="clearfix">
+    <div class="col-xs-12">
+        <div class="well margin-vert-10 text-center">         
+            <h2 class="margin-top-5 margin-bottom-15 text-danger"><i class="fa fa-warning text-danger"></i>&nbsp;Session Expired</h2>
+            <div>Seems like your Session has <b>Expired</b> due to inactivity. You will need to Login again to continue.</div>
+            <div>
+                Click <a class="btn-link font-size-16" href="@(LoginRedirectURL)" title="Click to go to Login Page">here</a> to go to Login Page
+                <span class="text-muted font-size-13">&nbsp;(Note : Any unsaved data will be lost)</span>
+            </div>
+        </div>
+    </div>
+</div>

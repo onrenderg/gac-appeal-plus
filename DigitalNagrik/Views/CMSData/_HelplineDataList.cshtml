@@ -1,0 +1,125 @@
+﻿@model DigitalNagrik.Models.CMSDatatAddHelpline
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+<div class="row mt-4">
+    <div class="col-12">
+        <h4 style="color: black;margin-left:10px"><i class="bx bx-list-check me-1"></i>Helpline Data List</h4>
+    </div>
+
+    <div class="col-12 overflow-auto">
+        <table id="tableHelplineList" class="table table-bordered">
+            <thead>
+                <tr class="table-primary  text-secondary">
+                    <th scope="col">Sl.No</th>
+                    <th scope="col">Content For</th>
+                    <th scope="col">Document Type</th>
+                    <th scope="col">Document Name/ link</th>
+                    <th scope="col">PDF link/ URL Link</th>
+                    <th scope="col">Display Order</th>
+                    <th scope="col">Is Active</th>
+                    <th scope="col" class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody style="font-size:18px;">
+                @{
+                    int counter = 1;
+                }
+                @if (Model.DocumnetListTable != null && Model.DocumnetListTable.Count > 0)
+                {
+                    foreach (var row in Model.DocumnetListTable)
+                    {
+                        <tr>
+                            <td>@counter</td>
+                            <td>@row.DeviceName</td>
+                            <td>@row.DocumentType</td>
+                            <td>@row.DocumentName_link</td>
+                            <td class="text-start">
+                                @if (@row.PDFlink_URLLink == null || @row.PDFlink_URLLink == "")
+                                {
+                                    <a target="_blank" href="@Url.Action("ViewHelplinePDF", "CMSData", new { Area = "", qs = SecureQueryString.SecureQueryString.Encrypt("DocID=" + row.DocID) })"><i class="fa fa-file-pdf fa-2x text-danger"></i></a>
+                                }
+                                else
+                                {
+                                    <a target="_blank" class="alert-link" href="@row.PDFlink_URLLink">@row.PDFlink_URLLink</a>
+                                }
+                            </td>
+                            <td>@row.DisplayOrder</td>
+
+                            <td>
+                                @if (@row.IsActive == "Y")
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeSwitches('@row.HelpLineID', 'IsActiveN')" role="switch" id="flexIsActive" checked>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeSwitches('@row.HelpLineID', 'IsActiveY')" role="switch" id="flexIsActive">
+                                    </div>
+                                }
+
+                            </td>
+                            <td class="text-center">
+                                @*<a href="@Url.Action("EditHelpline", "CMSData", new { Area = "", qs = SecureQueryString.SecureQueryString.Encrypt("HelplineID=" + row.HelpLineID) })"><i class="fa fa-edit text-success"></i></a>*@
+                                <a href="javascript:void(0);" onclick="OpenDialogDeleteHelpline($(this))" data-qs="@Url.Action("DeleteHelpline", "CMSData", new { Area = "", qs = SecureQueryString.SecureQueryString.Encrypt("HelplineID=" + row.HelpLineID) })"><i class="bx bx-trash h4 text-danger"></i></a>
+                            </td>
+                        </tr>
+                        counter = counter + 1;
+                    }
+                    <script>
+                        $(document).ready(function () {
+                            $("#tableHelplineList").DataTable()
+                        });
+                    </script>
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9">No Records Found</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="confirmModalDelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure to delete this Helpline Content?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a id="aDeleteMemo" class="btn btn-sm btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function changeSwitches(HelplineID, Command) {
+        $.ajax({
+            url: '@Url.Action("SwitchesHelpline", "CMSData", new { Area = "" })',
+            type: "get",
+            data: { HelplineID: HelplineID, Command: Command},
+            datatype: "json",
+            success: function (data) {
+                if (data.Status == "S") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-check-circle me-1'></i> Successfully Saved </div>", "success", 5, function () { });
+                }
+                else if (data.Status == "F") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-window-close me-1'></i> Error while saving the record </div>", "error", 5, function () { });
+                }
+            }
+        });
+    }
+    function OpenDialogDeleteHelpline(elem) {
+        $("#aDeleteMemo").attr("href", elem.attr("data-qs"));
+        $("#confirmModalDelete").modal('show');
+    }
+</script>

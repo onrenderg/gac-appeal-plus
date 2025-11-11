@@ -1,0 +1,511 @@
+﻿@model DigitalNagrik.Areas.Public.Models.mAppealDocument
+@{
+    ViewBag.Title = "ViewUploadDocs";
+
+    List<DigitalNagrik.Areas.Public.Models.DocumentFileTypeMaster> listtocheck = (List<DigitalNagrik.Areas.Public.Models.DocumentFileTypeMaster>)ViewData["DocumentFileType"];
+    List<DigitalNagrik.Areas.Public.Models.mAppealDocument> list = (List<DigitalNagrik.Areas.Public.Models.mAppealDocument>)ViewData["AppealDocList"];
+    Boolean ShowOTHC = true;
+    Boolean ShowURLAdd = true;
+    Boolean ShowCCADD = true;
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+
+}
+<div class="mt-4 mb-4" style="width: 100%; height: 20px; border-bottom: 1px solid black; text-align: center;">
+
+    <span style="font-size: 20px; background-color: rgb(26 108 148); color: #ffffff; padding: 5px; border-radius: 5px;">
+        @LabelDictionary["AppealComplaintRelatedDocuments"]
+    </span>
+</div>
+<div class="row mt-2">
+    <div class="col-sm-7">
+        <div>
+            <label>
+                @LabelDictionary["CCIntermediary"]                
+            </label>
+        </div>
+        <div>
+            @LabelDictionary["CCIntermediaryHelpMsg"]<span class="Mandatory">*</span>
+        </div>
+        <label>
+
+
+            @if (listtocheck != null)
+            {
+                int count = 1;
+                string fileext = "";
+                string[] validExtension = (string[])listtocheck.FindAll(x => x.AppealDocumentType == "CC").Select(o => o.FileExtension).ToArray();
+                foreach (string ext in validExtension)
+                {
+                    if (count != validExtension.Length)
+                    {
+                        fileext = fileext + ext + "/";
+                    }
+                    else
+                    {
+                        fileext = fileext + ext;
+                    }
+                    count++;
+                }
+
+            <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                (@fileext.ToUpper(), @LabelDictionary["Maxsize"]
+                @listtocheck.FindAll(x => x.AppealDocumentType == "CC").Select(o => o.MaxFileSize).FirstOrDefault()
+                @LabelDictionary["MB"], @LabelDictionary["CCupto"])
+            </label>
+            }
+        </label>
+        @Html.ValidationMessage("CopyofComplaint")
+    </div>
+
+
+    <div class="col-md-4">
+        @if (list != null)
+        {
+            int CClimit = Int32.Parse(listtocheck.Where(x => x.AppealDocumentType == "CC").Select(x => x.UploadLimit).FirstOrDefault());
+            var tmplist = list.Where(x => x.DocumentType == "CC" && x.EvidenceType == "F").ToList();
+
+            if (tmplist.Count > 0)
+            {
+                var srno = 1;
+                <table style="width:100%;">
+                    @foreach (var tmp in tmplist)
+                    {
+                        <tr>
+                            <td style="width:10%;">@srno.ToString() .</td>
+                            <td style="width:50%;">
+                                <a id="CCDocument" href="@Url.Action("DownloadDocument", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID+"&FilePath=" + tmp.FilePath + "&FileType=" + tmp.FileType+"&FileID="+ tmp.FileId) })" title="Download">
+                                    <label style="text-align:justify;font-size:14px;font-style :italic  " id="CCDocumentLabel">
+                                        @tmp.FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/CopyofComplaint/", "")
+                                    </label>
+                                    <i class="fa fa-download text-info"></i>
+                                </a>
+                            </td>
+                            <td style="width:40%;">
+                                <a href="javascript:void(0);" title="Click to remove file" data-qs="@Url.Action("DeleteFile", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID), DocumentType = tmp.DocumentType, FileID = tmp.FileId })"
+                                   onclick="return confirmDeleteFile($(this),'@tmp.FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/CopyofComplaint/", "")');"><label style="text-align:justify;font-size:14px;font-style :italic  "></label><i class="fa fa-trash text-info "></i></a>
+                            </td>
+                        </tr>
+                        srno += 1;
+                    }
+                </table>
+                if (tmplist.Count >= CClimit)
+                {
+                    ShowCCADD = false;
+                }
+            }
+        }
+    </div>
+    <div class="col-sm-1">
+        @if (ShowCCADD)
+        {
+            <input type="button" class="btn btn-warning btn-block " value="@LabelDictionary["UploadDocumentbutton"]" id="btnUploadCC" onclick="OpenModalUploadPopup('CC');" />
+        }
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-sm-7">
+        <label>
+            @LabelDictionary["Anyotherrelevantinformation"]
+            @if (listtocheck != null)
+            {
+                int count = 1;
+                string fileext = "";
+                string[] validExtension = (string[])listtocheck.FindAll(x => x.AppealDocumentType == "CD").Select(o => o.FileExtension).ToArray();
+                foreach (string ext in validExtension)
+                {
+                    if (count != validExtension.Length)
+                    {
+                        fileext = fileext + ext + "/";
+                    }
+                    else
+                    {
+                        fileext = fileext + ext;
+                    }
+                    count++;
+                }
+
+            <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                ( @fileext.ToUpper(), @LabelDictionary["Maxsize"]
+                @listtocheck.FindAll(x => x.AppealDocumentType == "CD").Select(o => o.MaxFileSize).FirstOrDefault()
+                @LabelDictionary["MB"])
+            </label>
+            }
+        </label>
+    </div>
+
+    <div class="col-md-4">
+        @if (list != null)
+        {
+            var tmplist = list.Where(x => x.DocumentType == "CD" && x.EvidenceType == "F").ToList();
+
+            if (tmplist.Count > 0)
+            {
+
+                <a id="CDDocument" href="@Url.Action("DownloadDocument", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID+"&FilePath=" + tmplist.FirstOrDefault().FilePath + "&FileType=" + tmplist.FirstOrDefault().FileType+"&FileID="+ tmplist.FirstOrDefault().FileId) })" title="Download">
+                    <label style="text-align:justify;font-size:14px;font-style :italic  " id="CDDocumentLabel">
+                        @tmplist.FirstOrDefault().FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/CopyofDecision/", "")
+                    </label>
+                    <i class="fa fa-download text-info"></i>
+                </a>
+                <label>&nbsp; &nbsp;</label>
+                <a href="javascript:void(0);" title="Click to remove file" data-qs="@Url.Action("DeleteFile", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID), DocumentType = tmplist.FirstOrDefault().DocumentType, FileID = tmplist.FirstOrDefault().FileId })" onclick="return confirmDeleteFile($(this),'@tmplist.FirstOrDefault().FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/CopyofDecision/", "")');"><label style="text-align:justify;font-size:14px;font-style :italic  "></label><i class="fa fa-trash text-info "></i></a>
+            }
+        }
+    </div>
+    <div class="col-sm-1"><input type="button" class="btn btn-warning btn-block " value="@LabelDictionary["UploadDocumentbutton"]" id="btnUploadCD" onclick="OpenModalUploadPopup('CD');" /></div>
+</div>
+@*
+    <div class="row mt-2">
+        <div class="col-sm-7">
+            <label>
+                Proof of making of Complaint, if the complaint is submitted on the intermediary’s
+                website or mobile app (not required if copy of the complaint itself includes such proof)
+                @if (listtocheck != null)
+                {
+                    int count = 1;
+                    string fileext = "";
+                    string[] validExtension = (string[])listtocheck.FindAll(x => x.AppealDocumentType == "PC").Select(o => o.FileExtension).ToArray();
+                    foreach (string ext in validExtension)
+                    {
+                        if (count != validExtension.Length)
+                        {
+                            fileext = fileext + ext + "/";
+                        }
+                        else
+                        {
+                            fileext = fileext + ext;
+                        }
+                        count++;
+                    }
+
+                    <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                        ( @fileext.ToUpper(), Max size
+                        @listtocheck.FindAll(x => x.AppealDocumentType == "PC").Select(o => o.MaxFileSize).FirstOrDefault()
+                        MB)
+                    </label>
+                }
+            </label>
+        </div>
+
+        <div class="col-md-4">
+            @if (list != null)
+            {
+                var tmplist = list.Where(x => x.DocumentType == "PC" && x.EvidenceType == "F").ToList();
+
+                if (tmplist.Count > 0)
+                {
+
+                    <a href="@Url.Action("DownloadDocument", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + tmplist.FirstOrDefault().FilePath + "&FileType=" + tmplist.FirstOrDefault().FileType) })" title="Download">
+                        <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                            @tmplist.FirstOrDefault().FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/ProofOfComplaint/", "")
+                        </label>
+                        <i class="fa fa-download text-info"></i>
+                    </a>
+                    <label>&nbsp; &nbsp;</label>
+                    <a href="javascript:void(0);" title="Click to remove file" data-qs="@Url.Action("DeleteFile", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID), DocumentType = tmplist.FirstOrDefault().DocumentType, FileID = tmplist.FirstOrDefault().FileId })" onclick="return confirmDeleteFile($(this),'@tmplist.FirstOrDefault().FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/ProofOfComplaint/", "")');"><label style="text-align:justify;font-size:14px;font-style :italic  "></label><i class="fa fa-trash text-info "></i></a>
+                }
+            }
+        </div>
+        <div class="col-sm-1">
+            <input type="button" class="btn btn-warning btn-block " value="Upload" id="btnUploadCD" onclick="OpenModalUploadPopup('PC');" />
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-sm-7">
+            <label>Any other correspondence made with the Grievance Officer</label>
+            @if (listtocheck != null)
+            {
+                int count = 1;
+                string fileext = "";
+                string[] validExtension = (string[])listtocheck.FindAll(x => x.AppealDocumentType == "OTHC").Select(o => o.FileExtension).ToArray();
+                foreach (string ext in validExtension)
+                {
+                    if (count != validExtension.Length)
+                    {
+                        fileext = fileext + ext + "/";
+                    }
+                    else
+                    {
+                        fileext = fileext + ext;
+                    }
+                    count++;
+                }
+
+                <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                    ( @fileext.ToUpper(), Max size
+                    @listtocheck.FindAll(x => x.AppealDocumentType == "OTHC").Select(o => o.MaxFileSize).FirstOrDefault()
+                    MB, upto 3 files)
+                </label>
+            }
+
+        </div>
+
+        <div class="col-md-4">
+            @if (list != null)
+            {
+                int OTHClimit = Int32.Parse(listtocheck.Where(x => x.AppealDocumentType == "OTHC").Select(x => x.UploadLimit).FirstOrDefault());
+                var tmplist = list.Where(x => x.DocumentType == "OTHC" && x.EvidenceType == "F").ToList();
+
+                if (tmplist.Count > 0)
+                {
+                    var srno = 1;
+                    <table style="width:100%;">
+                        @foreach (var tmpothc in tmplist)
+                        {
+                            <tr>
+                                <td style="width:10%;">@srno.ToString() .</td>
+                                <td style="width:50%;">
+                                    <a href="@Url.Action("DownloadDocument", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + tmpothc.FilePath + "&FileType=" + tmpothc.FileType) })" title="Download">
+                                        <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                                            @tmpothc.FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/OTHC/", "")
+                                        </label><i class="fa fa-download text-info"></i>
+                                    </a>
+                                </td>
+                                <td style="width:40%;">
+                                    <a href="javascript:void(0);" title="Click to remove file" data-qs="@Url.Action("DeleteFile", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID), DocumentType = tmpothc.DocumentType, FileID = tmpothc.FileId })" onclick="return confirmDeleteFile($(this),'@tmpothc.FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/OTHC/", "")');"><label style="text-align:justify;font-size:14px;font-style :italic  "></label><i class="fa fa-trash text-info "></i></a>
+                                </td>
+                            </tr>
+                            srno += 1;
+                        }
+                    </table>
+                    if (tmplist.Count >= OTHClimit)
+                    {
+                        ShowOTHC = false;
+                    }
+                }
+            }
+        </div>
+        <div class="col-sm-1">
+            @if (ShowOTHC)
+            {
+                <input type="button" class="btn btn-warning btn-block " value="Upload" id="btnCorresMade" onclick="OpenModalUploadPopup('OTHC');" />
+            }
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-sm-6">
+            <label>
+                URL / website link, if any, of the information in respect of which complaint was made
+                <label style="text-align:justify;font-size:14px;font-style :italic  ">(max. 300 characters, with option for adding up to 10 links)</label>
+            </label>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-11">
+            @if (list != null)
+            {
+                int URLlimit = Int32.Parse(listtocheck.Where(x => x.AppealDocumentType == "IURL").Select(x => x.UploadLimit).FirstOrDefault());
+                var tmplist = list.Where(x => x.DocumentType == "IURL" && x.EvidenceType == "U").ToList();
+
+                if (tmplist.Count > 0)
+                {
+                    var srno = 1;
+                    <table style="width:100%;">
+                        @foreach (var tmp in tmplist)
+                        {
+                            var tmpurl = tmp.FilePath;
+                            if (!tmp.FilePath.ToLower().Contains("http"))
+                            {
+                                tmpurl = "http://" + tmp.FilePath;
+                            }
+                            <tr>
+                                <td style="width:5%;">@srno.ToString() .</td>
+                                <td style="width:90%;">
+                                    <a href="@tmpurl" title="View" target="_blank">@tmp.FilePath</a>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <a href="javascript:void(0);" title="Click to remove URL" data-qs="@Url.Action("DeleteFile", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID), DocumentType = "IURL", FileID = tmp.FileId })"
+                                       onclick="return confirmDeleteFile($(this),'URL');">
+                                        <i class="fa fa-trash text-info "></i>
+                                    </a>
+                                </td>
+
+                            </tr>
+                            srno += 1;
+                        }
+                    </table>
+                    if (tmplist.Count >= URLlimit)
+                    {
+                        ShowURLAdd = false;
+                    }
+                }
+            }
+
+        </div>
+
+    </div>*@
+<div class="modal fade" id="OpenModalUploadPopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">@LabelDictionary["UploadDocument"]</h1>&nbsp;&nbsp;
+                <div id="headertextFileUpload"></div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+
+            </div>
+            <div class="modal-body" id="UploadPopupBody">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="confirmModalDeleteFile" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">@LabelDictionary["Confirm"]</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="confirmMessageText">@LabelDictionary["AreSureDeleteFile"] <span id="lbldelfilename" style="font-weight:bold"></span> @LabelDictionary["File"] ?</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary btn-block" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+                <button type="button" id="DeleteAction" class="btn btn-sm btn-warning btn-block" onclick="return deletefile($(this))">@LabelDictionary["DeleteFile"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*@if (ShowURLAdd)
+    {
+        <div class="row">
+            <div class="col-md-11">
+                @Html.TextBoxFor(m => m.IURL, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.IURL, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-1">
+
+                <input type="button" class="btn btn-warning btn-block " value="Add" id="btnIURL" />
+
+            </div>
+        </div>
+    }*@
+<script>
+    $("#btnIURL").click(function (evt) {
+        var data = new FormData();
+        //Add the input element values
+        data.append("RegistrationYear", $("#RegistrationYear").val());
+        data.append("GrievanceID", $("#GrievanceID").val());
+        data.append("FileType", $("#FileType").val());
+        data.append("DocumentType", $("#DocumentType").val());
+        data.append("MobileNo", $("#MobileNo").val());
+        data.append("IURL", $("#IURL").val());
+
+        $.ajax({
+            type: "POST",
+            url:"@Url.Action("SaveURL", "Registration")",
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (message) {
+                 $.ajax({
+            type: "POST",
+            url: "@Url.Action("ViewAppealDocument", "Registration")",
+                     data: '{RegistrationYear:"' + $("#RegistrationYear").val() + '", GrievanceID: "' + $("#GrievanceID").val() + '" }',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#AppealDocuments").html(response);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+                ///////////////////////////
+
+            },
+            error: function () {
+                alert("There was error uploading files!");
+            }
+        });
+
+    });
+    function confirmDeleteFile(elem, filedelname) {
+        $("#lbldelfilename").text(filedelname);
+        console.log(elem.attr("data-qs"));
+        $("#DeleteAction").attr("data-qs", elem.attr("data-qs"));
+        $("#confirmModalDeleteFile").modal('show');
+    }
+    function deletefile(elem) {
+        console.log(elem.attr("data-qs"));
+        var actionURL = elem.attr("data-qs");
+
+        $.ajax({
+            type: "POST",
+            url: actionURL,//"@Url.Action("DeleteFile", "Registration")",
+            contentType: false,
+            processData: false,
+
+            success: function (message) {
+                $("#confirmModalDeleteFile").modal('hide');
+                 $.ajax({
+            type: "POST",
+            url: "@Url.Action("ViewAppealDocument", "Registration")",
+                     data: '{RegistrationYear:"' + $("#RegistrationYear").val() + '", GrievanceID: "' + $("#GrievanceID").val() + '" }',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#AppealDocuments").html(response);
+
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+                ///////////////////////////
+
+            },
+            error: function () {
+                alert("There was error while removing file!");
+            }
+        });
+    }
+
+       function OpenModalUploadPopup(DocumentType) {
+
+           $("#DocumentType").val(DocumentType);
+           var DocumentTypeText = "";
+           if (DocumentType == "CC")
+               DocumentTypeText = " (Copy of Complaint)"
+           else if (DocumentType == "CD")
+               DocumentTypeText = " (Copy of Decision)"
+           else if (DocumentType == "PC")
+               DocumentTypeText = " (Proof of Complaint)"
+           else if (DocumentType == "OTHC")
+               DocumentTypeText = " (Any other Correspondence)"
+        $("#headertextFileUpload").text(DocumentTypeText);
+       // console.log(DocumentType);
+       var qsvalue = "@SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID)"
+
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("UploadDoc", "Registration")",
+            data: '{qs:"' + qsvalue+'", DocumentType: "' + DocumentType + '" }',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#OpenModalUploadPopup").find("#UploadPopupBody").html(response);
+                $("#OpenModalUploadPopup").modal('show');
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>
+

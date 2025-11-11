@@ -1,0 +1,12 @@
+﻿@model DigitalNagrik.Models.PublicMenu
+@using DigitalNagrik.Models
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2><b>@Model.MenuName</b></h2>
+        <ol>
+            <li><a href=@Url.Action("Index","Home")>@(FormLabels.GetSingleLabels("0", "1", UserSession.LangCulture, "Home"))</a></li>
+            <li>@Model.MenuName</li>
+        </ol>
+    </div>
+</div>

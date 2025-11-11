@@ -1,0 +1,41 @@
+﻿@model DigitalNagrik.Models.FAQs
+@{
+    ViewBag.Title = "FAQs";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+@*<style>
+    .accordion-button {
+        background-color: #e7f1ff;
+        color: #0C63E4;
+    }
+</style>*@
+
+<section class="breadcrumbs">
+    @{ Html.RenderPartial("_Breadcrumbs", (DigitalNagrik.Models.PublicMenu)ViewBag.Menu); }
+</section>
+
+<section class="inner-page">
+    <div class="container mt-3" style="min-height:50vh;">
+        <div class="accordion p-0" id="accordionPanelsStayOpenExample">
+            @foreach (DigitalNagrik.Models.FAQ li in Model.FAQList)
+            {
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="panelsStayOpen-heading_@li.SrNo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse_@li.SrNo" aria-expanded="true" aria-controls="panelsStayOpen-collapse_@li.SrNo">
+                            @li.SrNo.   @li.Question
+                        </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapse_@li.SrNo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading_@li.SrNo">
+                        <div class="accordion-body">
+                            @Html.Raw(li.Answer)
+                            @*@if (li.Hyperlink != null && li.Hyperlink != "")
+                            {
+                                <a href="@li.Hyperlink" target="_blank" class="alert-link">Click here</a>
+                            }*@
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

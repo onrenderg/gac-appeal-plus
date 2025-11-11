@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="GACAppeal.UnderProcessPage"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    ios:Page.UseSafeArea="true"
+    IconImageSource="Submitted_ico.png"
+    Title="Under Process"
+    x:Name="Page_name">
+    <NavigationPage.TitleView >
+        <StackLayout x:Name="Custom_Navigation" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" BackgroundColor="Transparent" >
+            <Image Source="goi_icon.png" HeightRequest="40" VerticalOptions="CenterAndExpand"/>
+            <Label x:Name="Lbl_Nav_title" Style="{StaticResource NavBar_LabelStyle}" />
+            <Image Source="app_nic_header.png" x:Name="Image_Nav_nic"  HeightRequest="30" VerticalOptions="CenterAndExpand"/>
+        </StackLayout>
+    </NavigationPage.TitleView>
+    <Grid>
+        <StackLayout>
+            <BoxView Style="{StaticResource BoxView_Line}"/>
+            <Label x:Name="Lbl_Title" Text="New Appeal" Style="{StaticResource LabelStyle_PageTitle}"/>
+            <BoxView Style="{StaticResource BoxView_Line}"/>
+            <ListView x:Name="MyApeals_List" HasUnevenRows="True" ItemTapped="MyApeals_List_ItemTapped" VerticalOptions="FillAndExpand" SelectionMode="None">
+                <ListView.ItemTemplate >
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="35"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Source="{Binding ImageToDisplay}" HorizontalOptions="End" VerticalOptions="CenterAndExpand" Grid.Column="0" HeightRequest="25"/>
+                                <StackLayout Grid.Column="1" VerticalOptions="CenterAndExpand">
+                                    <Label Text="{Binding AppealID}" Style="{StaticResource LabelStyle}"/>
+                                    <Label Text="{Binding IntermediaryTitle}" Style="{StaticResource LabelStyle}" FontAttributes="Bold"/>
+                                </StackLayout>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Label x:Name="Lbl_NoRecord" Style="{StaticResource LabelStyle}" HorizontalOptions="FillAndExpand"  TextColor="Red" FontAttributes="Bold" HorizontalTextAlignment="Center" IsVisible="false"/>
+        </StackLayout>
+        <ContentView x:Name="Loading_activity" BackgroundColor="#C0808080" Padding="20, 20" IsVisible="false">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <Frame Style="{StaticResource FrameLoadingStyle}">
+                    <StackLayout Orientation="Horizontal" Padding="6">
+                    <ActivityIndicator IsVisible="true" IsRunning="true" Margin="5"/>
+                    <Label x:Name="Lbl_PleaseWait" Text="Please Wait ..." Style="{StaticResource LabelStyle}" HorizontalOptions="FillAndExpand" WidthRequest="600"/>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </ContentView>
+    </Grid>
+</ContentPage>

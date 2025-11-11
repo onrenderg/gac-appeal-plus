@@ -1,0 +1,89 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+<div class="row" id="dvOuterPIN">
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { id = "GACLogin" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(x => x.HashPwd)
+        
+        @Html.HiddenFor(x => x.hdActionGACUser)
+        @Html.HiddenFor(x => x.Seed)
+
+        @Html.ValidationMessage("GACErrorMessage")
+        <div class="row">
+            <div class="col-12">
+                <label class="custom-input-label mb-1">Email ID<span class="text-danger">*</span></label>
+                @Html.TextBoxFor(x => x.GACEmailID, new { @class = "form-control DisabledInputs", maxlength = "100", placeholder = "Email ID", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.GACEmailID)
+            </div>
+        </div>
+        <div class="mb-2 row">
+            <div class="col-12">
+                <label class="custom-input-label mb-1">Password<span class="text-danger">*</span></label>
+                @Html.TextBoxFor(x => x.Password, new { @id = "Password", @class = "form-control DisabledInputs", @type = "Password", maxlength = "100", placeholder = "Password", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.Password)
+            </div>
+        </div>
+        <div class="mb-4 row">
+            <div class="col-12">
+                <label class="custom-input-label mb-1">Captcha<span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text" id="basic-addon1">
+                        <img id="CaptchaImageGAC" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                        <a title="Click to refresh Captcha" onclick="RefreshCaptcha();"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                    </span>
+                    @Html.TextBoxFor(x => x.GACCaptcha, new {  @class = "form-control DisabledInputs", placeholder = "Enter Captcha", autocomplete = "off", maxlength = "6" })
+                </div>
+                <div id="SpanCaptchaGACValidation">
+                    @Html.ValidationMessageFor(x => x.GACCaptcha)
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                <button type="button" class="btn btn-primary"  id="btnGACUserSubmit"><i class="fa fa-lock"></i>&nbsp;Login</button>
+            </div>
+        </div>
+
+    }
+</div>
+<script>
+    @*function RefreshGACCaptcha() {
+        $.ajax({
+            url: '@Url.Action("CaptchaImageNew", "Home", new { area = "" })',
+            data: {},
+            success: function (data) {
+                $("#CaptchaImageGAC").html(data);
+            }
+        });
+        $("#CaptchaImageGAC").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    }*@
+
+    @*function ValidateGACCaptcha() {
+        var Result = false;
+        var CaptchaCD = $("#txtGACCaptcha").val();
+        $.ajax({
+            url: '@Url.Action("CheckCaptcha", "Home", new { area = "" })',
+            type: "GET", async: false,
+            data: { CaptchaCD: CaptchaCD },
+            dataType: "JSON",
+            success: function (result) {
+                if (result == true) {
+                    Result = true;
+                }
+            }
+        });
+        return Result;
+    };*@
+
+    $("#btnGACUserSubmit").click(function () {
+        if ($("#GACLogin").valid()) {
+            $("#HashPwd").val(sha256($("#Seed").val() + sha256($('#Password').val())));
+            $('#Password').val('xxxxxxxxxxxxxxxx');
+            $('#hdActionGACUser').val("G");
+            $('#GACLogin').submit();
+        }
+    });
+
+
+</script>
+

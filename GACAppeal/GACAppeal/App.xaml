@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GACAppeal.App">
+    <Application.Resources>
+        <!--Light colors -->
+        <Color x:Key="Light_Btn_Text_Color">White</Color>
+        <Color x:Key="Light_Btn_Background_Color">#1a6c94</Color>
+
+        <Color x:Key="Light_Btn_Danger_Text_Color">White</Color>
+        <Color x:Key="Light_Btn_Danger_Background_Color">#1a6c94</Color>
+
+        <Color x:Key="Light_Lbl_Text_Color">Black</Color>
+        <Color x:Key="Light_Lbl_Hint_Text_Color">red</Color>
+        <Color x:Key="Light_Lbl_slider_Text_Color">#1a6c94</Color>
+
+        <Color x:Key="Light_slider_Color">#1a6c94</Color>
+
+        <Color x:Key="Light_Frame_Background_Color">Default</Color>
+        <Color x:Key="Light_Frame_Border_Color">Gray</Color>
+        <Color x:Key="Light_Frame_Border_Color_iOS">Transparent</Color>
+
+        <Color x:Key="Light_Grid_Background_Color">#F5F5F5</Color>
+
+        <Color x:Key="Light_Calender_Grid_Background_Color">#ebf0f0</Color>
+        <Color x:Key="Light_Calender_Stack_Background_Color">White</Color>
+
+
+        <!--Dark colors -->
+        <Color x:Key="Dark_Btn_Text_Color">White</Color>
+        <Color x:Key="Dark_Btn_Background_Color">#1a6c94</Color>
+
+        <Color x:Key="Dark_Btn_Danger_Text_Color">White</Color>
+        <Color x:Key="Dark_Btn_Danger_Background_Color">#1a6c94</Color>
+
+
+        <Color x:Key="Dark_Lbl_Text_Color">White</Color>
+        <Color x:Key="Dark_Lbl_Hint_Text_Color">RED</Color>
+        <Color x:Key="Dark_Lbl_slider_Text_Color">#1a6c94</Color>
+
+        <Color x:Key="Dark_slider_Color">#1a6c94</Color>
+
+
+        <Color x:Key="Dark_Frame_Background_Color">#4F4B4B</Color>
+        <Color x:Key="Dark_Frame_Border_Color">Gray</Color>
+        <Color x:Key="Dark_Frame_Border_Color_iOS">Transparent</Color>
+        <Color x:Key="Dark_Frame_Loading_Border_Color">#1a6c94</Color>
+
+        <Color x:Key="Dark_Grid_Background_Color">#4F4B4B</Color>
+
+        <Color x:Key="Dark_Calender_Grid_Background_Color">#4F4B4B</Color>
+        <Color x:Key="Dark_Calender_Stack_Background_Color">Black</Color>
+
+
+
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Btn_Background_Color}, Dark={StaticResource Dark_Btn_Background_Color}}" />
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Btn_Text_Color}, Dark={StaticResource Dark_Btn_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="15" Default="15" Desktop="22" Tablet="20" TV="20" Watch="8"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="80,0,80,0"/>
+        </Style>
+
+        <Style x:Key="Danger_ButtonStyle" TargetType="Button">
+            <Setter Property="BackgroundColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Btn_Danger_Background_Color}, Dark={StaticResource Dark_Btn_Danger_Background_Color}}" />
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Btn_Danger_Text_Color}, Dark={StaticResource Dark_Btn_Danger_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="15" Default="15" Desktop="22" Tablet="20" TV="20" Watch="8"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="80,0,80,0"/>
+        </Style>
+
+        <Style x:Key="LabelStyle" TargetType="Label">
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="15" Default="15" Desktop="22" Tablet="20" TV="22" Watch="8"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="RadioStyle" TargetType="RadioButton">
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="15" Default="15" Desktop="22" Tablet="20" TV="22" Watch="8"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PickerStyle" TargetType="Picker">
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="15" Default="15" Desktop="22" Tablet="20" TV="22" Watch="8"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="Frame_Title_LabelStyle" TargetType="Label">
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="16" Default="16" Desktop="23" Tablet="20" TV="23" Watch="9"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Margin">
+                <Setter.Value>
+                    <OnIdiom Desktop="10"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="HorizontalOptions" Value="Start"/>
+            <Setter Property="BackgroundColor" Value="#1a6c94"/>
+            <Setter Property="TextColor" Value="White"/>
+        </Style>
+
+        <Style x:Key="Frame_Sub_Title_LabelStyle" TargetType="Label">
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="16" Default="16" Desktop="20" Tablet="20" TV="22" Watch="9"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Margin">
+                <Setter.Value>
+                    <OnIdiom Desktop="10"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="HorizontalOptions" Value="End"/>
+            <Setter Property="BackgroundColor" Value="#1a6c94"/>
+            <Setter Property="TextColor" Value="White"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="Progress_Bar_Style" TargetType="ProgressBar">
+            <Setter Property="ScaleY" Value="2"/>
+            <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+            <Setter Property="BackgroundColor">
+                <Setter.Value>
+                    <OnPlatform x:TypeArguments="Color">
+                        <On Platform="iOS">Red</On>
+                        <On Platform="UWP">Red</On>
+                    </OnPlatform>
+                </Setter.Value>
+
+            </Setter>
+            <Setter Property="ProgressColor" Value="#1a6c94"/>
+        </Style>
+
+        <Style x:Key="Progress_Bar_Style_target" TargetType="ProgressBar">
+            <Setter Property="ScaleY" Value="2"/>
+            <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+            <Setter Property="BackgroundColor">
+                <Setter.Value>
+                    <OnPlatform x:TypeArguments="Color">
+                        <On Platform="iOS">Transparent</On>
+                        <On Platform="UWP">Transparent</On>
+                    </OnPlatform>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ProgressColor" Value="#1a6c94"/>
+        </Style>
+
+        <Style x:Key="Progress_Bar_Style_Progress" TargetType="ProgressBar">
+            <Setter Property="ScaleY" Value="2"/>
+            <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+            <Setter Property="BackgroundColor">
+                <Setter.Value>
+                    <OnPlatform x:TypeArguments="Color">
+                        <On Platform="iOS">Transparent</On>
+                        <On Platform="UWP">Transparent</On>
+                    </OnPlatform>
+                </Setter.Value>
+
+            </Setter>
+            <Setter Property="ProgressColor" Value="#1a6c94"/>
+        </Style>
+
+        <Style x:Key="Hint_LabelStyle" TargetType="Label">
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Hint_Text_Color}, Dark={StaticResource Dark_Lbl_Hint_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="12" Default="12" Desktop="16" Tablet="16" TV="18" Watch="8"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+            <Setter Property="FontAttributes" Value="Italic"/>
+        </Style>
+
+        <Style x:Key="Danger_LabelStyle" TargetType="Label">
+            <!--<Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Btn_Danger_Background_Color}, Dark={StaticResource Dark_Btn_Danger_Background_Color}}" />-->
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="12" Default="12" Desktop="16" Tablet="16" TV="18" Watch="8"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+            <Setter Property="FontAttributes" Value="Italic"/>
+        </Style>
+
+        <Style x:Key="Quater_LabelStyle" TargetType="Label">
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="12" Default="12" Desktop="12" Tablet="12" TV="12" Watch="8"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
+            <Setter Property="TextDecorations" Value="Underline"/>
+        </Style>
+
+
+        <Style x:Key="LabelStyle_PageTitle" TargetType="Label">
+            
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="16" Default="16" Desktop="20" Tablet="20" TV="22" Watch="9"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="BackgroundColor" Value="#1a6c94"/>
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Dark_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />
+        </Style>
+
+
+        <Style x:Key="LabelStyle_List" TargetType="Label">
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="16" Default="16" Desktop="20" Tablet="20" TV="22" Watch="9"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+        </Style>
+
+        <Style x:Key="NavBar_LabelStyle" TargetType="Label">
+            <!--<Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />-->
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="15" Default="12" Desktop="17" Tablet="17" TV="22" Watch="9"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+            <Setter Property="Text" Value="Grievance Appellate Committee"/>
+            <Setter Property="TextColor" Value="#1a6c94"/>
+        </Style>
+
+        <Style x:Key="NavBar_LabelStyle2" TargetType="Label">
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="14" Default="13" Desktop="10" Tablet="10" TV="19" Watch="9"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+            <!--<Setter Property="Text" Value="GAC Apeal - Testing"/>-->
+        </Style>
+
+        <Style x:Key="FrameStyle" TargetType="Frame">
+            <Setter Property="BackgroundColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Frame_Background_Color}, Dark={StaticResource Dark_Frame_Background_Color}}" />
+            <Setter Property="BorderColor">
+                <Setter.Value>
+                    <OnPlatform x:TypeArguments="Color">
+                        <On Platform="iOS">Silver</On>
+                        <On Platform="UWP">Gray</On>
+                        <On Platform="Android">Silver</On>
+                    </OnPlatform>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Padding"
+                    Value="10"/>
+            <Setter Property="Margin"
+                    Value="10"/>
+            <Setter Property="VerticalOptions"
+                    Value="CenterAndExpand"/>
+        </Style>
+
+        <Style x:Key="FrameCircleStyle" TargetType="Frame">
+            <Setter Property="BackgroundColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Frame_Background_Color}, Dark={StaticResource Dark_Frame_Background_Color}}" />
+            <Setter Property="BorderColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Frame_Border_Color}, Dark={StaticResource Dark_Frame_Border_Color}}" />
+            <Setter Property="HeightRequest" Value="30"/>
+            <Setter Property="WidthRequest" Value="30"/>
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="HasShadow" Value="False"/>
+        </Style>
+
+        <Style x:Key="FrameLoadingStyle" TargetType="Frame">
+            <Setter Property="BackgroundColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Frame_Background_Color}, Dark={StaticResource Dark_Frame_Background_Color}}" />
+            <Setter Property="BorderColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Frame_Border_Color}, Dark={StaticResource Dark_Frame_Loading_Border_Color}}" />
+        </Style>
+
+        <Style x:Key="FooterGridStyle" TargetType="Grid">
+            <Setter Property="BackgroundColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Grid_Background_Color}, Dark={StaticResource Dark_Grid_Background_Color}}" />
+            <Setter Property="Padding" Value="6"/>
+        </Style>
+
+        <Style x:Key="BoxView_Line" TargetType="BoxView">
+            <Setter Property="BackgroundColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Calender_Grid_Background_Color}, Dark={StaticResource Dark_Calender_Grid_Background_Color}}" />
+            <Setter Property="HeightRequest" Value="2"/>
+            <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+        </Style>
+
+        <Style x:Key="SliderStyle" TargetType="Slider">
+            <Setter Property="MaximumTrackColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_slider_Color}, Dark={StaticResource Dark_slider_Color}}" />
+        </Style>
+
+        <Style x:Key="Lable_SmallFont_Style" TargetType="Label">
+            <Setter Property="TextColor"
+                    Value="{AppThemeBinding Light={StaticResource Light_Lbl_Text_Color}, Dark={StaticResource Dark_Lbl_Text_Color}}" />
+            <Setter Property="FontSize">
+                <Setter.Value>
+                    <OnIdiom Phone="13" Default="13" Desktop="20" Tablet="18" TV="20" Watch="8"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="VerticalTextAlignment" Value="Center"/>
+            <Setter Property="HorizontalTextAlignment" Value="Start"/>
+        </Style>
+    </Application.Resources>
+</Application>

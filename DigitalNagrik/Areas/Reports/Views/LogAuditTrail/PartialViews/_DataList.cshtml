@@ -1,0 +1,99 @@
+﻿@model DigitalNagrik.Areas.Reports.Data.LogAuditTrailReportData
+@{
+    string UserID = ViewBag.UserID;
+    string UserTypeID = ViewBag.UserTypeID;
+    string FromDate = ViewBag.FromDate;
+    string ToDate = ViewBag.ToDate;
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+<hr class="mb-0 mt-2" />
+<div class="col-xl-12 mt-5">
+    <div class="row gx-3">
+        <div class="col-lg-8">
+            <h3><i class="bi bi-person-circle me-1"></i>User Login Details</h3>
+        </div>
+        <div class="col-lg-4">
+            <a class="btn btn-success btn-sm  float-end me-2" target="_blank" href='@Url.Action("LogAuditTrailReportDownloadExcel", "LogAuditTrail", new {Area="Reports",qs=SecureQueryString.SecureQueryString.Encrypt("UserID="+UserID+"&UserTypeID="+UserTypeID+"&FromDate="+FromDate+"&ToDate="+ToDate)})'>
+                <i class="fa fa-file-excel me-1"></i> Download Excel
+            </a>
+        </div>
+    </div>
+    <hr class="mb-0" />
+    <div class="row gx-3">
+        <div class="col-12 overflow-auto">
+            <table class="table table-bordered table-responsive align-top tablePaging">
+                <thead style="font-size:18px">
+                    <tr class="table-primary  text-secondary">
+                        <th style="font-size:18px!important" scope="col" width="1%"> @LabelDictionary["Sl.No"]</th>
+                        <th style="font-size:18px!important" scope="col" width="19%">User Name/ @LabelDictionary["UserID"]</th>
+                        <th style="font-size:18px!important" scope="col" width="25%">@LabelDictionary["LoginDateTime"]</th>
+                        <th style="font-size:18px!important" scope="col" width="25%">Activity Details</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-light" style="font-size:18px;">
+                    @if (Model.ReportDataList_LoginStatus_List.Count > 0)
+                    {
+                        int counter = 1;
+                        foreach (var row in Model.ReportDataList_LoginStatus_List)
+                        {
+                            <tr>
+                                <td class="text-center">@counter</td>
+                                <td>
+                                    <span><i class="bx bx-user-circle text-black"></i>@row.UserName (@row.UserType)</span><br />
+                                    <span><i class="bx bx-key text-black"></i>@row.UserId</span>
+                                </td>
+                                <td>
+                                    <span><i class="bx bx-check-circle text-success me-2"></i>Login: @row.LoginDate @row.StartTime</span><br />
+                                    <span><i class="bx bx-calendar-alt text-primary me-2"></i>Logout: @row.LogoutDate @row.EndTime</span><br />
+                                    <span><i class="bx bx-laptop text-primary me-2"></i></span>@row.IPAddress
+                                </td>
+                                <td>
+                                    @{
+                                        var ActionList = Model.ReportDataList_Actions_List.Where(x => Convert.ToDateTime(x.ActionDateTime) >= Convert.ToDateTime(row.LoginDateTime) && Convert.ToDateTime(x.ActionDateTime) <= Convert.ToDateTime(row.NewLoginDateTime) && x.ActionBy == row.UserId).ToList();
+                                        if (ActionList.Count > 0)
+                                        {
+                                            foreach (var row1 in ActionList)
+                                            {
+                                                if (row1.ActionDesc != "")
+                                                {
+                                                    <span class="badge bg-primary">@row1.ActionDesc</span><br />
+                                                }
+                                                <span>@row1.AppealNumber </span>
+                                                <span>
+                                                    at @row1.ActionDate @row1.StartTime
+                                                </span><br />
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <h6> No Activity Found</h6>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                            counter = counter + 1;
+                        }
+                        <script>
+                            $(document).ready(function () {
+                                $(".tablePaging").DataTable()
+                            });
+                        </script>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6">
+                                No Record(s) Found
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

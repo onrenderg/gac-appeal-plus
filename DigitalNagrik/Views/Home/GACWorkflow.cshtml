@@ -1,0 +1,65 @@
+﻿@{
+    ViewBag.Title = "GACWorkflow";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+
+<section class="breadcrumbs">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h2><b>GAC Committee Workflow</b></h2>
+            <ol>
+                <li><a href=@Url.Action("Index","Home",new {Area=""})>Home</a></li>
+                <li>GAC</li>
+                <li>GAC Workflow</li>
+            </ol>
+        </div>
+
+    </div>
+</section>
+
+<section class="inner-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-7">              
+                <p style="text-align: justify" class="mt-0 pt-0">
+                    <ol class="list-group list-group-numbered">
+                        <li class="list-group-item">Digital Nagrik will submit the Appeal online and it will start appearing in the concerned GAC ePortal, as per assigned subject.</li>
+                        <li class="list-group-item">Two auto-emails will go, one to the Appellant (Digital Nagrik) and other to the Intermediary, with details of the Appeal. </li>
+                        <li class="list-group-item">The Intermediary will get a Link to check and confirm the Appeal contents after Email OTP verification. The intermediary may object, as per given criteria, giving suitable documents as proof, within 72 hours. In case Intermediary doesn’t given any response, the respective GAC Secretariat will verify appeal contents and fill responses.</li>
+                        <li class="list-group-item">The concerned GAC official will Login into the GAC ePortal, through Parichay (Single Sign On). However, since Member/ co-opted members or some other official may not be having Government email, the System Administrator may enter any email and mobile of the Members/officials. They may activate and set their passwords by getting an OTP on the given mobile. So both modes will work.</li>
+                        <li class="list-group-item">The GAC Secretariat officials will see all appeals of their GAC appeals, sorted as received, new, disposed, rejected, awaiting intermediary response, approaching 30 day period without decision etc. The official may forward the appeal to other GAC in case Digital Nagrik has wrongly selected the GAC. A dashboard will also be available. The Chairperson and Members can also view this interface as per current status of every appeal. </li>
+                        <li class="list-group-item">The GAC official will prepare a summary of appeal and based on the inputs from intermediary, put up the appeal to the Committee for rejection or further processing. In case of rejection, approval will be taken from Committee and status informed to Digital Nagrik about its rejection. </li>
+                        <li class="list-group-item">In case the Appeal is accepted, the GAC members will process the Appeal for decision. The GAC may may co-opt a subject matter expert, and their details/ inputs will be recorded in the ePortal.</li>
+                        <li class="list-group-item">The GAC may seek additional information from both the Digital Nagrik and Intermediary for deciding the case. These communications will be sent as Email link by email to Intermediary and Digital Nagrik (who will also get it in their web/mobile interface). </li>
+                        <li class="list-group-item">Based on inputs, the GAC will decide the case and write the Decision/Order, within 30 days of receiving it.  </li>
+                        <li class="list-group-item">The Intermediary will be informed to take action as per Decision/ Order. This will be followed up automatically by the ePortal and final disposal will be deemed only when the Intermediary has taken corrective action. </li>
+                        <li class="list-group-item">The Dashboards of Admin and respective GACs will have relevant data stats and actionable items (like Appeals nearing 30 days-time for deciding).</li>
+                    </ol>
+                </p>
+            </div>
+            <div class="col-5">
+                <img src="~/assets/img/GACCommitteeWorkflow.png" width="100%" data-bs-toggle="modal" data-bs-target="#exampleModal" />
+            </div>
+
+        </div>
+
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">GAC Workflow</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="~/assets/img/GACCommitteeWorkflow.png" class="img-fluid" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

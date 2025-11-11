@@ -1,0 +1,93 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACAppealTransferApprove
+@using DigitalNagrik.Areas.GridView.Data
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<div class="modal-header pt-3">
+    <h4 class="modal-title">@LabelDictionary["Approve/RejectTransferRequest"] (<span class="h5">@LabelDictionary["AppealNumber"]: </span><span>@Model.GrievanceId/@Model.RegistrationYear</span>)</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<hr class="mb-0 mt-2" />
+@using (Html.BeginForm("GACTransferApprove", "GACGridViewInbox", FormMethod.Post, new { @class = "frmGACTransferApprove" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(x => x.GrievanceId)
+    @Html.HiddenFor(x => x.RegistrationYear)
+    @Html.HiddenFor(x => x.TransferRequestId)
+
+    <div class="modal-body pb-0 pt-3 px-3">
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="mb-3">
+                    <label class="form-label">@LabelDictionary["Action"]</label>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            @Html.RadioButtonFor(x => x.TransferRequestStatus, GACGridViewInbox.TransferRequestStatus.Approved, new { @class = "form-check-input", id = "rb_TransferRequestStatus_" + GACGridViewInbox.TransferRequestStatus.Approved })
+                            <label class="form-check-label" for="rb_TransferRequestStatus_@(GACGridViewInbox.TransferRequestStatus.Approved)">@LabelDictionary["Approve"]</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            @Html.RadioButtonFor(x => x.TransferRequestStatus, GACGridViewInbox.TransferRequestStatus.Rejected, new { @class = "form-check-input", id = "rb_TransferRequestStatus_" + GACGridViewInbox.TransferRequestStatus.Rejected })
+                            <label class="form-check-label" for="rb_TransferRequestStatus_@(GACGridViewInbox.TransferRequestStatus.Rejected)">@LabelDictionary["Reject"]</label>
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(x => x.TransferRequestStatus)
+                </div>
+
+                <div style="display:none" id="gvformcontainer-transfer-gac" class="mb-3">
+                    <label class="form-label">@LabelDictionary["TransferToGAC"]</label>
+                    @Html.DropDownListFor(m => m.GACId, Model.GACList, "--Select--", new { @class = "form-select" })
+                    @Html.ValidationMessageFor(x => x.GACId)
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">@LabelDictionary["Remarks"]</label><span class="font-sm ms-1">(@LabelDictionary["Max.characters"]: 1000)</span><span class="text-danger ms-1">*</span>
+                    @Html.TextAreaFor(x => x.Remarks, new { @id = "Remarks", @class = "form-control", maxlength = "1000", placeholder = LabelDictionary["Remarks"] + " ..." })
+                    @Html.ValidationMessageFor(x => x.Remarks)
+                </div>
+            </div>
+
+            <div class="col-xl-6">
+                <div class="bg-white gv-container-comparison-doc"></div>
+
+                <div class="mb-2 ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["AppealDetails"]</div>
+                    <div style="height:230px" class="overflow-auto">
+                        @{ Html.RenderAction("GetAppealDetailsGrid_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+                <hr />
+                <div class="ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["RespondentIntermediaryResponse"]</div>
+                    <div style="height:370px" class="overflow-auto">
+                        @{ Html.RenderAction("IntermediaryResponseView", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="mt-0" />
+    <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-primary" onclick="Submit($(this))">@LabelDictionary["Submit"]</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+    </div>
+}
+
+<script>
+    $.validator.unobtrusive.parse($(".frmGACTransferApprove"));
+
+    function TransferRequestStatusChange(TransferRequestStatus) {
+        if (TransferRequestStatus == "@(GACGridViewInbox.TransferRequestStatus.Approved)") {
+            $("#gvformcontainer-transfer-gac").show('fast');
+        }
+        else {
+            $("#gvformcontainer-transfer-gac").hide('fast');
+        }
+    }
+
+    $("input[name=TransferRequestStatus][type=radio]").change(function () {
+        var TransferRequestStatus = $(this).val();
+        TransferRequestStatusChange(TransferRequestStatus);
+    });
+</script>

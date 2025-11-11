@@ -1,0 +1,150 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.IntermediaryReply
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+@using (Html.BeginForm("SaveSubjectExpertReply", "Intermediary", FormMethod.Post, new { id = "frm_SaveSubjectExpertReply", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.GrievanceId)
+    @Html.HiddenFor(x => x.RegistrationYear)
+    @Html.HiddenFor(x => x.InputID)
+    <div class="modal-header pt-3" id="gv-action-modal-content">
+        <h3 class="modal-title" id="gv-action-modal-title">@Model.HeaderText</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <hr class="mb-0 mt-2" />
+    <div class="modal-body pb-0 pt-3 px-3">
+        <div class="accordion pt-3" id="accordionPanelsStayOpenExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                    <button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                        <h3><i class="text-primary bx bx-user-check align-middle me-1"></i>  @LabelDictionary["AppealDetails"]</h3>
+                    </button>
+                </h2>
+                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                    <div class="accordion-body">
+                        <div class="row mt-2 ms-3">
+                            <table class="table table-bordered table-responsive">
+                                <tbody style="font-size:17px">
+                                    <tr>
+                                        <td width="50%" colspan="2"> @LabelDictionary["AppealNumber"]: <b>@Model.GrievanceId/@Model.RegistrationYear</b></td>
+                                        <td width="50%" colspan="2"> @LabelDictionary["AppealDate"]: <b> @Model.ReceiptDate</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" colspan="4">
+                                            @LabelDictionary["BriefofComplaint"]: <b>@Model.BriefofComplaint</b>
+                                            <a target="_blank" href="@Url.Action("AppealPDF", "Registration", new { Area = "Public", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="btn btn-outline-primary btn-sm ms-2">
+                                                <i class="bx bxs-file-pdf me-1 text-danger align-middle font-lg"></i><span>@LabelDictionary["ViewAppeal"] </span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" colspan="4">
+                                            @LabelDictionary["Justification"]: <b>@Model.GrievanceDesc</b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" colspan="4">@LabelDictionary["GroundforAppeal"]: <b>@Model.GroundTitle</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="100%" colspan="4">@LabelDictionary["ReliefSought"]: <b>@Model.RelieftSoughtSpecification</b></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-2 ms-3" style="font-size:18px">
+            <div class="col-lg-2">
+                <label class="custom-input-label mb-1">  @LabelDictionary["AssistanceSoughtfromExpert"]</label>
+            </div>
+            <div class="col-lg-9 mb-3">
+                <label class="custom-input-label mb-1" style="font-weight:bold">@Html.Raw(Model.InputSeekRemarks)</label>
+                <br />
+                @LabelDictionary["AppealDate"]: <span class="text-muted text-primary" style="font-weight:bold">(@Model.InputSeekDateTime)</span>
+            </div>
+        </div>
+        <hr />
+        <div class="row mt-3">
+            <div class="col-lg-12">
+                <h3><i class="text-success bx bx-user-circle align-middle me-1"></i> @LabelDictionary["SubjectExpertInput"]</h3>
+            </div>
+        </div>
+        @if (@Model.IntermediaryReplyText == null || Model.IntermediaryReplyText == "")
+        {
+            <div class="row mt-2 ms-3" style="font-size:18px">
+                <div class="col-lg-3">
+                    <label class="custom-input-label">@LabelDictionary["ReplyText"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-9">
+                    @Html.TextAreaFor(x => x.IntermediaryReplyText, new { @id = "IntermediaryReplyText", @class = "form-control DisabledInputs", maxlength = "500", placeholder = @LabelDictionary["ReplyText"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.IntermediaryReplyText)
+                </div>
+            </div>
+            <div class="row mt-2 ms-3" style="font-size:18px">
+                <div class="col-lg-3">
+                    <label class="custom-input-label" id="lblUploadPDF">@LabelDictionary["SupportingDocument"]</label><span class="text-danger"> </span>
+                    <span class="text-muted text-gray font-xs">@LabelDictionary["(PDFFileupto4Mb)"]</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(m => m.SupportingDocument, new { type = "file", @accept = ".pdf", @class = "form-control fileinput-button", @id = "SupportingDocument" })
+                    @Html.ValidationMessageFor(m => m.SupportingDocument)
+                </div>
+            </div>
+            <hr />
+            <div class="row mt-3 mb-3">
+                <div class="col-lg-12 text-center">
+                    <button type="button" class="btn btn-info" id="btnSubmit"><i class="bx bx-check-circle align-middle"></i>&nbsp;@LabelDictionary["Submit"]</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row mt-2 ms-3" style="font-size:18px">
+                <div class="col-lg-3">
+                    <label class="custom-input-label">@LabelDictionary["SubjectExpertReply"]</label><span class="text-danger"> </span>
+                </div>
+                <div class="col-lg-9">
+                    <span class="text-success">@LabelDictionary["Status:Replied"]</span><br />
+                    <span>@Model.IntermediaryReplyText</span>
+                </div>
+            </div>
+            <div class="row mt-2 mb-3 ms-3" style="font-size:18px">
+                <div class="col-lg-3">
+                    <label class="custom-input-label">@LabelDictionary["SupportingDocument"]</label><span class="text-danger"> </span>
+                </div>
+                <div class="col-lg-4">
+                    @if (Model.isSupportingDocument == "N")
+                    {
+                        <span class="text-danger">@LabelDictionary["NoDocumentUploaded"]</span><br />
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-danger" target="_blank" href="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + Model.FilePath + "&FileType=pdf") })"><i class=" bx bxs-file-pdf align-middle me-1"></i>@LabelDictionary["ViewDocument"]</a>
+                        @*<a class="btn btn-outline-danger" target="_blank" href="@Url.Action("SubjectExpertReplyPDF", "Intermediary", new { Area = "Intermediary", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + @Model.RegistrationYear + "&GrievanceId=" + @Model.GrievanceId + "&InputId=" + @Model.InputID) })"><i class=" bx bxs-file-pdf align-middle me-1"></i>View Document</a>*@
+                    }
+                </div>
+            </div>
+            <hr />
+            <div class="row mt-3 mb-3">
+                <div class="col-lg-12 text-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+                </div>
+            </div>
+
+        }
+    </div>
+
+}
+<script>
+    $('#frm_SaveSubjectExpertReply').removeData("validator").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse($('#frm_SaveSubjectExpertReply'));
+    $("#btnSubmit").click(function () {
+        if ($("#frm_SaveSubjectExpertReply").valid()) {
+            $('#frm_SaveSubjectExpertReply').submit();
+        }
+    });
+</script>

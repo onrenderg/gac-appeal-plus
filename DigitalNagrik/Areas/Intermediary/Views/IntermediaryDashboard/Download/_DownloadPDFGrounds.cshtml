@@ -1,0 +1,98 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.GroundforAppeals
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<style>
+    table, td, th {
+        border: 1px solid #000000;
+        text-align: left;
+        color: black;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        font-family: Calibri !important;
+        color: black;
+        vertical-align: top;
+    }
+
+    th, td {
+        padding: 10px;
+        font-family: Calibri !important;
+        color: black;
+        vertical-align: top;
+    }
+
+    div, span {
+        font-family: Calibri !important;
+        font-size: 15px !important;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+</style>
+<div class="container-lg" style="font-family: Calibri !important; width: 100% !important">
+    <div class="row">
+        <div class="col-12 text-center" style="text-align:center;padding:0px;">
+            <img id="Header" src="@Server.MapPath("~/assets/img/logo.png")" style="height:100px;" alt="DigitalNagrikHeader" />
+        </div>
+    </div>
+    <div class="col-12 text-center" style="padding: 0px !important; margin-top: 0px !important; ">
+        <h2 class="text-primary" style="text-align:center; padding-top: 5px !important; margin-bottom: 5px !important; margin-top: 17px !important">Grounds List</h2>
+    </div>
+    <div class="col-12 text-center" style="padding: 0px !important; margin-top: 0px !important; ">
+        <table class="table table-bordered">
+            <tbody>
+                <tr style="font-weight:bold;">
+                    <td> <span>@LabelDictionary["DefaultGAC"]</span></td>
+                    <td> <span>@LabelDictionary["Groundforappeal,whichwillbedisplayedontheportalforuserselection"]</span></td>
+                    <td> <span>@LabelDictionary["Keywords"]</span></td>
+                    <td> <span>@LabelDictionary["Extractoftheruletowhichthegroundisrelatedto"] </span></td>
+                    <td> <span>@LabelDictionary["Relatedruleprovision"]</span></td>
+                </tr>
+                @{
+                    int counter = 1;
+                }
+                @foreach (var row in Model.List)
+                {
+                    <tr>
+                        @*<td><span>@counter</span></td>*@
+                        <td>
+                            <span>
+                                @row.GACName
+                            </span>
+                        </td>
+                        <td>
+                            <span>
+                                @row.GroundTitle
+                            </span>
+                        </td>
+                        <td>
+                            <span>
+                                @row.Grounds
+                            </span>
+                        </td>
+                        @*<td>
+                                <span>
+                                    @row.CorrespondingITRule
+                                </span>
+                            </td>*@
+                        <td>
+                            <span>
+                                @Html.Raw(row.ITRuleExtract)
+                            </span>
+                        </td>
+                        <td>
+                            <span>
+                                @row.CorrespondingITRule <span> of the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021</span>
+                            </span>
+                        </td>
+                    </tr>
+                    counter = counter + 1;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

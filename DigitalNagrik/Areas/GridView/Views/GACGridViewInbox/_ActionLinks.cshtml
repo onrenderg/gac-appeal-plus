@@ -1,0 +1,105 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACGridViewInbox_AppealDetails
+@using DigitalNagrik.Areas.GridView.Data
+@using DigitalNagrik.Models
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+@if (Model.GrievanceStatusCd == GACGridViewInbox.GrievanceStatus.UnapprovedIntermediary)
+{
+    <div class="btn-group gv-btn-link-group">
+        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="me-1 align-bottom bx bx-message-dots"></i>@LabelDictionary["Action"]</button>
+        <ul class="dropdown-menu gv-btn-link-group-dropdown py-2" style="">
+            @if (UserSession.RoleID == UserRoles.Secretariat)
+            {
+                <li><a onclick="TakeAction($(this),'M')" data-modalclass="xxl" data-url="@Url.Action("GetIntermediaryVerificationForm_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="dropdown-item" href="javascript:void(0);"><i class="me-2 align-top bx bx-check-square"></i>@LabelDictionary["RespondentIntermediaryVerification"]</a></li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    switch (Model.GrievanceActionId)
+    {
+        case GACGridViewInbox.AppealAction.AssignedToGAC:
+        case GACGridViewInbox.AppealAction.ReassignGAC:
+            <div class="btn-group gv-btn-link-group">
+                <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="me-1 align-bottom bx bx-message-dots"></i>@LabelDictionary["Action"]</button>
+                <ul class="dropdown-menu gv-btn-link-group-dropdown py-2" style="">
+                    @if (string.IsNullOrWhiteSpace(Model.MatterSummary))
+                    {
+                        if (UserSession.RoleID == UserRoles.GACManager)
+                        {
+                            if ((Model.GrievanceActionId == GACGridViewInbox.AppealAction.ReassignGAC && Model.Transfer_RequestStatus == GACGridViewInbox.TransferRequestStatus.Approved) || (Model.GrievanceActionId == GACGridViewInbox.AppealAction.AssignedToGAC && (Model.Transfer_RequestStatus == GACGridViewInbox.TransferRequestStatus.NoRequest || Model.Transfer_RequestStatus == GACGridViewInbox.TransferRequestStatus.Rejected)))
+                            {
+                                <li><a onclick="TakeAction($(this),'M')" data-modalclass="xxl" data-url="@Url.Action("GetAssignAppealForm_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="dropdown-item" href="javascript:void(0);"><i class="me-2 align-top bx bx-transfer"></i>@LabelDictionary["SubmitTransferRequest"]</a></li>
+                                <li><a onclick="TakeAction($(this),'M')" data-modalclass="fullscreen" data-url="@Url.Action("GetMatterSummaryForm_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="dropdown-item" href="javascript:void(0);"><i class="me-2 align-top bx bx-file"></i>@LabelDictionary["PrepareMatterSummary"]</a></li>
+                                <li><a onclick="TakeAction($(this),'M')" data-modalclass="fullscreen" data-url="@Url.Action("GetAdditionalInputForm_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="dropdown-item" href="javascript:void(0);"><i class="me-2 align-top bx bx-info-circle"></i>@LabelDictionary["SeekadditionalinputsfromRespondentIntermediary"]</a></li>
+                            }
+                        }
+                        if (UserSession.RoleID == UserRoles.Secretariat)
+                        {
+                            if (Model.Transfer_RequestStatus == GACGridViewInbox.TransferRequestStatus.Submitted)
+                            {
+                                <li><a onclick="TakeAction($(this),'M')" data-modalclass="xxl" data-url="@Url.Action("GetTransferApproveForm_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId + "&TransferRequestId=" + Model.Transfer_RequestId + "&GACId=" + Model.Transfer_SuggestedGACId) })" class="dropdown-item" href="javascript:void(0);"><i class="me-2 align-top bx bx-check-square"></i>@LabelDictionary["Approve/RejectTransferRequest"]</a></li>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (UserSession.RoleID == UserRoles.GACManager)
+                        {
+                            <li><a onclick="TakeAction($(this),'M')" data-modalclass="fullscreen" data-url="@Url.Action("GetMatterSummaryForm_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="dropdown-item" href="javascript:void(0);"><i class="me-2 align-top bx bx-pencil"></i>@LabelDictionary["PrepareMatterSummary"]</a></li>
+                        }
+                    }
+                </ul>
+            </div>
+            break;
+        case GACGridViewInbox.AppealAction.PrepareSummary:
+            <div class="btn-group gv-btn-link-group">
+                <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="me-1 align-bottom bx bx-message-dots"></i>@LabelDictionary["Action"]</button>
+                <ul class="dropdown-menu gv-btn-link-group-dropdown py-2" style="">
+                    @if (UserSession.RoleID == UserRoles.Member)
+                    {
+                        <li><a onclick="TakeAction($(this),'M')" data-modalclass="fullscreen" data-url="@Url.Action("GetRecommendationForm_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="dropdown-item" href="javascript:void(0);"><i class="me-2 align-top bx bx-pencil"></i>@LabelDictionary["MemberOpinion"]</a></li>
+                    }
+                    @if (UserSession.RoleID == UserRoles.Chairperson)
+                    {
+                        <li><a onclick="TakeAction($(this),'M')" data-modalclass="fullscreen" data-url="@Url.Action("GetDecisionByChairpersonForm_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="dropdown-item" href="javascript:void(0);"><i class="me-2 align-top bx bx-pencil"></i>@LabelDictionary["ChairpersonDecision"]</a></li>
+                        if (Model.IsChairpersonDecision == "N")
+                        {
+                            <li><a onclick="TakeAction($(this),'M')" data-modalclass="fullscreen" data-url="@Url.Action("GetExpertOpinonForm_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="dropdown-item" href="javascript:void(0);"><i class='me-2 align-top bx bx-help-circle'></i>@LabelDictionary["SeekAssistancefromSubjectExpert"]</a></li>
+                        }
+                    }
+                    @if (Model.IsChairpersonDecision == "Y")
+                    {
+                        if (UserSession.RoleID == UserRoles.GACManager)
+                        {
+                            <li><a onclick="TakeAction($(this),'M')" data-modalclass="fullscreen" data-url="@Url.Action("GetDecisionAppealForm_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="dropdown-item" href="javascript:void(0);"><i class='me-2 align-top bx bx-file'></i>@LabelDictionary["PrepareDraftDecision"]</a></li>
+                            if (!string.IsNullOrWhiteSpace(Model.DraftDecision))
+                            {
+                                <li> <a onclick="TakeAction($(this),'M')" data-modalclass="xxl" data-url="@Url.Action("GetDisposeAppealForm_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="dropdown-item" href="javascript:void(0);"><i class='me-2 align-top bx bx-check-circle text-success'></i>@LabelDictionary["UploadFinalDecision"]</a></li>
+                            }
+                        }
+                    }
+                </ul>
+            </div>
+            break;
+    }
+}
+
+<a href="javascript:void(0)"  data-url="@Url.Action("ShowTracker", "GACAppeal", new { Area = "", qs = SecureQueryString.SecureQueryString.Encrypt("GrievanceId=" + Model.GrievanceId + "&RegistrationYear=" + Model.RegistrationYear) })" class="btn btn-primary" onclick="ViewTracker($(this))"><i class="bx bx-map-pin me-1 align-text-bottom"></i>@LabelDictionary["TrackAppeal "]</a>
+<a href="javascript:void(0)" data-modalclass="xxl" data-url="@Url.Action("AppealHistoryPV", "AppealHistory", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("GrievanceId=" + Model.GrievanceId + "&RegistrationYear=" + Model.RegistrationYear) })" class="btn btn-info" onclick="TakeAction($(this),'M')"><i class="bx bx-history me-1 align-text-bottom"></i>Appeal History</a>
+@if (UserSession.RoleID == UserRoles.Secretariat && Model.IsTimeExtensionRequested == "Y")
+{
+    <a href="javascript:void(0)" data-modalclass="xl" data-url="@Url.Action("OpenApproveRejectPopup", "IntermediaryDashboard", new { Area = "Intermediary", qs = SecureQueryString.SecureQueryString.Encrypt("GrievanceId=" + Model.GrievanceId + "&RegistrationYear=" + Model.RegistrationYear + "&OpenFrom=" + "GV") })" class="btn btn-warning" onclick="TakeAction($(this),'M')"><i class="bx bx-time me-1 align-text-bottom"></i>Approve Time Extension</a>
+}
+<script>
+    $(function () {
+        $('.gv-btn-link-group-dropdown').each(function () {
+            if ($(this).find('li').length == 0) {
+                $(".gv-btn-link-group .dropdown-toggle").hide();
+            }
+        });
+    });
+</script>

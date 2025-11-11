@@ -1,0 +1,56 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.AppealBackTracking
+@using DigitalNagrik.Models
+@{
+    ViewBag.Title = "AppealBacktrack";
+    Layout = "~/Views/Shared/_LayoutDashGAC.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<link href="@Url.Content("~/assets/alertifyjs/css/alertify.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/alertifyjs/alertify.min.js")"></script>
+<style>
+    .min-vh-50 {
+        min-height: 70vh !important;
+    }
+</style>
+<div class="col-lg-12 min-vh-50">
+    <div class="row p-3">
+        <div class="col-6">
+            <h3>Appeal Rollback</h3>
+        </div>
+        <div class="col-6">
+            <a class="btn btn-warning float-end me-2" href='@Url.Action("Index", "GACGridViewInbox", new {Area="Gridview"})'>
+                <i class="bx bx-arrow-back align-middle"></i> @LabelDictionary["Back"]
+            </a>
+        </div>
+    </div>
+    <hr class="m-0" />
+    <div class="row mt-2 ms-3" style="font-size:17px">
+        <div class="col-lg-1 offset-4">
+            <label class="custom-input-label">Appeal ID</label><span class="text-danger"> *</span>
+        </div>
+        <div class="col-lg-2">
+            @Html.TextBoxFor(x => x.AppealID, new { @id = "AppealID", @class = "form-control DisabledInputs", maxlength = "10", placeholder = "Enter Appeal ID", @autocomplete = "off" })
+            @Html.ValidationMessageFor(x => x.AppealID)
+            <span class="text-danger font-xl"> #</span><span class="text-gray font-sm">(Grievance ID/Registration Year [xx2/2023])</span>
+
+        </div>
+        <div class="col-lg-3">
+            <button type="button" class="btn btn-info" onclick="GetAppealDetails($(this))" id="btnSearch"><i class="bx bx-search align-middle mr-1"></i>Search</button>
+        </div>
+    </div>
+    <div class="row gx-3">
+        <div class="gv-container-action-form">
+            @*@{ Html.RenderAction("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary" }); }*@
+        </div>
+    </div>
+</div>
+<script>
+    var _AppealListContainer = $(".gv-container-action-form");
+    var _BlankAppealHtml = '<div class="px-4 py-3 font-sm text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">@LabelDictionary["FetchingData"]</span></div><br>@LabelDictionary["FetchingData"]</div>';
+    function GetAppealDetails(element) {
+        var AppealID = $("#AppealID").val();
+        _AppealListContainer.html(_BlankAppealHtml);
+        setTimeout(function () { $.ajax({ url: '@Url.Action("GetAppealDetails", "AppealBackTrack", new { Area = "GridView" })' + '?', data: { AppealID: AppealID }, type: "POST", dataType: "HTML", async: false, success: function (data) { if (data) { _AppealListContainer.html(data); } }, }); }, 400);
+    }
+</script>
+

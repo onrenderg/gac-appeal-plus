@@ -1,0 +1,62 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACGridViewInbox_DelayResponses
+@using DigitalNagrik.Areas.GridView.Data
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<style>
+    .td-active {
+        background-color: rgba(67, 89, 113, 0.06) !important;
+    }
+</style>
+
+<hr />
+<div class="px-3">
+    <div class="alert alert-danger py-2 fw-semibold"><i class="bx bx-error me-1 align-text-bottom text-danger"></i>@LabelDictionary["ALERTS"]</div>
+</div>
+
+@if (Model.AlertList != null && Model.AlertList.Count > 0)
+{
+    <div class="font-xxxl">
+        <table class="table w-100 table-borderless">
+            <tbody>
+                @foreach (var Alert in Model.AlertList)
+                {
+                    if (Alert.Flag == GACGridViewInbox.MenuStatus.PendingInDays)
+                    {
+                        <tr title="Click to view details" class="cursor-pointer table-item" style="line-height:1rem;">
+                            <td class="pe-0 ps-3">
+                                @LabelDictionary["Pending"] >=
+                                <div class="btn-group btn-group-xs">
+                                    <button class="btn btn-warning btn-xs dropdown-toggle gv-alert-pendingdays-title" type="button" data-bs-toggle="dropdown" aria-expanded="false">5 @LabelDictionary["day(s)"]</button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" data-days="5" data-qs="@SecureQueryString.SecureQueryString.Encrypt("MenuStatusCd=" + GACGridViewInbox.MenuStatus.PendingInDays + "&IsDateGroup=Y")" onclick="ChangePendingDaysCount($(this))" href="javascript:void(0);">5 @LabelDictionary["day(s)"]</a></li>
+                                        <li><a class="dropdown-item" data-days="15" data-qs="@SecureQueryString.SecureQueryString.Encrypt("MenuStatusCd=" + GACGridViewInbox.MenuStatus.PendingInDays + "&IsDateGroup=Y")" onclick="ChangePendingDaysCount($(this))" href="javascript:void(0);">15 @LabelDictionary["day(s)"]</a></li>
+                                        <li><a class="dropdown-item" data-days="25" data-qs="@SecureQueryString.SecureQueryString.Encrypt("MenuStatusCd=" + GACGridViewInbox.MenuStatus.PendingInDays + "&IsDateGroup=Y")" onclick="ChangePendingDaysCount($(this))" href="javascript:void(0);">25 @LabelDictionary["day(s)"]</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                            <td class="ps-2 pe-3 text-end text-danger gv_labelcount_pendingdays">@Alert.AppealCount</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr title="Click to view details" class="layout-menu-toggle cursor-pointer table-item" onclick="RenderGVAppealListData($(this))" data-qs="@SecureQueryString.SecureQueryString.Encrypt("MenuStatusCd=" + Alert.Flag + "&IsDateGroup=Y")" style="line-height:1rem;">
+                            <td class="pe-0 ps-3">@Alert.AlertTypeDesc</td>
+                            <td style="width:15%" class="ps-2 pe-3 text-end text-danger">@Alert.AppealCount</td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+}
+
+<script>
+    function ChangePendingDaysCount(element) {
+        var days = element.data("days");
+        $('.gv-alert-pendingdays-title').html(days + " days");
+        RenderGVAppealListData(element, days);
+    }
+</script>

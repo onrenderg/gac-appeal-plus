@@ -1,0 +1,29 @@
+﻿@model DigitalNagrik.Models.UserListD
+@{
+    ViewBag.Title = "User Activation Successful";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+
+<div class="container no-padding p-3">
+    <div class="row">
+        <div class="card p-2">
+            <h2 class="mb-3 p-0"><i class="fa fa-check-circle me-2"></i>User Activation Successful</h2>
+            <div class="row">
+                <div class="col-lg-12  text-center">
+                    <br /><br />
+                    <h3 class="text-success">Your user has been successfully activated for Grievance Appellate Committee.</h3>
+                    <br />
+                    <h3 class="text-danger">
+                        Please Login to Your Account
+
+                    </h3>
+                    <br />
+                    <a class="btn btn-primary" href='@Url.Action("Login","Home")'>
+                        <i class="fa fa-user"></i> Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,128 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACGridViewInbox_AppealDetails
+@using DigitalNagrik.Areas.GridView.Data
+@using DigitalNagrik.Models
+@{
+    string IsDocGrid = "N";
+    try { IsDocGrid = ViewBag.IsDocGrid; } catch { }
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+@if (IsDocGrid == "Y")
+{
+    <div class="fw-light mb-3 mt-1">
+        <span>@LabelDictionary["AppealNumber"]: </span><span class="h5">@Model.GrievanceNo</span>
+        <a onclick="ShowComparsionDocument($(this))" href="javascript:void(0)" data-href="@Url.Action("AppealPDF", "Registration", new { Area = "Public", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="btn btn-secondary btn-sm rounded-pill float-end me-2">
+            <i class="bx bx-file me-1 align-text-bottom" style="opacity: 0.6;"></i>@LabelDictionary["ViewAppeal"]
+        </a>
+    </div>
+}
+else
+{
+    <div class="fw-light mb-3 mt-1 hide-gv">
+        <span>@LabelDictionary["AppealNumber"]: </span><span class="h5">@Model.GrievanceNo</span>
+        <a target="_blank" href="@Url.Action("AppealPDF", "Registration", new { Area = "Public", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="btn btn-secondary btn-sm rounded-pill d-block d-lg-inline mt-2 mt-lg-0 float-lg-end mt-lg-n2">
+            <i class="bx bx-file me-1 align-text-bottom"></i>@LabelDictionary["ViewAppeal"]
+        </a>
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-6 mb-3">
+        <div class="fw-semibold form-label">@LabelDictionary["Appellant"]</div>
+        <h6 class="mb-1 mt-1">@Model.User_FullNm</h6>
+        <div><i class="bx bxs-contact align-middle me-1"></i>@Model.User_Mobile_Email</div>
+        @if (!string.IsNullOrWhiteSpace(Model.User_Address))
+        {
+            <div style="line-height: 1.35rem;"><i class="bx bx-building-house align-middle me-1"></i>@Model.User_Address</div>
+        }
+    </div>
+    <div class="col-lg-6 mb-3">
+        <div class="fw-semibold">
+            <span class="form-label">@LabelDictionary["RespondentIntermediary"]</span>
+            @if (Model.GrievanceStatusCd == GACGridViewInbox.GrievanceStatus.UnapprovedIntermediary)
+            {
+                <span class="text-danger ms-2 text-uppercase"><i class="bx bx-error  align-text-top me-1"></i>@LabelDictionary["RespondentIntermediaryVerificationPending"]</span>
+            }
+        </div>
+        <div class=" @(Model.GrievanceStatusCd == GACGridViewInbox.GrievanceStatus.UnapprovedIntermediary ? "text-muted" : "")">
+            <h6 class="mb-1 mt-1">@Model.Intermediary_Title</h6>
+            <div><i class="bx bx-link align-middle me-1"></i>@Model.Intermediary_Url</div>
+            <div><i class="bx bx-at align-middle me-1"></i>@Model.Intermediary_GROEmail</div>
+            @if (!string.IsNullOrWhiteSpace(Model.Intermediary_Address))
+            {
+                <div style="line-height: 1.35rem;"><i class="bx bx-building-house align-middle me-1"></i>@Model.Intermediary_Address</div>
+            }
+        </div>
+    </div>
+</div>
+
+<hr class="mt-0" />
+<div class="mb-3">
+    <div class="fw-semibold form-label">@LabelDictionary["AppealDetails"]</div>
+    <table class="table table-sm ">
+        <tbody class="table-border-bottom-0">
+            @if (!string.IsNullOrWhiteSpace(Model.DateOfComplaint))
+            {
+                <tr>
+                    <td class="ps-0 lh-1_1" style="width:25%">@LabelDictionary["DateofComplaint"]</td>
+                    <td class="pe-0 fw-semibold lh-1_1">@Model.DateOfComplaint</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.DateOfDecision))
+            {
+                <tr>
+                    <td class="ps-0 lh-1_1">@LabelDictionary["DateofDecision"]</td>
+                    <td class="pe-0 fw-semibold lh-1_1">@Model.DateOfDecision</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.BriefOfComplaint))
+            {
+                <tr>
+                    <td class="ps-0 lh-1_1">@LabelDictionary["BriefofComplaint"]</td>
+                    <td class="pe-0 fw-semibold lh-1_1">@Model.BriefOfComplaint</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Keyword))
+            {
+                <tr>
+                    <td class="ps-0 lh-1_1">@LabelDictionary["Subject/Keyword/Tag/Specificprovisioninthelaw"]</td>
+                    <td class="pe-0 fw-semibold lh-1_1">@Model.Keyword</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.GrievanceDesc))
+            {
+                <tr>
+                    <td class="ps-0 lh-1_1">@LabelDictionary["Justification"]</td>
+                    <td class="pe-0 fw-semibold lh-1_1">@Model.GrievanceDesc</td>
+                </tr>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Appeal_Reason))
+            {
+                <tr>
+                    <td class="ps-0 lh-1_1">@LabelDictionary["ReliefSought"]</td>
+                    <td class="pe-0 fw-semibold lh-1_1">@Model.Appeal_Reason</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<hr />
+@if (Model.AppealDocsList.Where(x => x.EvidenceType == "F") != null && Model.AppealDocsList.Where(x => x.EvidenceType == "F").Count() > 0)
+{
+    <div class="mb-3 attachment-container">
+        <div class="fw-semibold form-label">@LabelDictionary["SupportingDocument"]</div>
+        @foreach (var Doc in Model.AppealDocsList.Where(x => x.EvidenceType == "F"))
+        {
+            if (IsDocGrid == "Y")
+            {
+                <a onclick="ShowComparsionDocument($(this))" href="javascript:void(0)" data-href="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + Doc.FilePath + "&FileType=" + Doc.FileType) })"><i class="bx bx-file me-1 text-primary align-text-bottom"></i>@Doc.DocumentType</a>
+                <span class="text-lighter attach-separator font-sm px-1">|</span>
+            }
+            else
+            {
+                <a target="_blank" href="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + Doc.FilePath + "&FileType=" + Doc.FileType) })"><i class="bx bx-file me-1 text-primary align-text-bottom"></i>@Doc.DocumentType</a>
+                <span class="text-lighter attach-separator font-sm px-1">|</span>
+            }
+        }
+    </div>
+}

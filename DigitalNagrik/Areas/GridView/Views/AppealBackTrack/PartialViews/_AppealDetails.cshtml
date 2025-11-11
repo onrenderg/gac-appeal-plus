@@ -1,0 +1,126 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.AppealBackTracking
+@using (Html.BeginForm("SaveAppealBackTracking", "AppealBackTrack", FormMethod.Post, new { id = "frm_SaveAppealBackTracking", enctype = "multipart/form-data" }))
+{
+    <hr class="mt-0" />
+    if (Model.AppealDetailsList.Count > 0)
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(x => x.GrievanceId)
+        @Html.HiddenFor(x => x.RegistrationYear)
+        <div class="row">
+            <div class="col-lg-12">
+                <h4 class="ms-3 mt-2">Appeal Details:</h4>
+            </div>
+        </div>
+        <div class="row mt-2 ms-3" style="font-size:17px;">
+            <table class="table table-borderless table-responsive">
+                <tbody>
+                    <tr>
+                        @if (Model.AppealDetailsList.Count > 0)
+                        {
+                            foreach (var row in Model.AppealDetailsList)
+                            {
+                                <td width="33%">Assigned To: <span class="badge bg-info"><b>@row.GACAbbr</b></span><br />Assigned On: <b>@row.AssignedDateTime</b></td>
+                                <td width="34%">Appeal Status: <span class="badge bg-success"><b>@row.ActionDesc</b></span></td>
+                                <td width="33%">Last Action By:<b> @row.LastActionBy</b><br />Last Action On: <b>@row.LastActionDateTime</b></td>
+                            }
+                        }
+                        else
+                        {
+                            <td><span class="text-gray"><b>No Appeal Found</b></span></td>
+                        }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row mt-2 ms-3" style="font-size:17px">
+            <div class="col-lg-1 offset-2">
+                <label class="custom-input-label"><b>Action(s) (if any)</b></label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-7">
+                @{ if (Model.Actions.Count > 0)
+                    {
+                        var i = 1;
+                        foreach (var item in Model.Actions)
+                        {
+                            <label>
+                                <input class="ActionList form-check-input" type="checkbox" value="@item.Value" name="Action_@i" id="Action_@item.Value"
+                                       onchange="checkChange('@item.Value',this)" /><span style="vertical-align: text-bottom">&nbsp; @item.Text</span>
+                                </label>
+                                <br />
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            <h5 class="text-info"><i class="bx bx-info-circle mr-1"></i>As the Appeal is now in Initial Stage or is Disposed off, No action could be performed on this appeal. </h5>
+                        }
+                }
+                @Html.ValidationMessageFor(x => Model.Actions)
+                @Html.HiddenFor(x => x.ActionString, new { id = "ActionString" })
+                <span id="ActionValidationMsg" class="text-danger"></span>
+            </div>
+        </div>
+        <hr class="mt-0" />
+        <div class="row mt-3 mb-3">
+            @if (Model.Actions.Count > 0)
+            {
+                <div class="col-lg-12 text-center">
+                    <button type="button" class="btn btn-success" id="btnSubmit"><i class="bx bx-check-circle align-middle mr-1"></i>Submit</button>
+                    <button type="button" class="btn btn-danger" id="btnReset"><i class="bx bx-window-close align-middle mr-1"></i>Reset</button>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row mt-2">
+            <div class="col-lg-12 text-center">
+                <h4 class="text-info"><i class="bx bx-info-circle mr-1"></i>No Appeal Found</h4>
+            </div>
+        </div>
+
+    }
+}
+<script>
+        function checkChange(DId, CInput) {
+            var count = $('.ActionList').length;
+            for (var i = 1; i <= count; i++) {
+                var name = "Action_" + i;
+                var str = "";
+                if ($("input[name='" + name + "']").prop("checked") == true) {
+                    for (var j = 1; j <= i; j++) {
+                        $("input[name='" + "Action_" + j + "']").prop("checked", true);
+                    }
+                }
+            }
+            for (var i = 1; i <= count; i++) {
+                var name = "Action_" + i;
+                if ($("input[name='" + name + "']").prop("checked") == true) {
+                    str = ($.trim(str) == "" ? "" : str + ',') + $("input[name='" + name + "']").val();
+                }
+            }
+            $('#ActionString').val(str);
+            //alert("ActionString=" + $('#ActionString').val());
+    }
+
+        $("#btnReset").click(function () {
+            var url = '@Url.Action("Index", "AppealBackTrack",new { Area = "GridView" })';
+            window.location.href = url;
+        });
+
+        $("#btnSubmit").click(function () {
+            if ($("#frm_SaveAppealBackTracking").valid()) {
+                var ActionString = $('#ActionString').val();
+                //alert("GACIDString=" + $('#GACIDString').val());
+                if (ActionString != null && ActionString != "") {
+                    $('#frm_SaveAppealBackTracking').submit();
+                }
+                else {
+                    $('#ActionValidationMsg').html("Please Select Action !");
+                    return false;
+                }
+            }
+        });
+</script>

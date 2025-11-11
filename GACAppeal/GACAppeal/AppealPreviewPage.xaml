@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="GACAppeal.AppealPreviewPage"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    ios:Page.UseSafeArea="true">
+    <NavigationPage.TitleView >
+        <StackLayout x:Name="Custom_Navigation" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" BackgroundColor="Transparent" >
+            <Image Source="goi_icon.png" HeightRequest="40" VerticalOptions="CenterAndExpand"/>
+            <Label x:Name="Lbl_Nav_title" Style="{StaticResource NavBar_LabelStyle}" />
+            <Image Source="app_nic_header.png" x:Name="Image_Nav_nic"  HeightRequest="30" VerticalOptions="CenterAndExpand"/>
+        </StackLayout>
+    </NavigationPage.TitleView>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="language_ico.png" Clicked="Language_Clicked"/>
+        <ToolbarItem IconImageSource="Home_ico.png" Clicked="ToolbarItem_Clicked"/>
+    </ContentPage.ToolbarItems>
+    <Grid Margin="6">
+        <StackLayout>
+            <BoxView Style="{StaticResource BoxView_Line}"/>
+            <Label x:Name="Lbl_Title" Text="Appeal Preivew - ID" Style="{StaticResource LabelStyle_PageTitle}"/>
+            <BoxView Style="{StaticResource BoxView_Line}"/>
+            <ScrollView VerticalOptions="FillAndExpand">
+                <StackLayout VerticalOptions="FillAndExpand">
+                    
+                    <Label Style="{StaticResource LabelStyle_PageTitle}" Padding="2" x:Name="Lbl_Appellant_Detail" Text="Appellant Detail"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_CitizenName_lbl" Text="Name" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_CitizenName" FontAttributes="Bold" Text="Citizen Name" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Mobile_lbl" Text="Mobile" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Mobile" FontAttributes="Bold" Text="Mobile" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Email_lbl" Text="Email" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Email" FontAttributes="Bold" Text="Email" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <BoxView Style="{StaticResource BoxView_Line}"/>
+                    <Label Style="{StaticResource LabelStyle_PageTitle}" Padding="2" x:Name="Lbl_Respondent_Intermediary_Detail" Text="Respondent Intermediary Detail"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Appeal_Date_lbl" Text="Appeal Date" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Appeal_Date" FontAttributes="Bold"  VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Status_lbl" Text="Status" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Status" FontAttributes="Bold" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <!-- New Filed -->
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_DateOfComplaint_lbl" Text="Date of Complaint registered with the intermediary" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_DateOfComplaint" FontAttributes="Bold" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_DateOfDecision_lbl" Text="Date of Decision given by the intermediary" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_DateOfDecision" FontAttributes="Bold" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <!-- End New Filed -->
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Name_Intermediary_lbl" Text="Name of the Respondent Intermediary" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Name_Intermediary" FontAttributes="Bold"  VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_URL_Intermediary_lbl" Text="URL of the Respondent Intermediary" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_URL_Intermediary" FontAttributes="Bold"  VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Email_Intermediary_lbl" Text="Email" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Email_Intermediary" FontAttributes="Bold" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Address_Intermediary_lbl" Text="Address" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Address_Intermediary" FontAttributes="Bold" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_BriefOfComplaint_lbl" Text="Brief of Complaint" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_BriefOfComplaint" FontAttributes="Bold" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Subject_lbl" Text="Subject / Keyword / Tag / Specific provision in the law" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Subject" FontAttributes="Bold" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Relief_Sought_lbl" Text="Relief Sought" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Relief_Sought" FontAttributes="Bold" Text="" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Justification_lbl" Text="Justification for invoking the ground for appeal" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_Justification" FontAttributes="Bold" Text="" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+
+
+
+
+
+
+                    <BoxView Style="{StaticResource BoxView_Line}"/>
+                    <Label Style="{StaticResource LabelStyle_PageTitle}" Padding="2" x:Name="Lbl_Document_Uploaded" Text="Document Uploaded"/>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_CopyOfComplaint" Text="Copy of the complaint made to the Grievance Officer / intermediary and the decision on that complaint given by the intermediary" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <ListView x:Name="DetailedList_CopyOfComplaint" VerticalOptions="Fill" HasUnevenRows="True" ItemTapped="DetailedList_CopyOfComplaint_ItemTapped" IsVisible="false">
+                        <ListView.ItemTemplate >
+                            <DataTemplate>
+                                <ViewCell>
+                                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Spacing="10">
+                                        <Label Text="{Binding FileName}" Style="{StaticResource Hint_LabelStyle}"  TextDecorations="Underline" VerticalTextAlignment="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start"/>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_AnyOther" Text="Any other relevant information" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label x:Name="Link_CD" Text="Click To Download/Delete" Style="{StaticResource Hint_LabelStyle}" TextDecorations="Underline" IsVisible="false" HorizontalOptions="FillAndExpand">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="CD_Tapped"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                    <StackLayout Orientation="Horizontal" VerticalOptions="End" x:Name="Stack_EULA">
+                        <CheckBox x:Name="CheckBox_EULA"  VerticalOptions="CenterAndExpand"/>
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_EULA" Text="I hereby declare that information furnished by me in this appeal is true and correct in every respect, and I understand that if any information is found to be incorrect, my appeal is liable to be rejected."/>
+                    </StackLayout>
+                    
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_SignName" FontAttributes="Bold" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                    <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_FinalSubmittedDateTime" Text="Date and time : _____________ [Indian standard time]" FontAttributes="Bold" VerticalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                </StackLayout>
+            </ScrollView>
+            <StackLayout Orientation="Horizontal" VerticalOptions="End" HorizontalOptions="FillAndExpand">
+                <Button Style="{StaticResource ButtonStyle}" Text="Final Submit" x:Name="Btn_Submit" Clicked="Btn_Submit_Clicked" VerticalOptions="FillAndExpand" Margin="0" HorizontalOptions="FillAndExpand"/>
+            </StackLayout>
+            <Button Style="{StaticResource Danger_ButtonStyle}" Text="Download PDF" x:Name="Btn_DownloadPDF" Clicked="Btn_DownloadPDF_Clicked" VerticalOptions="FillAndExpand" Margin="0" HorizontalOptions="FillAndExpand"/>
+        </StackLayout>
+        <ContentView x:Name="Loading_activity" BackgroundColor="#C0808080" Padding="20, 20" IsVisible="false">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <Frame Style="{StaticResource FrameLoadingStyle}">
+                    <StackLayout Orientation="Horizontal" Padding="6">
+                    <ActivityIndicator IsVisible="true" IsRunning="true" Margin="5"/>
+                    <Label x:Name="Lbl_PleaseWait" Text="Please Wait ..." Style="{StaticResource LabelStyle}" HorizontalOptions="FillAndExpand" WidthRequest="600"/>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </ContentView>
+    </Grid>
+</ContentPage>
+

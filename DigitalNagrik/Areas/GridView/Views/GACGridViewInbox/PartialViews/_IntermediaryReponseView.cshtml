@@ -1,0 +1,68 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.IntermediaryResponseDownloadPDF
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+@if (Model.IntermediaryResponseDownloadPDFResponse.Count > 0)
+{
+    <ul class="list-unstyled font-xxxl">
+        @foreach (var item in Model.IntermediaryResponseDownloadPDFResponse)
+        {
+            <li>
+                <div class="d-flex">
+                    <div style="width:95%">@Html.Raw(item.ResponseText)</div>
+                    <div style="width:5%" class="h4 mb-1 @(item.ResponseValue == "Yes" ? "text-success" : "text-danger")">@item.ResponseValue</div>
+                </div>
+
+                @if (item.ResponseDetails != "")
+                {
+                    <div>Relevant detail/reason: <span style="color: #b78f5e">@item.ResponseDetails</span></div>
+                }
+                <div class="attachment-container">
+                    @if (Model.IntermediaryResponseDownloadPDFsubResponseFiles.Where(x => x.ResponseID == item.ResponseID && x.SubResponseID == "").Count() > 0)
+                    {
+                        <i class="bx bx-paperclip me-1 text-primary align-middle"></i>
+                        foreach (var File in Model.IntermediaryResponseDownloadPDFsubResponseFiles.Where(x => x.ResponseID == item.ResponseID && x.SubResponseID == ""))
+                        {
+                            <a onclick="ShowComparsionDocument($(this))" href="javascript:void(0)" data-href="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + File.File + "&FileType=pdf") })">@LabelDictionary["SupportingDocument"]</a> <span class="text-lighter attach-separator font-sm px-1">|</span>
+                        }
+                    }
+                </div>
+                @if (!string.IsNullOrWhiteSpace(item.ResponseUrls))
+                {
+                    <div>@LabelDictionary["URL(s)"]: @item.ResponseUrls</div>
+                }
+                <ul>
+                    @{
+                        var resultSubResponse = Model.IntermediaryResponseDownloadPDFsubResponse.Where(x => x.ResponseID == item.ResponseID).ToList();
+                    }
+                    @foreach (var item1 in resultSubResponse)
+                    {
+
+                        <li>
+                            @item1.SubResponseText<br />
+                            <div style="color: #b78f5e">@LabelDictionary["Relevantdetail/reason"]: @item1.SubResponseDetails</div>
+                            <div class="attachment-container">
+                                @if (Model.IntermediaryResponseDownloadPDFsubResponseFiles.Where(x => x.ResponseID == item.ResponseID && x.SubResponseID == item1.SubResponseID).Count() > 0)
+                                {
+                                    <i class="bx bx-paperclip me-1 text-primary align-middle"></i>
+                                    foreach (var File in Model.IntermediaryResponseDownloadPDFsubResponseFiles.Where(x => x.ResponseID == item.ResponseID && x.SubResponseID == item1.SubResponseID))
+                                    {
+                                    }
+                                }
+                            </div>
+                        </li>
+                    }
+                </ul>
+                <hr />
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <div class="px-2 py-3 text-center text-muted "><div class=""><i class="bx bx-calendar-exclamation me-2 h1 mb-1 mb-0 text-muted"></i></div>@LabelDictionary["RespondentIntermediaryResponseAwaited"]</div>
+}
+
+
+

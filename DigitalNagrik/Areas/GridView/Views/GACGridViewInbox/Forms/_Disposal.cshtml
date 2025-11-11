@@ -1,0 +1,72 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACAppealDispose
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<div class="modal-header pt-3">
+    <h4 class="modal-title">@LabelDictionary["UploadFinalDecision"] (<span class="h5">@LabelDictionary["AppealNumber"]: </span><span>@Model.GrievanceId/@Model.RegistrationYear</span>)</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<hr class="mb-0 mt-2" />
+@using (Html.BeginForm("GACDisposeAppeal", "GACGridViewInbox", FormMethod.Post, new { @class = "frmGACDisposeAppeal", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(x => x.GrievanceId)
+    @Html.HiddenFor(x => x.RegistrationYear)
+
+    <div class="modal-body pb-4 pt-3 px-3">
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="mb-3">
+                    <label class="form-label">@LabelDictionary["SignedcopyofDecision"]</label><span class="font-sm ms-1">(@LabelDictionary["PDF"], @LabelDictionary["Max.Size"]: 4MB)</span><span class="text-danger ms-1">*</span>
+                    @Html.TextBoxFor(m => m.UploadPDF, new { type = "file", @accept = ".pdf", @class = "form-control fileinput-button", @id = "fileUploadPDF" })
+                    @Html.ValidationMessageFor(m => m.UploadPDF)
+                </div>
+                <div id="gv-container-final-doc"></div>
+                <hr class="mt-0" />
+                <div class="mb-3">
+                    <button type="button" class="btn btn-primary" onclick="Submit($(this))">@LabelDictionary["Submit"]</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+                </div>
+            </div>
+
+            <div class="col-xl-6">
+                <div class="bg-white gv-container-comparison-doc"></div>
+
+                <div class="mb-2 ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["AppealDetails"]</div>
+                    <div style="height:230px" class="overflow-auto">
+                        @{ Html.RenderAction("GetAppealDetailsGrid_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+                <hr />
+                <div class="ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["RespondentIntermediaryResponse"]</div>
+                    <div style="height:370px" class="overflow-auto">
+                        @{ Html.RenderAction("IntermediaryResponseView", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $.validator.unobtrusive.parse($('.frmGACDisposeAppeal'));
+
+    $(document.body).on("change", "#fileUploadPDF", function () {
+        DocContainer = $("#gv-container-final-doc");
+        var form = $('.frmGACDisposeAppeal');
+        if (form.valid()) {
+            var formdata = new FormData(form.get(0));
+            $.ajax({
+                type: "POST", url: '@Url.Action("DocFileToBase64String", "GACGridViewInbox", new { Area = "GridView" })', data: formdata, dataType: 'JSON', contentType: false, processData: false,
+                success: function (data) { if (data) { DocContainer.html('<object width="100%" height="450px;" data="data:application/pdf;base64,' + data + '"></object>'); } else { DocContainer.html(''); } },
+                error: function (data) { DocContainer.html(''); }
+            });
+        } else { DocContainer.html(''); }
+    });
+</script>
+
+

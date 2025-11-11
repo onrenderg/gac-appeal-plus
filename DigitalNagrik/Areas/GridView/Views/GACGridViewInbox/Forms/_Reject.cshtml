@@ -1,0 +1,33 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACAppealReject
+
+<div class="shadow rounded-2 p-3 mb-3">
+    <div class="fw-semibold text-muted font-md mb-2"><i class="bx bx-comment-x me-1 align-bottom"></i>Reject Appeal</div>
+    @using (Html.BeginForm("GACRejectAppeal", "GACGridViewInbox", FormMethod.Post, new { @class = "frmGACRejectAppeal" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(x => x.GrievanceId)
+        @Html.HiddenFor(x => x.RegistrationYear)
+        <div class="mb-3">
+            <div class="input-group">
+                <span class="input-group-text bg-light font-md">Reason</span>
+                @Html.DropDownListFor(m => m.RejectActionId, Model.RejectActionList, "--Select--", new { @class = "form-select" })
+            </div>
+            @Html.ValidationMessageFor(x => x.RejectActionId)
+        </div>
+
+        <div class="mb-3">
+            @Html.TextAreaFor(x => x.Remarks, new { @id = "Remarks", @class = "form-control", maxlength = "1000", placeholder = "Enter Remarks here ..." })
+            @Html.ValidationMessageFor(x => x.Remarks)
+        </div>
+
+        <div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="Submit($(this))">Submit</button>
+            <a href="javascript:void(0);" class="btn btn-secondary btn-sm" data-bs-dismiss="modal" onclick="$('.gv-container-action-form').html('');">Cancel</a>
+        </div>
+    }
+</div>
+
+<script>
+    $.validator.unobtrusive.parse($(".frmGACRejectAppeal"));
+</script>

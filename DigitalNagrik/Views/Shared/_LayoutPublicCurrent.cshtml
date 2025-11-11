@@ -1,0 +1,253 @@
+﻿@using DigitalNagrik.Models
+@{
+    string DefaultLangCulture = "en-IN";
+    string DefaultLangCultureName = "English";
+    string RegnlLangCulture = "hi-IN";
+    string RegnlLangCultureName = "हिंदी";
+
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<!DOCTYPE html>
+<html lang="en">
+@if (IsSectionDefined("cssSection"))
+{
+    @RenderSection("cssSection")
+}
+
+@if (IsSectionDefined("jsSection"))
+{
+    @RenderSection("jsSection")
+}
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Grievance Appellate Committee</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <link href=@Url.Content("~/assets/img/favicon.png") rel="icon">
+    <link href=@Url.Content("~/assets/css/font.css") rel="stylesheet" />
+    <link href=@Url.Content("~/assets/vendor/fontawesome-free/css/all.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/animate.css/animate.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/aos/aos.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/bootstrap/css/bootstrap.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/bootstrap-icons/bootstrap-icons.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/boxicons/css/boxicons.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/glightbox/css/glightbox.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/vendor/swiper/swiper-bundle.min.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/css/jquery.dataTables.min.css") rel="stylesheet" />
+    <link href=@Url.Content("~/assets/alertifyjs/css/alertify.min.css") rel="stylesheet" />
+    <link href=@Url.Content("~/assets/css/style.css") rel="stylesheet">
+    <link href=@Url.Content("~/assets/css/customstyle.css") rel="stylesheet">
+    <script src=@Url.Content("~/assets/js/jquery.min.js")></script>
+    <script src=@Url.Content("~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js")></script>
+    <script src=@Url.Content("~/assets/js/jquery.validate.min.js")></script>
+    <script src=@Url.Content("~/assets/js/jquery.validate.unobtrusive.min.js")></script>
+    <script src=@Url.Content("~/assets/js/jquery.validate.custom.js")></script>
+    <script src=@Url.Content("~/assets/js/bootstrap-datepicker.js")></script>
+    <script src=@Url.Content("~/assets/js/jquery.datatable.min.js")></script>
+    <script src=@Url.Content("~/assets/alertifyjs/alertify.min.js")></script>
+    <style>
+        .form-control:disabled, .form-control[readonly] {
+            background-color: #e9ecef;
+            opacity: 1;
+        }
+
+        .validation-summary-errors {
+            color: red;
+        }
+
+        .field-validation-error {
+            color: red;
+        }
+
+        .btn-sm, .btn-group-sm > .btn {
+            padding: 0.25rem 0.6875rem;
+            font-size: 0.75rem;
+            border-radius: 0.25rem;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+    </style>
+
+    <script>
+        function RedirectToUrl(Url) {
+            alert(Url);
+            window.location.href = Url;
+        }
+    </script>
+</head>
+
+<body class="globe">
+    <div class="main-container">
+        <div id="topbar">
+            <div class="px-3">
+                <div class="row">
+                    <div class="col-lg-6">
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="text-end pt-1">
+                            @if (ViewData["LanguageMaster"] != null)
+                            {
+                                var objList = new List<mLanguageMaster>();
+                                objList = (List<mLanguageMaster>)ViewData["LanguageMaster"];
+                                <div class="dropdown">
+                                    <button class="dropbtn" style="min-width:150px;">@objList.Where(x => x.languageCode == (UserSession.LangCulture == null ? "en-IN" : UserSession.LangCulture)).FirstOrDefault().languageDescriptionlocal   </button>
+                                    <div class="dropdown-content mt-1">
+                                        @foreach (var obj in objList)
+                                        {
+                                            if (obj.languageCode != UserSession.LangCulture)
+                                            {
+                                                @Html.ActionLink(obj.languageDescriptionlocal, "ChangeLanguage", "CommonControls", new { Area = "", LangCulture = obj.languageCode }, "")
+                                            }
+                                        }
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container main-content py-xl-5">
+            @RenderBody()
+        </div>
+        <div class="footer position-relative" style="padding-top: 30px; padding-bottom: 30px;">
+            <div class="container">
+                <div class="footer-c" style="text-align: center">
+                    <div stlyle="d-flex " style="font-weight:bold ;">
+                        @DigitalNagrik.Models.PublicMenu.RenderMenu()
+                    </div>
+                    @*<div>
+                        Any person aggrieved by a decision of an intermediary’s Grievance Officer may appeal to the Grievance Appellate Committee within 30 days of the receipt of communication from the Grievance Officer. Submit your grievance ONLY if the Grievance Officer (GO) of the relevant intermediary has been contacted, and within 30 days of receiving the decision from the GO or on Non receipt of any response from the intermediary within 30 days.
+
+                        The Grievance Appellate Committee (GAC) deals with the appeals of users (Digital Nagriks) aggrieved by decisions of Grievance Officers of social media intermediaries and other intermediaries on complaints of users or victims against violation of the rules and any other matters pertaining to the computer resources made available by the intermediary.
+
+                        The GAC is an online dispute resolution mechanism. The entire appeal process, from filing to decision, is in digital mode. The Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 ["IT Rules, 2021"] and GAC aim to ensure a Safe, Trusted and Accountable Internet for Indian users. GAC functions as a regulatory body overseeing the resolution of appeals related to social media platforms, including but not limited to Facebook, Instagram, WhatsApp, Twitter, LinkedIn, etc.
+
+                        Note:
+
+                        - Cases/matters relating to financial fraud or cybercrime, may please be reported on cybercrime helpline number “1930” or visit the website "<a href="https://www.cybercrime.gov.in" target="_blank" rel="noopener noreferrer">
+                            https://www.cybercrime.gov.in
+                        </a>”.
+
+                        - FAQ on GAC website “<a href="https://gac.gov.in/CMSData/FAQs" target="_blank" rel="noopener noreferrer">
+                            https://gac.gov.in/CMSData/FAQs
+                        </a>” be referred before filing appeal, for any assistance.
+
+                        - GAC does not handle financial fraud or cybercrime cases.
+
+                    </div>*@
+                    <br>
+                    @Html.Raw(LabelDictionary["Disclaimer"])
+                    <br>
+                    @Html.Raw(LabelDictionary["DesignedDevelopedbyNIC"]) <a href="https://www.nic.in" target="_blank" rel="noopener noreferrer">
+                        <img src="@Url.Content("~/assets/img/iconic_logo_v3.png")" height="40" />
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    @{Html.RenderPartial("_Disclaimer"); }
+    <div class="modal modal-lg fade" id="divSSMIOfficerList" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #1a6c94 !important;color :#ffffff;">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">SSMI Grievance Officers</h1>
+                    <button type="button" class="" data-bs-dismiss="modal" aria-label="Close" style="background-color: #1a6c94 !important; color: #ffffff !important; border: none;">X</button>
+                </div>
+                <div class="modal-body">
+                    <div id="dvSSMILIST">
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <div style="text-align :center ;width:100%;">
+                        <button type="button" class="btn btn-sm btn-secondary " style="background-color: #1a6c94;font-size :14px;" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src=@Url.Content("~/assets/vendor/purecounter/purecounter_vanilla.js")></script>
+    <script src=@Url.Content("~/assets/vendor/aos/aos.js")></script>
+    <script src=@Url.Content("~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js")></script>
+    <script src=@Url.Content("~/assets/vendor/glightbox/js/glightbox.min.js")></script>
+    <script src=@Url.Content("~/assets/vendor/swiper/swiper-bundle.min.js")></script>
+    <script src=@Url.Content("~/assets/vendor/php-email-form/validate.js")></script>
+    <script>
+    $('#btnAdminLogin').click(function () {
+       window.location.href = '@Url.Action("ParichayCall", "SSOLogin", new { Area = "" })';
+    });
+         function showDisclaimer() {
+            $("#divDisclaimer").modal('show');
+        }
+
+
+        function showSSMIOfficer() {
+
+            $("#dvSSMILIST").html('');
+            $.ajax({
+                url: '@Url.Action("getSSMIOfficerList", "Home", new { Area = "" })', type: 'GET', dataType: "HTML",
+                success: function (data) {
+
+                    if (data != "") {
+                        $("#dvSSMILIST").html(data);
+                        $("#divSSMIOfficerList").modal('show');
+                    }
+                    else if (data == "") {
+                        //alertify.alert("Info", "No Bills Found.", function () { });
+                    }
+
+                }
+
+            }).done(function () { });
+        }
+    </script>
+    <script src=@Url.Content("~/assets/js/main.js")></script>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script type="text/javascript">
+                window.onload = function () {
+                    alertify.success('@TempData["SuccessMessage"]');
+                 };
+        </script>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script type="text/javascript">
+                window.onload = function () {
+                    alertify.error('@TempData["ErrorMessage"]');
+                 };
+        </script>
+    }
+
+    @if (TempData["AlertStatus"] != null)
+    {
+        DigitalNagrik.Models.BALCommon.CustomClientAlerts Alert = (DigitalNagrik.Models.BALCommon.CustomClientAlerts)TempData["AlertStatus"];
+        <script type="text/javascript">
+            $(function () { alertify.alert("<h5 class='m-0'><i class='fa @Alert.AlertIcon @Alert.AlertColor me-1'></i> @Alert.AlertTitle</h5>", "@Html.Raw(Alert.AlertMessage)", function () { }); });
+        </script>
+    }
+
+</body>
+
+</html>

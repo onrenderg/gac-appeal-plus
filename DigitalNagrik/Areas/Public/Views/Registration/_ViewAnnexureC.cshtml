@@ -1,0 +1,30 @@
+﻿@model DigitalNagrik.Areas.Public.Models.ListAnnexureC
+<div class=" table table-responsive">
+    <table style="width:100%;" class="table  table-dark">
+        <tr>
+            <th style="width:15%;">Section</th>
+            <th style="width:70%;">Extract IT Rule</th>
+            <th style="width:15%;">Related Subject To Entry</th>
+        </tr>
+    </table>
+    <div style="max-height:500px;overflow:auto ;" class=" table table-responsive">
+        <table style="width:100%;" class="table table-striped">
+
+            @if (Model.list != null)
+            {
+                if (Model.list.Count > 0)
+                {
+                    foreach (DigitalNagrik.Areas.Public.Models.mAnnexureC obj in Model.list)
+                    {
+                        <tr>
+                            <td style="width:15%;">@obj.Section </td>
+                            <td style="width:70%;">@obj.ExtractITRule   </td>
+                            <td style="width:15%;">@obj.RelatedSubjectEntry  </td>
+                        </tr>
+                    }
+
+                }
+            }
+        </table>
+    </div>
+</div>

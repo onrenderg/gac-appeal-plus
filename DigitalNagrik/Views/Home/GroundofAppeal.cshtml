@@ -1,0 +1,103 @@
+﻿
+@{
+    ViewBag.Title = "GroundofAppeal";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+
+<section class="breadcrumbs">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2><b>Grounds for Appeal </b></h2>
+            <ol>
+                <li><a href=@Url.Action("Index","Home",new {Area=""})>Home</a></li>
+                <li>GAC </li>
+                <li>Grounds for Appeal</li>
+            </ol>
+        </div>
+    </div>
+</section>
+
+<section class="inner-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h5>Grounds for appeal and the relevant Grievance Appellate Committee (GAC):</h5>
+            </div>
+
+        </div>
+        <div class="row mt-2">
+            <div class="col-12">
+                <table class="table table-bordered table-responsive" style="border: 1px solid #ccc;">
+                    <thead>
+                        <tr class="table-primary">
+                            <th scope="col">Grounds for Appeal</th>
+                            <th scope="col">Related to GAC</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>Rules, regulations, policy or agreement, and changes in them, not published or intimated</li>
+                                    <li>Rules, regulations, policy or agreement not available in language of choice</li>
+                                    <li>Hosting, displaying etc. without having right over information</li>
+                                    <li>Information that violates intellectual property right</li>
+                                    <li>Information that contains software designed to endanger computer resource</li>
+                                    <li>Information that violates any law other than a criminal law or a law relating to the media</li>
+                                    <li>Non-observance of prescribed security practices and procedures</li>
+                                    <li>Reasonable measures not taken for accessibility, privacy or transparency</li>
+                                    <li>Not identifying information advertised, marketed, sponsored, owned or exclusively controlled</li>
+                                    <li>Non-implementation of requisite grievance mechanism</li>
+                                    <li>Non-implementation of requisite user verification mechanism</li>
+                                    <li>User not notified prior to removal or disablement of access</li>
+                                    <li>User not given opportunity to dispute the removal or disablement of access</li>
+                                    <li>Dispute raised by user regarding removal or disablement of access not decided</li>
+                                </ul>
+                            </td>
+                            <td>
+                                <span style="font-weight: 700">GAC 1: </span>
+                                (which will include an ex officio member from the Ministry of Electronics and Information Technology)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>Obscene or pornographic or paedophilic information or information that invades privacy, including bodily privacy</li>
+                                    <li>Information insulting or objectionable to a gender, race or ethnicity</li>
+                                    <li>Information relating to or encouraging money laundering or gambling</li>
+                                    <li>Information promoting enmity on grounds of religion or caste</li>
+                                    <li>Information that is harmful to child</li>
+                                    <li>Information that impersonates another person</li>
+                                    <li>Information that threatens India's unity, integrity, defence, security or sovereignty</li>
+                                    <li>Information that threatens friendly relations with or insults other nations</li>
+                                    <li>Information that threatens public order or incites commission of cognizable crime</li>
+                                    <li>Information that prevents investigation of crime</li>
+                                    <li>Information that violates any criminal law</li>
+                                    <li>Non-removal of content showing complainant in the nude or in sexual act, or impersonating or morphing her/his image</li>
+                                </ul>
+                            </td>
+                            <td><span style="font-weight: 700">GAC 2: </span>(which will include an ex officio member from the Ministry of Home Affairs)</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>Misinformation or patently false or misleading information</li>
+                                    <li>Information that violates any law relating to the media</li>
+                                </ul>
+                            </td>
+                            <td><span style="font-weight: 700">GAC 3:</span> (which will include an ex officio member from the Ministry of Information and Broadcasting)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h5>Note: In case an appeal is related to more than one ground, the secretariat for the GACs will assign it to the GAC to which the matter appears to relate to a greater degree.</h5>
+            </div>
+
+        </div>
+    </div>
+</section>
+

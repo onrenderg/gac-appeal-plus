@@ -1,0 +1,109 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACGridViewInbox_AppealDetails
+@using DigitalNagrik.Areas.GridView.Data
+@using DigitalNagrik.Models
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<div class="mt-3 mb-1 font-xxxl">
+    @if (string.IsNullOrWhiteSpace(Model.MatterSummary))
+    {
+        if (UserSession.RoleID == UserRoles.GACManager)
+        {
+            if (Model.Transfer_RequestStatus == GACGridViewInbox.TransferRequestStatus.Submitted)
+            {
+                <div class="alert alert-warning mb-2" style="line-height: 1.2rem;">
+                    <div>@LabelDictionary["AppealTransferRequestispendingwiththeManager"]</div>
+                    <div>@LabelDictionary["RequestNumber"]: <span class="fw-semibold">TR/@Model.RegistrationYear/@(Model.GrievanceId)/@Model.Transfer_RequestId</span> <span class="px-1">@LabelDictionary["dated"]</span> <span class="fw-semibold">@Model.Transfer_TransRequestDate</span></div>
+                </div>
+            }
+            else if (Model.Transfer_RequestStatus == GACGridViewInbox.TransferRequestStatus.Rejected)
+            {
+                <div class="alert alert-danger mb-2" style="line-height:1.2rem;">
+                    <div>@LabelDictionary["AppealTransferRequesthasbeenrejectedbytheManager"]</div>
+                    <div>@LabelDictionary["RequestNumber"]: <span class="fw-semibold">TR/@Model.RegistrationYear/@(Model.GrievanceId)/@Model.Transfer_RequestId</span> <span class="px-1">@LabelDictionary["dated"]</span> <span class="fw-semibold">@Model.Transfer_TransRequestDate</span></div>
+                    <div>@LabelDictionary["Remarks"]: <span class="fw-semibold">@Model.Transfer_RequestStatusRemarks</span></div>
+                </div>
+            }
+            else if (Model.Transfer_RequestStatus == GACGridViewInbox.TransferRequestStatus.Approved)
+            {
+                <div class="alert alert-info mb-2" style="line-height: 1.2rem;">
+                    <div>@LabelDictionary["Appealhasbeentransfered"] @LabelDictionary["FromGAC"] @Model.Transfer_FromGAC, @LabelDictionary["Remarks"]: <span class="fw-semibold">@Model.Transfer_RequestStatusRemarks</span></div>
+                </div>
+            }
+        }
+        else if (UserSession.RoleID == UserRoles.Secretariat)
+        {
+            if (Model.Transfer_RequestStatus == GACGridViewInbox.TransferRequestStatus.Submitted)
+            {
+                <div class="alert alert-warning mb-2" style="line-height: 1.2rem;">
+                    <div>@LabelDictionary["AppealTransferRequestispendingforapproval"]</div>
+                    <div>@LabelDictionary["RequestNumber"]: <span class="fw-semibold">TR/@Model.RegistrationYear/@(Model.GrievanceId)/@Model.Transfer_RequestId</span> <span class="px-1">@LabelDictionary["dated"]</span> <span class="fw-semibold">@Model.Transfer_TransRequestDate</span></div>
+                    <div>@LabelDictionary["Remarks"]: <span class="fw-semibold">@Model.Transfer_RequestRemarks</span></div>
+                </div>
+            }
+        }
+    }
+
+    @if (Model.GrievanceStatusCd == GACGridViewInbox.GrievanceStatus.UnapprovedIntermediary)
+    {
+        <span class="text-danger"><i class="bx bx-calendar-exclamation me-1 text-danger"></i>@LabelDictionary["RespondentIntermediaryVerificationPending"]</span>
+    }
+    else
+    {
+        if (Model.IsIntermediaryReply == "N")
+        {
+            if (Model.Is72Hrs == "Y")
+            {
+                <span class="text-danger"><i class="bx bx-calendar-exclamation me-1 text-danger"></i>@LabelDictionary["Noresponsein96hrs."]</span>
+                if (UserSession.RoleID == UserRoles.GACManager)
+                {
+                    <a class="text-primary ms-1" href="javascript:void(0);" onclick="TakeAction($(this),'M')" data-modalclass="xxl" data-url="@Url.Action("OpenIntermediaryResponseDetails", "Intermediary", new { Area = "Intermediary", RegistrationYear = Model.RegistrationYear, GrievanceId = Model.GrievanceId, OpenInModal = "Y", HeaderText = "Add Response",FormName="GV" })">@LabelDictionary["Clickheretoenterresponse"]</a>
+                }
+            }
+            else
+            {
+                <div class="text-danger"><i class="bx bx-calendar-exclamation me-1"></i>@LabelDictionary["RespondentIntermediaryResponseAwaited"]: <span class="fw-semibold">@Html.Raw(BALCommon.ConvertMinToDHM(Model.IntermediaryReplyPendingForMins))</span></div>
+            }
+        }
+        else
+        {
+            <div title="Response received on @Model.IntermediaryReplyDt"><i class="bx bx-check-circle me-1 align-text-bottom text-success"></i>@LabelDictionary["RespondentIntermediaryResponseReceived"] <a target="_blank" class="" href="@Url.Action("IntermediaryDownloadPDF", "Intermediary", new { Area = "Intermediary", qs1 = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })"><i class='me-1 ms-2 align-middle bx bx-message-alt'></i>@LabelDictionary["ViewResponse"]</a></div>
+        }
+    }
+
+    @if (Model.GrievanceActionId == GACGridViewInbox.AppealAction.PrepareSummary || Model.GrievanceActionId == GACGridViewInbox.AppealAction.DecisionGAC)
+    {
+        <div class="mt-1">
+            <i class="bx bx-check-circle me-1 align-text-bottom text-success"></i>@LabelDictionary["MatterSummaryprepared"]
+            <a class="" target="_blank" href="@Url.Action("PrintMatterSummary", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId + "&IsDraft=N") })"><i class='me-1 ms-2 align-text-top bx bx-printer'></i>@LabelDictionary["Print"]</a>
+        </div>
+    }
+    @if (Model.IsChairpersonDecision == "Y")
+    {
+        <div class="mt-1">
+            <i class="bx bx-check-circle me-1 align-text-bottom text-success"></i>@LabelDictionary["ChairpersonDecision"]: <b>@Model.DecisionType</b>
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.DraftDecision))
+    {
+        <div class="mt-1">
+            <i class="bx bx-check-circle me-1 align-text-bottom text-success"></i>@LabelDictionary["DraftDecisionPrepared"]
+            <a class="" target="_blank" href="@Url.Action("PrintDraftDecision", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })"><i class='me-1 ms-2 align-text-top bx bx-printer'></i>@LabelDictionary["Print"]</a>
+        </div>
+    }
+    @if (Model.GrievanceStatusCd == GACGridViewInbox.GrievanceStatus.Disposed)
+    {
+        <div class="mt-1">
+            <i class="bx bx-check-circle me-1 align-text-bottom text-success"></i>@LabelDictionary["FinalDecision"] <a class="" target="_blank" href="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + Model.DecisionFilePath + "&FileType=pdf") })"><i class='me-1 ms-1 align-text-top bx bx-file'></i>@LabelDictionary["View"]</a>
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.ComplianceDate))
+    {
+        <div class="mt-1">
+            <div title="Compliance received on @Model.ComplianceDate"><i class="bx bx-check-circle me-1 align-text-bottom text-success"></i>Compliance Received on @Model.ComplianceDate  <a href="javascript:void(0)" data-url="@Url.Action("OpenComplianceDetails", "IntermediaryDashboard", new { Area = "Intermediary", RegistrationYear= Model.RegistrationYear,GrievanceId= Model.GrievanceId, HeaderText=@LabelDictionary["ViewCompliance"] })" onclick="ViewTracker($(this))"><i class="me-1 ms-1 align-text-top bx bx-file"></i>@LabelDictionary["ViewCompliance"]</a></div>
+
+
+        </div>
+    }
+</div>

@@ -1,0 +1,83 @@
+﻿@using DigitalNagrik.Models
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutDashGAC.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<style>
+    .font-lg {
+        font-size: 14px;
+    }
+
+    .font-md {
+        font-size: 13px;
+    }
+
+    .font-sm {
+        font-size: 12px;
+    }
+
+    .font-xs {
+        font-size: 11px;
+    }
+
+    .font-xxs {
+        font-size: 10px;
+    }
+
+    .text-orange {
+        color: #ed9943;
+    }
+
+    .spinner-border-xs {
+        width: 0.8rem;
+        height: 0.8rem;
+        border-width: 0.1em;
+    }
+</style>
+<style>
+    .min-vh-50 {
+        min-height: 80vh !important;
+    }
+</style>
+<div class="container-fluid flex-grow-1 px-3 pt-3 pb-0 min-vh-50">
+    <div class="row py-2 mb-0">
+        <div class="col-lg-3 h3 mb-1 fw-bold">
+            <i class="bi bi-file-text me-2"></i>@LabelDictionary["LogAuditTrailReport"]
+        </div>
+        <div class="col-lg-9">
+            <a class="btn btn-warning float-end me-2" href='@Url.Action("Index", "GACGridViewInbox", new {Area="GridView"})'>
+                <i class="bx bx-arrow-back align-middle"></i> @LabelDictionary["Back"]
+            </a>
+        </div>
+    </div>
+    <hr class="mt-2 mb-3" />
+    <div class="row gx-3">
+        @{ Html.RenderAction("Header_PV", "LogAuditTrail", new { Area = "Reports" }); }
+    </div>
+    <div class="row gx-3">
+        <div class="gv-container-action-form">
+            @*@{ Html.RenderAction("DataList", "LogAuditTrail", new { Area = "Reports" }); }*@
+        </div>
+    </div>
+</div>
+<script>
+    var _AppealActionFormContainer = $(".gv-container-action-form");
+    var _FormLoadHtml_Grid = '<div class="px-4 py-3 font-sm text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">@LabelDictionary["FetchingData"]</span></div><br>@LabelDictionary["FetchingData"]</div>';
+    var _AppealModalActionFormContainer = $("#gv-action-modal-content");
+
+
+    function ViewAppeals(element) {
+        $('#frm_LogAuditTrail').removeData("validator").removeData("unobtrusiveValidation");
+        $.validator.unobtrusive.parse($('#frm_LogAuditTrail'));
+            if ($("#frm_LogAuditTrail").valid()) {
+                var UserTypeID = $("#UserTypeID").val();
+                var FromDate = $("#FromDate").val();
+                var ToDate = $("#ToDate").val();
+                var UserID = $("#UserID").val();
+                var URL = element.data("url"); var ActionContainer;
+                ActionContainer = _AppealActionFormContainer; _AppealModalActionFormContainer.html(_FormLoadHtml_Grid); ActionContainer.html(_FormLoadHtml_Grid);
+                setTimeout(function () { $.ajax({ url: URL, type: "GET", data: { UserID: UserID, UserTypeID: UserTypeID, FromDate: FromDate, ToDate: ToDate }, dataType: "HTML", async: false, success: function (data) { if (data) { ActionContainer.html(data); } } }); }, 400);
+            }
+         }
+</script>

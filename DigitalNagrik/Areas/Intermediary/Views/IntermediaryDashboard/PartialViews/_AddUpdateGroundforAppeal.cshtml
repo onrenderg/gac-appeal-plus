@@ -1,0 +1,141 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.GroundforAppealsList
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="bx bx-user text-primary me-1"></i>@LabelDictionary["Add/UpdateGround(s)forAppeal"]</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <hr class="mt-0" />
+    <div class="modal-body">
+        @using (Html.BeginForm("SaveGroundforAppeal", "IntermediaryDashboard", FormMethod.Post, new { id = "frm_SaveGroundforAppeal", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.GroundId)
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["GroundTitle"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextAreaFor(x => x.GroundTitle, new { @id = "GroundTitle", @class = "form-control DisabledInputs", maxlength = "200", placeholder = @LabelDictionary["GroundTitle"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.GroundTitle)
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["CorrespondingITRule"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextAreaFor(x => x.CorrespondingITRule, new { @id = "CorrespondingITRule", @class = "form-control DisabledInputs", maxlength = "50", placeholder = @LabelDictionary["CorrespondingITRule"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.CorrespondingITRule)
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["GACName"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.DropDownListFor(m => m.GACId, Model.GACList, @LabelDictionary["Select"], new { @class = "form-select" })
+                    @Html.ValidationMessageFor(x => x.GACId)
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["IntermediaryResponseNeeded"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-check form-switch">
+                        @if (Model.IntermediaryResponseNeeded == "Y")
+                        {
+                            <input class="form-check-input" type="checkbox" role="switch" id="IntermediaryResponseNeeded" name="IntermediaryResponseNeeded" checked>
+                        }
+                        else
+                        {
+                            <input class="form-check-input" type="checkbox" role="switch" id="IntermediaryResponseNeeded" name="IntermediaryResponseNeeded">
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["EntryRequired"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-check form-switch">
+                        @if (Model.EntryRequired == "Y")
+                        {
+                            <input class="form-check-input" type="checkbox" role="switch" id="EntryRequired" name="EntryRequired" checked>
+                        }
+                        else
+                        {
+                            <input class="form-check-input" type="checkbox" role="switch" id="EntryRequired" name="EntryRequired">
+                        }
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["EntryFieldLabel"]</label><span class="text-danger"> </span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextAreaFor(x => x.EntryFieldLabel, new { @id = "EntryFieldLabel", @class = "form-control DisabledInputs", maxlength = "100", placeholder = @LabelDictionary["EntryFieldLabel"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.EntryFieldLabel)
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["ITExtractRule"]</label><span class="text-danger"> </span>
+                </div>
+                <div class="col-lg-10">
+                    @Html.TextAreaFor(x => x.ITRuleExtract, new { @id = "ITRuleExtract", @class = "form-control DisabledInputs", maxlength = "4000", placeholder = @LabelDictionary["ITExtractRule"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.ITRuleExtract)
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["Subject/Keyword/Specificprovisioninthelaw"]</label><span class="text-danger"> </span>
+                </div>
+                <div class="col-lg-10">
+                    @Html.TextAreaFor(x => x.Grounds, new { @id = "Grounds", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["Subject/Keyword/Specificprovisioninthelaw"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.Grounds)
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["ListOrder"]</label><span class="text-danger"> </span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.ListOrder, new { @id = "ListOrder", @class = "form-control DisabledInputs", maxlength = "2", placeholder = @LabelDictionary["ListOrder"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.ListOrder)
+                </div>
+                <div class="col-lg-2">
+                    @LabelDictionary["IsActive"]
+                </div>
+                <div class="col-2">
+                    <div class="form-check form-switch">
+                        @if (Model.IsActive == "Y")
+                        {
+                            <input class="form-check-input" type="checkbox" role="switch" id="IsActive" name="IsActive" checked>
+                        }
+                        else
+                        {
+                            <input class="form-check-input" type="checkbox" role="switch" id="IsActive" name="IsActive">
+                        }
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="btnSubmit">
+            <i class="bx-check-circle bx align-middle"></i>&nbsp;@LabelDictionary["Submit"]
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1 align-middle"></i>@LabelDictionary["Close"]</button>
+    </div>
+</div>
+
+<script>
+    $('#frm_SaveGroundforAppeal').removeData("validator").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse($('#frm_SaveGroundforAppeal'));
+    $("#btnSubmit").click(function () {
+        if ($("#frm_SaveGroundforAppeal").valid()) {
+            $('#frm_SaveGroundforAppeal').submit();
+        }
+    });
+</script>

@@ -1,0 +1,165 @@
+﻿@using System.Data
+@model DigitalNagrik.Models.CMSDatatAddHelpline
+@{
+    ViewBag.Title = "AddHelplineData";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+
+<div class="container no-padding" style="font-size:18px">
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-11">
+                        <h4 style="color: black;margin-left:10px; margin-top: 10px;"><i class="bx bx-plus-circle"></i>&nbsp;Add Helpline Data</h4>
+                    </div>
+                    <div class="col-lg-1 float-end">
+                        <a class="btn btn-warning btn-sm" href='@Url.Action("Index", "AdminDashboard", new {Area="Dashboard"})'>
+                            <i class="bx bx-arrow-back align-middle"></i> Back
+                        </a>
+                    </div>
+                </div>
+                <hr />
+                @using (Html.BeginForm("InsertUpdHelpline", "CMSData", FormMethod.Post, new { id = "frm_AddNewDoc", enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div id="divAddNewDocument">
+                        <div class="row mb-2">
+                            <div class="col-lg-2">
+                                <label class="custom-input-label mb-1">Content For</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-4">
+                                @Html.DropDownListFor(m => m.DeviceNameID, Model.DeviceNameList, "Select", new { @id = "DeviceNameID", @class = "form-select", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(x => x.DeviceNameID)
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="custom-input-label mb-1">Content Type</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="ContentType" id="ContentTypeD" value="DOCUMENT" checked>
+                                    <label class="form-check-label" for="ContentTypeD">Document (PDF)</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="ContentType" id="ContentTypeL" value="LINK">
+                                    <label class="form-check-label" for="ContentTypeL">Link (URL)</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="ContentType" id="ContentTypeV" value="VIDEO">
+                                    <label class="form-check-label" for="ContentTypeV">Video (URL)</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-lg-2">
+                                <label class="custom-input-label" id="lblDocName">Document Name</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-4">
+                                @Html.TextBoxFor(x => x.DocumentName, new { @id = "DocumentName", @class = "form-control DisabledInputs", maxlength = "100", placeholder = "Document Name", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(x => x.DocumentName)
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="custom-input-label" id="lblUploadPDF">Upload Document (PDF)</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-4" id="divUploadPDF">
+                                @Html.TextBoxFor(m => m.DocumenttoUpload, new { type = "file", @accept = ".pdf", @class = "form-control fileinput-button", @id = "DocumenttoUpload" })
+                                @Html.ValidationMessageFor(m => m.DocumenttoUpload)
+                            </div>
+                            <div class="col-lg-4" id="divLinkAddress" style="display:none;">
+                                @Html.TextBoxFor(x => x.LinkAddress, new { @id = "LinkAddress", @class = "form-control DisabledInputs", maxlength = "100", placeholder = "Link Address", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(x => x.LinkAddress)
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-lg-2">
+                                <label class="custom-input-label">Enabled</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Enabled" id="EnabledY" value="Y" checked>
+                                    <label class="form-check-label" for="EnabledY">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Enabled" id="EnabledN" value="N">
+                                    <label class="form-check-label" for="EnabledN">No</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="custom-input-label" id="lblDocName">Display Order</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-4">
+                                @Html.TextBoxFor(x => x.DisplayOrder, new { @id = "DisplayOrder", @class = "form-control DisabledInputs", maxlength = "100", placeholder = "Display Order", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(x => x.DisplayOrder)
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <button type="button" class="btn btn-success" id="btnSubmit"><i class="bx bx-check-circle align-middle"></i>&nbsp;Submit</button>
+                                <button type="button" class="btn btn-danger" id="btnCancel"><i class=" bx bx-window-close align-middle"></i>&nbsp;Cancel </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div id="divDocumentList">
+                    @{ Html.RenderPartial("_HelplineDataList"); }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //$(document).ready(function () {
+    //    $("#tableAppList").DataTable()
+    //});
+
+    $('input[type=radio][name=ContentType]').change(function () {
+        if (this.value == 'DOCUMENT') {
+            $('#divUploadPDF').show();
+            $('#divLinkAddress').hide();
+            $('#lblUploadPDF').text('Upload Document (PDF)');
+            $('#divDocumentDate').show();
+            $('#lblDocName').text('Document Name');
+        }
+        else if (this.value == 'LINK') {
+            $('#divUploadPDF').hide();
+            $('#divLinkAddress').show();
+            $('#lblUploadPDF').text('Link Address (URL)');
+            $('#lblDocName').text('Link Name');
+        }
+        else if (this.value == 'VIDEO') {
+            $('#divUploadPDF').hide();
+            $('#divLinkAddress').show();
+            $('#lblUploadPDF').text('Video Link (URL)');
+            $('#lblDocName').text('Video Name');
+        }
+    });
+    $("#btnSubmit").click(function () {
+        if ($("#frm_AddNewDoc").valid()) {
+            $('#frm_AddNewDoc').submit();
+        }
+    });
+
+    @*$("#DocumentSelectionID").change(function () {
+        var DocSectionID = $(this).val();
+        $.ajax({
+            url: '@Url.Action("ChangeDocumentListData", "CMSData", new { area = "" })',
+            type: "GET",
+            dataType: "html",
+            data: { DocSectionID: DocSectionID },
+            success: function (data) {
+                if (data) {
+                    $("#divDocumentList").html('').html(data);
+                }
+            },
+            error: function () {
+                    }
+                });
+    });*@
+
+
+
+</script>
+
+

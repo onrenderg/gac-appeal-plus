@@ -1,0 +1,380 @@
+﻿@using DigitalNagrik.Areas.GridView.Data
+@using DigitalNagrik.Models
+@{
+    ViewBag.Title = "Grid View";
+    Layout = "~/Views/Shared/_LayoutDashGAC.cshtml";
+    List<SelectListItem> GACList = ViewBag.GACList;
+    string qs = ViewBag.qs;
+    List<SelectListItem> Notifications = ViewBag.Notifications;
+    string RegistrationYear = string.Empty; string GrievanceId = string.Empty; var Params = QueryString.GetDecryptedParameters(qs); try { RegistrationYear = Params["RegistrationYear"]; GrievanceId = Params["GrievanceId"]; } catch { }
+    string MenuStatusCd = Session["GVMenuStatusCd"] == null ? GACGridViewInbox.MenuStatus.Inbox : Convert.ToString(Session["GVMenuStatusCd"]);
+    string EmptyImgSrc = "../assets/img/nothingtoshow.svg";
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+<script src="@Url.Content("~/assets/ckeditor/ckeditor.js")"></script>
+
+<div class="modal fade" id="gv-modal-tracker" data-bs-backdrop="static" data-bs-keyboard="false" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content" id="gv-modal-tracker-content"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="gv-action-modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content" id="gv-action-modal-content"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="gv-comparedraft-modal" data-bs-backdrop="static" data-bs-keyboard="false" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-fullscreen" role="document">
+        <div class="modal-content" id="gv-comparedraft-modal-content"></div>
+    </div>
+</div>
+
+<div>
+    <aside id="layout-menu" class="layout-menu menu-vertical px-2 menu bg-menu-theme d-md-none" style="position:fixed!important">
+        <div class="app-brand px-0 demo">
+            <a href="#" class="app-brand-link"><span class="h5 demo menu-text fw-bolder ms-2">@DigitalNagrik.Models.UserSession.GACName<br />@UserSession.RoleName</span></a>
+            <a href="javascript:void(0);" class="layout-menu-toggle text-large ms-auto d-block d-xl-none"><i class="bx bx-chevron-left bx-sm align-middle"></i></a>
+        </div>
+        <a class="btn btn-primary mb-2" href="@Url.Action("Index", "AdminDashboard", new { Area = "Dashboard" })"><i class="bx bx"></i><i class="bi bi-speedometer me-2"></i>@LabelDictionary["Dashboard"]</a>
+        @if (UserSession.RoleID == UserRoles.Secretariat)
+        {
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary mb-2" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-plus-circle me-2"></i>@LabelDictionary["OtherActions"]</button>
+                <ul class="dropdown-menu py-2">
+                    <li><a href="@Url.Action("AddNewIntermediary", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 align-text-bottom bx bx-user"></i>@LabelDictionary["Add/UpdateRespondentIntermediary"]</a></li>
+                    <li><a href="@Url.Action("AddNewReliefSought", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 align-text-bottom bx bx-list-ol"></i>@LabelDictionary["Add/UpdateReliefSought"]</a></li>
+                    <li><a href="@Url.Action("AddNewGroundforAppeal", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 bx bx-list-ol align-text-bottom"></i>@LabelDictionary["Add/UpdateGroundforAppeal"]</a></li>
+                    <li><a href="@Url.Action("AddNewExpert", "SubjectExpert", new { Area = "SubjectExpert" })" class="dropdown-item"><i class="me-2 bx bx-user align-text-bottom"></i>@LabelDictionary["Add/UpdateExpert"]</a></li>
+                    <li><a href="@Url.Action("DecisionLog_List", "GACGridViewInbox", new { Area = "GridView" })" class="dropdown-item"><i class="me-2 bx bx-file align-text-bottom"></i>Unlock Draft Decision</a></li>
+                    <li><a href="@Url.Action("IntermediaryExtensionTime_List", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 bx bx-time-five align-text-bottom"></i>Time Extension Sought Requests</a></li>
+                    <li><a href="@Url.Action("Index", "LogAuditTrail", new { Area = "Reports" })" class="dropdown-item"><i class="me-2 bx bx-file align-text-bottom"></i>Log Audit Trail Report</a></li>
+                    <li><a href="@Url.Action("Index", "AppealHistoryReport", new { Area = "GridView" })" class="dropdown-item"><i class="me-2 bx bx-time-five align-text-bottom"></i>Appeal History Report</a></li>
+                    <li><a href="@Url.Action("SearchAppeal", "AppealHistoryReport", new { Area = "GridView" })" class="dropdown-item"><i class="me-2 bx bx-search align-text-bottom"></i>Search Appeal Details</a></li>
+                    @if (UserSession.UserID == "s.mangal@nic.in")
+                    {
+                        <li><a href="@Url.Action("Index", "AppealBackTrack", new { Area = "GridView" })" class="dropdown-item"><i class="me-2 bx bx-arrow-back align-text-bottom"></i>Appeal Withdraw</a></li>
+                    }
+                </ul>
+            </div>
+        }
+        @{ Html.RenderAction("GetInboxMenu_PV", "GACGridViewInbox", new { Area = "GridView" }); }
+        @{ Html.RenderAction("GetResponseDelayStats_PV", "GACGridViewInbox", new { Area = "GridView" }); }
+    </aside>
+
+    <div class="px-3 py-2 mt-1 bg-white">
+        <div class="row">
+            <div class="col-xl-6 col-lg-6">
+                <div class="h3 mb-0 d-inline-block py-1">
+                    <a class="d-md-none me-2 me-md-0 layout-menu-toggle btn btn-sm btn-primary align-top" href="javascript:void(0)"><i class="bx bx-menu align-bottom"></i></a>
+                    <span class="align-middle">@DigitalNagrik.Models.UserSession.GACName - @UserSession.RoleName</span>
+                    @if (GACList != null && GACList.Count > 1)
+                    {
+                        <div class="btn-group ms-0 ms-lg-2">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @UserSession.GACName
+                            </button>
+                            <ul class="dropdown-menu">
+                                @foreach (var GAC in GACList)
+                                {
+                                    <li><a class="dropdown-item" data-gacid="@GAC.Value" onclick="SwitchGAC($(this))" href="javascript:void(0);">@GAC.Text</a></li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="col-xl-6 col-lg-6 text-lg-end">
+                <button class="d-none d-lg-inline-block btn btn-light mt-1" type="button" data-bs-toggle="dropdown" data-bs-auto-close="false" aria-expanded="false">
+                    <i class="fa fa-bell text-danger"></i>
+                </button>
+                <style>
+                    .scrollable-container {
+                        max-height: 650px;
+                        overflow-y: auto;
+                    }
+                </style>
+                <ul class="dropdown-menu py-2 scrollable-container" id="listNotifications">
+                    @if (Notifications != null && Notifications.Count > 0)
+                    {
+                        foreach (var NotificationList in Notifications)
+                        {
+                            <li><a class="dropdown-item item-remove" href="javascript:void(0);" title="Delete Notification" id="li_@NotificationList.Value" data-li="li_@NotificationList.Value" onclick="DeleteNotification($(this))" data-url="@Url.Action("DeleteNotification" , "GACGridViewInbox",new {Area="GridView",qs = SecureQueryString.SecureQueryString.Encrypt("NotificationId=" + NotificationList.Value + "&IsSingle=Y") })"><i class="fa fa-trash text-danger text-end me-1"></i> @NotificationList.Text </a></li>
+                        }
+                        <li class="text-center"><a class="dropdown-item text-danger item-remove" href="javascript:void(0);" title="Delete Notification" data-li="li_0" onclick="DeleteNotification($(this))" data-url="@Url.Action("DeleteNotification" , "GACGridViewInbox",new {Area="GridView",qs = SecureQueryString.SecureQueryString.Encrypt("NotificationId=" + 0 + "&IsSingle=N") })"><i class="fa fa-trash text-danger me-1"></i>Clear All  </a></li>
+                    }
+                    else
+                    {
+                        <li class="text-center"><a class="dropdown-item text-primary" href="javascript:void(0);"><i class="fa fa-newspaper text-primary me-1"></i>No New Notification(s) </a></li>
+                    }
+                </ul>
+                <a class="d-none d-lg-inline-block btn btn-primary mt-1" href="@Url.Action("Index", "AdminDashboard", new { Area = "Dashboard" })"><i class="bx bx"></i><i class="bi bi-speedometer me-2"></i>@LabelDictionary["Dashboard"]</a>
+                @if (UserSession.RoleID == UserRoles.Secretariat)
+                {
+                    <div class="btn-group d-none d-lg-inline-block mt-1">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="me-1 align-middle bx bx-plus-circle"></i></button>
+                        <ul class="dropdown-menu py-2" style="">
+                            <li><a href="@Url.Action("AddNewIntermediary", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 align-text-bottom bx bx-user"></i>@LabelDictionary["Add/UpdateRespondentIntermediary"]</a></li>
+                            <li><a href="@Url.Action("AddNewReliefSought", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 align-text-bottom bx bx-list-ol"></i>@LabelDictionary["Add/UpdateReliefSought"]</a></li>
+                            <li><a href="@Url.Action("AddNewGroundforAppeal", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 bx bx-list-ol align-text-bottom"></i>@LabelDictionary["Add/UpdateGroundforAppeal"]</a></li>
+                            <li><a href="@Url.Action("AddNewExpert", "SubjectExpert", new { Area = "SubjectExpert" })" class="dropdown-item"><i class="me-2 bx bx-user align-text-bottom"></i>@LabelDictionary["Add/UpdateExpert"]</a></li>
+                            <li><a href="@Url.Action("DecisionLog_List", "GACGridViewInbox", new { Area = "GridView" })" class="dropdown-item"><i class="me-2 bx bx-file align-text-bottom"></i>Unlock Draft Decision</a></li>
+                            <li><a href="@Url.Action("IntermediaryExtensionTime_List", "IntermediaryDashboard", new { Area = "Intermediary" })" class="dropdown-item"><i class="me-2 bx bx-time-five align-text-bottom"></i>Time Extension Sought Requests</a></li>
+                            <li><a href="@Url.Action("Index", "LogAuditTrail", new { Area = "Reports" })" class="dropdown-item"><i class="me-2 bx bx-file align-text-bottom"></i>Log Audit Trail Report</a></li>
+                            <li><a href="@Url.Action("Index", "AppealHistoryReport", new { Area = "GridView" })" class="dropdown-item"><i class="me-2 bx bx-time-five align-text-bottom"></i>Appeal History Report</a></li>
+                            <li><a href="@Url.Action("SearchAppeal", "AppealHistoryReport", new { Area = "GridView" })" class="dropdown-item"><i class="me-2 bx bx-search align-text-bottom"></i>Search Appeal Details</a></li>
+                            <li><a href="@Url.Action("Index", "AppealBackTrack", new { Area = "GridView" })" class="dropdown-item"><i class="me-2 bx bx-arrow-back align-text-bottom"></i>Appeal Withdraw</a></li>
+                        </ul>
+                    </div>
+                }
+                <a class="btn btn-info float-end me-1" href="@Url.Action("SearchAppeal", "AppealHistoryReport", new { Area = "GridView" })"><i class="bx bx-search me-2 align-text-bottom"></i>Search Appeal</a>
+            </div>
+
+            <script>
+                $("#ddlSecttGACList").val('@UserSession.GACID');
+            </script>
+        </div>
+    </div>
+    <hr class="m-0" />
+
+    <div class="d-flex flex-fill min-vh-50">
+        <div id="layout-menu" class="pb-3 pt-2 menu-vertical menu bg-menu-theme d-none d-md-block overflow-auto" style="min-width: 13rem !important; max-width: 15rem !important; height: 700px;">
+            @{ Html.RenderAction("GetInboxMenu_PV", "GACGridViewInbox", new { Area = "GridView" }); }
+            @{ Html.RenderAction("GetResponseDelayStats_PV", "GACGridViewInbox", new { Area = "GridView" }); }
+        </div>
+        <div style="width: 2px; background: #ebebeb"></div>
+        <div class="bg-white" id="gv-container-appeallist" style="min-width: 23%;">
+            <div>
+                @{ Html.RenderAction("GetAppealList_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("MenuStatusCd=" + MenuStatusCd + "&IsDateGroup=Y") }); }
+                @if (!string.IsNullOrWhiteSpace(qs) && !string.IsNullOrWhiteSpace(RegistrationYear) && !string.IsNullOrWhiteSpace(GrievanceId))
+                {
+                    <script>
+                        $("#gv-link-grievance-@(RegistrationYear)@(GrievanceId)").addClass("active");
+                    </script>
+                }
+            </div>
+        </div>
+
+        <div class="d-none d-md-block" id="horizontal-drag-resize" style="cursor: col-resize; width: 3px; height: 700px; background: #ebebeb">
+            <div class="HSashThumb ImgHSash_thumb"></div>
+        </div>
+
+        <div class="bg-white gv-container-appealdetails d-none d-lg-block" style="min-width: 23%; flex: 1 1 0%; height: 700px;">
+            @if (!string.IsNullOrWhiteSpace(qs) && !string.IsNullOrWhiteSpace(RegistrationYear) && !string.IsNullOrWhiteSpace(GrievanceId))
+            {
+                Html.RenderAction("GetAppealDetails_PV", "GACGridViewInbox", new { Area = "GridView", qs = ViewBag.qs });
+            }
+            else
+            {
+                <div class="text-center text-muted mt-5 lh-2">
+                    @LabelDictionary["Nothingisselected"]<br />
+                    @LabelDictionary["ClickontheAppealtoviewitsdetails"]<br /><br />
+                    <img src="@EmptyImgSrc" alt="" style="width: 120px; height: 120px;">
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-end d-lg-none" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="gv-offcanvas-appealdetails" aria-labelledby="offcanvasScrollingLabel">
+        <div class="offcanvas-header px-2 py-0"><button type="button" class="btn btn-secondary btn-xs m-0 my-2" data-bs-dismiss="offcanvas" aria-label="Close">Close</button></div>
+        <div class="offcanvas-body p-0">
+            <div class="bg-white overflow-auto gv-container-appealdetails" style="min-width: 20%; flex:1 1 0%">
+                @if (!string.IsNullOrWhiteSpace(qs) && !string.IsNullOrWhiteSpace(RegistrationYear) && !string.IsNullOrWhiteSpace(GrievanceId))
+                {
+                    Html.RenderAction("GetAppealDetails_PV", "GACGridViewInbox", new { Area = "GridView", qs = ViewBag.qs });
+                }
+                else
+                {
+                    <div class="text-center text-muted mt-5 lh-2">
+                        @LabelDictionary["Nothingisselected"]<br />
+                        @LabelDictionary["ClickontheAppealtoviewitsdetails"]<br /><br />
+                        <img src="@EmptyImgSrc" alt="" style="width: 120px; height: 120px;">
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var _LoadHtml = '<div class="px-4 py-5 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><br>@LabelDictionary["FetchingData"]</div>';
+    var _BlankAppealHtml = '<div class="text-center text-muted mt-5">@LabelDictionary["Nothingisselected"]<br />@LabelDictionary["ClickontheAppealtoviewitsdetails"]<br /><br /><img src="@EmptyImgSrc" alt="" style="width: 120px; height: 120px;"></div>';
+    var _AppealDetailsContainer = $(".gv-container-appealdetails");
+    var _AppealListContainer = $("#gv-container-appeallist");
+    var _AppealActionFormContainer = $(".gv-container-action-form");
+    var _AppealModalActionFormContainer = $("#gv-action-modal-content");
+    var _TrackContainer = $("#gv-modal-tracker-content");
+    var _FormLoadHtml_Grid = '<div class="px-4 py-3 font-sm text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><br>@LabelDictionary["FetchingData"]</div>';
+    var _FormLoadHtml_Modal = '<div class="px-4 py-4 my-4 h-100 text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><br>@LabelDictionary["FetchingData"]</div>';
+
+    function RenderGVAppealListData(element, Days) {
+        _AppealListContainer.html(_LoadHtml); _AppealDetailsContainer.html(_BlankAppealHtml);
+        $('.menu-item').removeClass("menu-active"); $(".td-active").removeClass("td-active"); element.closest('.menu-item').addClass("menu-active"); element.find('td').addClass("td-active");
+        if (element.hasClass("btn-light")) { element.removeClass("btn-light").addClass("btn-primary"); } else if (element.hasClass("btn-primary")) { element.removeClass("btn-light").addClass("btn-primary"); }
+        element.siblings(".btn").removeClass('btn-primary').addClass("btn-light");
+        var qs = element.data("qs");
+        if (qs) { setTimeout(function () { $.ajax({ url: '@Url.Action("GetAppealList_PV", "GACGridViewInbox", new { Area = "GridView" })' + '?qs=' + qs + "&SearchText=" + "&Days=" + Days, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { _AppealListContainer.html(data); } }, }); }, 400); }
+    }
+
+    function SwitchGAC(element) {
+        element.attr("disabled", "disabled");
+        var Url = '@Url.Action("SwitchGAC", "GACGridViewInbox", new { Area = "GridView" })' + '?GACId=' + element.data("gacid");
+        window.location.href = Url;
+    }
+
+    function TakeAction(element, ActionContainerType) {
+        var URL = element.data("url"); var ActionContainer;
+        if (ActionContainerType == "G") {
+            ActionContainer = _AppealActionFormContainer; _AppealModalActionFormContainer.html(''); ActionContainer.html(_FormLoadHtml_Grid);
+        }
+        else if (ActionContainerType == "M") {
+            var ModalSizeClass = element.data('modalclass');
+            $("#gv-action-modal").find('.modal-dialog').removeClass().addClass('modal-dialog modal-' + ModalSizeClass); $("#gv-action-modal").modal('show');
+            ActionContainer = _AppealModalActionFormContainer; _AppealActionFormContainer.html(''); ActionContainer.html(_FormLoadHtml_Modal);
+        }
+        setTimeout(function () { $.ajax({ url: URL, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { ActionContainer.html(data); } } }); }, 400);
+    }
+
+    function DisposeAppeal(element) {
+        var URL = element.data("url");
+        alertify.confirm('<i class="me-2 bx bx-calendar-exclamation"></i>@LabelDictionary["Confirm"]', '@LabelDictionary["appealwillbedisposedCopywillbesenttoAppellant"]. @LabelDictionary["Areyousuretoproceed"]?', function () { window.location.href = URL }, function () { });
+    }
+
+    function ViewTracker(element) {
+        $("#gv-modal-tracker").modal('show'); _TrackContainer.html(''); _TrackContainer.html(_FormLoadHtml_Modal);
+        var URL = element.data("url");
+        setTimeout(function () { $.ajax({ url: URL, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { _TrackContainer.html(data); } } }); }, 400);
+    }
+
+    function Submit(element) {
+        var form = element.closest('form');
+        if (form.valid()) {
+            $(".btn").attr("disabled", "disabled"); form.submit();
+        }
+    }
+
+    function SubmitEditorText(element) {
+        var form = element.closest('form');
+        var wordCounts = CKEDITOR.instances.txtEditor.wordCount.wordCount;
+        if (wordCounts < 1) {
+            alertify.alert("<h5 class='m-0'><i class='bx bx-help-circle me-1'></i> @LabelDictionary["TextEditorEmpty"]</h5>", "@LabelDictionary["TextEditorcannotbeempty"]", function () { });
+        }
+        else if (wordCounts > 5000) {
+            alertify.alert("<h5 class='m-0'><i class='bx bx-help-circle me-1'></i> @LabelDictionary["TextEditorFull"]</h5>", "@LabelDictionary["Youhaveexceededwordlimit"] <span class='text-danger'>" + wordCounts + "</span>/5000 @LabelDictionary["words"].", function () { });
+        }
+        else {
+            if (form.valid()) {
+                $(".btn").attr("disabled", "disabled"); form.submit();
+            }
+        }
+    }
+
+    function ShowComparsionDocument(element) {
+        var src = element.data('href'); var ComparisonContainer = $(".gv-container-comparison-doc");
+        ComparisonContainer.html('<div class="my-2 text-right"><a href="javascript:void(0);" class="btn btn-danger btn-xs" onclick="$(\'.gv-container-comparison-doc\').hide(\'fast\')">@LabelDictionary["Close"]</a></div><object width="100%" height="93%;" data="' + src + '"></object>');
+        ComparisonContainer.show('fast'); ComparisonContainer.append('');
+    }
+
+    function ShowComparsionHtml(element) {
+        var html = element.data('html'); var ComparisonContainer = $(".gv-container-comparison-doc");
+        ComparisonContainer.html('<div class="my-2 text-right"><a href="javascript:void(0);" class="btn btn-danger btn-xs" onclick="$(\'.gv-container-comparison-doc\').hide(\'fast\')">@LabelDictionary["Close"]</a></div><div class="font-lg" width="100%" height="93%;">' + html + '</div>');
+        ComparisonContainer.show('fast'); ComparisonContainer.append('');
+    }
+
+    function SelectGround(element) {
+        var GACId = element.data("gacid"); var GroundId = element.data("groundid"); var GroundNm = element.data("groundnm");
+        $("#ddlGACList").val(GACId); $("#AppealGround").val(GroundId); $("#lblDashSelectedGround").html(GroundNm); $('.gv-container-comparison-doc').hide('fast');
+    }
+
+    $(document).on('click', '.gv-link-grievance', function () {
+        _AppealDetailsContainer.html(_LoadHtml);
+        var element = $(this); $('.gv-link-grievance').removeClass("active"); element.addClass("active"); var qs = element.data("qs");
+        if (qs) { setTimeout(function () { $.ajax({ url: '@Url.Action("GetAppealDetails_PV", "GACGridViewInbox", new { Area = "GridView" })' + '?qs=' + qs, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { _AppealDetailsContainer.html(data); } }, }); }, 400); }
+    });
+</script>
+
+<script>
+    const resizer = document.getElementById('horizontal-drag-resize');
+    const leftSide = resizer.previousElementSibling;
+    const rightSide = resizer.nextElementSibling;
+    let x = 0;
+    let y = 0;
+    let leftWidth = 0;
+
+    const mouseDownHandler = function (e) {
+        x = e.clientX;
+        y = e.clientY;
+        leftWidth = leftSide.getBoundingClientRect().width;
+        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mouseup', mouseUpHandler);
+    };
+    resizer.addEventListener('mousedown', mouseDownHandler);
+
+    const mouseMoveHandler = function (e) {
+        resizer.style.cursor = 'col-resize';
+        const dx = e.clientX - x;
+        const dy = e.clientY - y;
+        const newLeftWidth = ((leftWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
+        leftSide.style.width = `${newLeftWidth}%`;
+        document.body.style.cursor = 'col-resize';
+        leftSide.style.userSelect = 'none';
+        leftSide.style.pointerEvents = 'none';
+        rightSide.style.userSelect = 'none';
+        rightSide.style.pointerEvents = 'none';
+    };
+
+    const mouseUpHandler = function () {
+        document.body.style.removeProperty('cursor');
+        leftSide.style.removeProperty('user-select');
+        leftSide.style.removeProperty('pointer-events');
+        rightSide.style.removeProperty('user-select');
+        rightSide.style.removeProperty('pointer-events');
+        resizer.style.cursor = 'col-resize';
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+    };
+</script>
+
+<script>
+    function DeleteNotification(element) {
+        var URL = element.data("url");
+        var li = element.data("li");
+        $.ajax({
+            url: URL,
+            type: "get",
+            datatype: "json",
+            success: function (data) {
+                if (data.Status == "S") {
+                    //alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-check-circle me-1'></i> Successfully Removed </div>", "success", 5, function () { });
+                    $("#" + li).fadeOut(300, function () {
+                        // After the fadeOut completes, remove the <li> element
+                        $("#" + li).remove();
+                    });                  
+                }
+                else if (data.Status == "A") {
+                    //alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-check-circle me-1'></i> Successfully Removed </div>", "success", 5, function () { });
+                    $('.item-remove').each(function () {
+                        $(this).fadeOut(300, function () {
+                            // After the fadeOut completes, remove the <li> element
+                            $(this).remove();
+                        });
+                        
+                    });
+                    var newItem = $('<li class="text-center"><a class="dropdown-item text-primary" href="javascript:void(0);"><i class="fa fa-newspaper text-primary me-1"></i>No New Notification(s) </a></li>');
+                    // Append the new <li> to the list
+                    $('#listNotifications').append(newItem);
+                }
+                else if (data.Status == "F") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-window-close me-1'></i> Error while saving the record </div>", "error", 5, function () { });
+                }
+            }
+        });
+    }
+</script>
+
+
+<script src="@Url.Content("~/DashAssets/js/helpers.js")"></script>
+<script src="@Url.Content("~/DashAssets/js/menu.js")"></script>
+<script src="@Url.Content("~/DashAssets/js/main.js")"></script>

@@ -1,0 +1,88 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACAppealDecision
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<div class="modal-header pt-3">
+    <h4 class="modal-title">@LabelDictionary["PrepareDraftDecision"] (<span class="h5">@LabelDictionary["AppealNumber"]: </span><span>@Model.GrievanceId/@Model.RegistrationYear</span>)</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<hr class="mb-0 mt-2" />
+@using (Html.BeginForm("GACDecisionAppeal", "GACGridViewInbox", FormMethod.Post, new { @class = "frmGACDecisionAppeal" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(x => x.GrievanceId)
+    @Html.HiddenFor(x => x.RegistrationYear)
+
+    <div class="modal-body pb-0 pt-3 px-3">
+        <div class="row gx-3">
+            <div class="col-xl-6">
+                <div class="mb-3">
+                    <div class="px-3 py-2 bg-primary text-white">@LabelDictionary["DraftDecision"]</div>
+                    <div class="my-2">
+                        <a href="javascript:void(0);" onclick="CKEDITOR.instances.txtEditor.setData($(this).data('html'));" data-html="@Model.OriginalFormat" class="btn btn-sm btn-danger p-1" title="@LabelDictionary["Reseteditortooriginalformatofdecision/order"]"><i class="bx bxs-wrench align-middle"></i></a>
+                        <a href="javascript:void(0);" onclick="CKEDITOR.instances.txtEditor.setData($(this).data('html'));" data-html="@Model.MatterSummary" class="btn btn-sm btn-success p-1" title="@LabelDictionary["CopyMatterSummarytoeditor"]"><i class="bx bxs-copy-alt align-middle"></i></a>
+                        @if (!string.IsNullOrWhiteSpace(Model.DraftDecision))
+                        {
+                            <a href="javascript:void(0);" onclick="CKEDITOR.instances.txtEditor.setData($(this).data('html'));" data-html="@Model.DraftDecision" class="btn btn-sm btn-info p-1" title="@LabelDictionary["Reseteditortoexistingdraftdecision"]"><i class="bx bxs-pencil align-middle"></i></a>
+                        }
+                        <a href="javascript:void(0);" data-tcid="dash-history-hidden" onclick="ShowComparsionHtmlAsst($(this));" class="btn btn-sm btn-info float-end ms-2">View Member's/ Chairperson's Comments</a>
+                        <a href="javascript:void(0);" onclick="ShowComparsionHtml($(this));" data-html="<h5>Matter Summary</h5>@Model.MatterSummary" class="btn btn-sm btn-warning float-end">@LabelDictionary["ViewMatterSummary"]</a>
+                    </div>
+                    <div id="dash-history-hidden" class="d-none">
+                        @{ Html.RenderPartial("Forms/_ViewHistoryAsstManager", Model); }
+                    </div>
+                    @Html.TextAreaFor(x => x.DraftDecision, new { id = "txtEditor", @class = "form-control", rows = 4 })
+                    @Html.ValidationMessageFor(x => x.DraftDecision)
+                </div>
+                <hr class="mt-0" />
+                <div class="mb-3">
+                    <button type="button" class="btn btn-primary" onclick="SubmitEditorText($(this))">@LabelDictionary["SaveDraft"]</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+                </div>
+            </div>
+
+            <div class="col-xl-6">
+                <div class="bg-white gv-container-comparison-doc"></div>
+
+                <div class="mb-2 ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["AppealDetails"]</div>
+                    <div style="height:400px" class="overflow-auto">
+                        @{ Html.RenderAction("GetAppealDetailsGrid_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+                <hr />
+                <div class="ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["RespondentIntermediaryResponse"]</div>
+                    <div class="overflow-auto">
+                        @{ Html.RenderAction("IntermediaryResponseView", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+
+                @*<div class="ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["Member(s)/ChairpersonOpinion"]</div>
+                    <div style="height:250px" class="overflow-auto">
+                        @{ Html.RenderAction("GetMemberChairpersonOpinion_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>*@
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $.validator.unobtrusive.parse($(".frmGACDecisionAppeal"));
+
+    CKEDITOR.config.height = '500'; CKEDITOR.config.allowedContent = true; CKEDITOR.config.protectedSource.push(/<i[^>]*><\/i>/g); CKEDITOR.config.autoParagraph = false;
+    CKEDITOR.config.editorplaceholder = "@LabelDictionary["Typeyourdraftdecisionhere"] ...";
+    CKEDITOR.config.removeButtons = 'Preview,Source,Save,NewPage,ExportPdf,Print,Templates,Find,SelectAll,Undo,Redo,Cut,Copy,Paste,PasteText,PasteFromWord,Outdent,Indent,Scayt,Form,Radio,TextField,Textarea,Select,Strike,Button,ImageButton,HiddenField,Checkbox,CopyFormatting,RemoveFormat,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Image,Flash,Smiley,PageBreak,Iframe,ShowBlocks,About,Replace,Styles,Font';
+    CKEDITOR.config.removePlugins = 'uploadfile'; CKEDITOR.config.extraPlugins = 'wordcount';
+    CKEDITOR.replace('txtEditor');
+    function ShowComparsionHtmlAsst(element) {
+        var tcid = element.data('tcid'); var html = "";
+        if (tcid) { html = $("#" + tcid).html(); } else { element.data('html'); }
+        var ComparisonContainer = $(".gv-container-comparison-doc");
+        ComparisonContainer.html('<div class="my-2 text-end"><a href="javascript:void(0);" class="btn btn-danger btn-xs" onclick="$(\'.gv-container-comparison-doc\').hide(\'fast\')">@LabelDictionary["Close"]</a></div><div class="font-lg" width="100%" height="93%;">' + html + '</div>');
+        ComparisonContainer.show('fast'); ComparisonContainer.append('');
+    }
+</script>

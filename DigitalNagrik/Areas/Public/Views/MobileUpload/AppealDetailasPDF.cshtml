@@ -1,0 +1,364 @@
+﻿@model DigitalNagrik.Areas.Public.Models.IntermediaryDetailPreview
+@{
+    Layout = null;
+    List<DigitalNagrik.Areas.Public.Models.mAppealDocument> list = (List<DigitalNagrik.Areas.Public.Models.mAppealDocument>)ViewData["AppealDocList"];
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Appeal Detail</title>
+</head>
+<body>
+    <div style="text-align: center; height: 100px;">
+        <img src="~/assets/img/logo.png" />
+    </div>
+    <div style="text-align:center;">
+        <h2>Appeal Details </h2>
+    </div>
+    <br />
+
+    <table style="width: 100%;">
+        <tr>
+            <td style="width: 80%; text-align: left">
+                <h3>Personal Information</h3>
+            </td>
+
+            <td style="width: 20%;  ">Appeal ID : <b>@Model.RegistrationYear/@Model.GrievanceID</b> </td>
+        </tr>
+    </table>
+    <table style="width :100%;">
+        <tr>
+            <td style="width:20%;">Citizen Name</td>
+            <td style="width:20%;">Mobile</td>
+            <td style="width:20%;">Email</td>
+            <td style="width:40%;">Pin Code</td>
+
+        </tr>
+        <tr>
+            <td style="font-weight :bold;">@Model.IntermediaryDetailPart.CitizenName</td>
+            <td style="font-weight :bold;"> @Model.MobileNo</td>
+            <td style="font-weight :bold;"> @Model.IntermediaryDetailPart.EmailID</td>
+            <td style="font-weight :bold;"> @Model.IntermediaryDetailPart.PinCode</td>
+        </tr>
+    </table>
+    <table style="width :100%;">
+        <tr>
+            <td style="width:100%;text-align:left ">Address</td>
+        </tr>
+        <tr>
+            <td style="font-weight :bold;"> @Model.IntermediaryDetailPart.Address @Model.IntermediaryDetailPart.Tehsil @Model.IntermediaryDetailPart.District @Model.IntermediaryDetailPart.State     </td>
+        </tr>
+    </table>
+
+
+    <div style="text-align: left">
+        <hr />
+        <h3>Intermediary Detail</h3>
+        <hr />
+    </div>
+    <table style="width :100%;">
+        <tr>
+            <td style="width:10%;">Appeal Date</td>
+            <td style="width:10%;">Status</td>
+            <td style="width:80%;"></td>
+        </tr>
+        <tr>
+
+
+            <td style="font-weight: bold; vertical-align: top;"> @Model.IntermediaryDetailPart.ReceiptDate  </td>
+            <td style="font-weight: bold; vertical-align: top;"> @Model.IntermediaryDetailPart.StatusTitle </td>
+
+        </tr>
+    </table>
+    <table style="width:100%">
+        <tr>
+            <td style="width: 10%;">Language</td>
+            <td style="width: 30%;">Intermediary Decision Date</td>
+            <td style="width: 30%;">Name of the Intermediary</td>
+            <td style="width: 30%;">URL of the Intermediary</td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold; ">@Model.IntermediaryDetailPart.languageDescription   </td>
+            <td style="font-weight: bold; ">@Model.IntermediaryDetailPart.txtIntermediaryDecisionDate</td>
+            <td style="font-weight: bold; ">@Model.IntermediaryDetailPart.txtIntermediary</td>
+            <td style="font-weight: bold; ">@Model.IntermediaryDetailPart.txturlofintermediary</td>
+        </tr>
+    </table>
+    <br />
+
+    <table style="width:100%">
+        <tr>
+            <td style="width: 40%;">Name of Grievance Officer </td>
+            <td style="width: 60%;">
+                Email of
+                @if (Model.IntermediaryDetailPart.GROIntermediaryEmail == "G")
+                {<span>Grievance Officer</span>}
+                else
+                {<span>Intermediary </span>}
+
+
+            </td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold; ">@Model.IntermediaryDetailPart.txtNameofGROName </td>
+            <td style="font-weight: bold; ">@Model.IntermediaryDetailPart.EmailID</td>
+        </tr>
+    </table>
+    <br />
+    <table style="width:100%">
+        <tr>
+            <td style="width: 70%;">Address</td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold; ">@Model.IntermediaryDetailPart.txtCorrespondenceAddress </td>
+        </tr>
+    </table>
+
+    <br />
+    <table style="width:100%">
+        <tr>
+
+            <td style="width:30%;">Platform Type</td>
+            <td style="width:30%;">Category of Content</td>
+            <td style="width:30%;">Sub Category of Content</td>
+
+        </tr>
+        <tr>
+
+            <td style="font-weight: bold;vertical-align:top; ">@Model.AppealDetails.PlatformTypeTitle</td>
+            <td style="font-weight: bold; vertical-align: top; ">@Model.AppealDetails.ContentClassificationTitle</td>
+            <td style="font-weight: bold; vertical-align: top; ">@Model.AppealDetails.SubContentClassificationTitle</td>
+        </tr>
+
+    </table>
+    <table style="width:100%">
+        <tr>
+
+            <td style="width:33%;">Ground for the appeal</td>
+            <td style="width:33%;">Relief Sought</td>
+            <td style="width:33%;">
+                @if (Model.AppealDetails.ddlReliefSought == "1")
+                {<span>Account(s) specified</span>}
+                else if (Model.AppealDetails.ddlReliefSought == "2")
+                { <span>Information(s) specified</span>}
+                else if (Model.AppealDetails.ddlReliefSought == "3")
+                { <span>Information(s) specified</span>}
+                else if (Model.AppealDetails.ddlReliefSought == "4")
+                { <span>Relief specified</span>}
+            </td>
+
+        </tr>
+        <tr>
+
+            <td style="font-weight: bold; ">@Model.AppealDetails.GroundTitle      </td>
+            <td style="font-weight: bold; ">@Model.AppealDetails.ReliefSoughtTitle</td>
+            <td style="font-weight: bold; ">@Model.AppealDetails.ReliefSoughtSpecification</td>
+        </tr>
+
+    </table>
+    <br />
+
+    <table style="width:100%">
+        <tr>
+            <td style="width: 100%;">Justification for invoking the ground for the appeal</td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold; ">@Model.AppealDetails.txtJustification   </td>
+        </tr>
+    </table>
+
+
+    <div style="text-align: left">
+        <hr />
+        <h3>Document Uploaded</h3>
+        <hr />
+    </div>
+    <table style="width :100%;">
+        <tr>
+            <td style="width:33%;">Copy of complaint</td>
+            <td style="width:33%;">Copy of decision</td>
+            <td style="width:33%;"> Proof of making of complaint</td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold;padding-right:5px; ">
+                @if (list != null)
+                {
+                    var tmplist = list.Where(x => x.DocumentType == "CC" && x.EvidenceType == "F").ToList();
+                    if (tmplist.Count > 0)
+                    {
+                        <span>
+                            @tmplist.FirstOrDefault().FilePath.Replace(Model.RegistrationYear+Model.GrievanceID +"/CopyofComplaint/", "") 
+                        </span>
+                    }
+                }
+            </td>
+            <td style="font-weight: bold; padding-right: 5px; ">
+                @if (list != null)
+                {
+                    var tmplist = list.Where(x => x.DocumentType == "CD" && x.EvidenceType == "F").ToList();
+                    if (tmplist.Count > 0)
+                    {
+                        <span>
+                            @tmplist.FirstOrDefault().FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/CopyofDecision/", "")
+                        </span>
+                    }
+                }
+            </td>
+            <td style="font-weight: bold; padding-right: 5px; ">
+                @if (list != null)
+                {
+                    var tmplist = list.Where(x => x.DocumentType == "PC" && x.EvidenceType == "F").ToList();
+                    if (tmplist.Count > 0)
+                    {
+                        <span>
+                            @tmplist.FirstOrDefault().FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/ProofOfComplaint/", "")
+                        </span>
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+    <br />
+    <table style="width :100%;">
+        <tr>
+            <td style="width:100%;">Any other correspondence made with the Grievance Officer</td>
+
+        </tr>
+        <tr>
+            <td>
+                @if (list != null)
+                {
+                    var tmplist = list.Where(x => x.DocumentType == "OTHC" && x.EvidenceType == "F").ToList();
+                    if (tmplist.Count > 0)
+                    {
+                        var srno = 1;
+                        <table style="width:100%;">
+                            @foreach (var tmpothc in tmplist)
+                            {
+                                <tr>
+                                    <td style="width:5%;">@srno.ToString() .</td>
+                                    <td style="width:90%;">
+                                        <span>@tmpothc.FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/OTHC/", "")</span>
+                                    </td>
+                                </tr>
+                                srno += 1;
+                            }
+                        </table>
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+    <br />
+    <table style="width :100%;">
+        <tr>
+            <td style="width:100%;"> URL / website link, if any, of the information in respect of which complaint was made</td>
+        </tr>
+        <tr>
+            <td>
+                @if (list != null)
+                {
+                    var tmplist = list.Where(x => x.DocumentType == "IURL" && x.EvidenceType == "U").ToList();
+                    if (tmplist.Count > 0)
+                    {
+                        var srno = 1;
+                        <table style="width:100%;">
+                            @foreach (var tmp in tmplist)
+                            {
+                                var tmpurl = tmp.FilePath;
+                                if (!tmp.FilePath.ToLower().Contains("http"))
+                                {
+                                    tmpurl = "http://" + tmp.FilePath;
+                                }
+                                <tr>
+                                    <td style="width:5%;">@srno.ToString() .</td>
+                                    <td style="width:90%;"><a href="@tmpurl" title="View" target="_blank">@tmp.FilePath</a></td>
+                                </tr>
+                                srno += 1;
+                            }
+                        </table>
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+    <div style="text-align: left">
+        <hr />
+        <h3>Evidence Detail</h3>
+        <hr />
+    </div>
+    @if (list != null)
+    {
+        var tmplist = list.Where(x => x.DocumentType == "EI" || x.DocumentType == "EVI" || x.DocumentType == "EVO").ToList();
+        if (tmplist.Count > 0)
+        {
+            string oldEvidencaeTitle = "";
+
+            <table style="width :100%;">
+                <tr>
+                    <th style="width:10%;">Type</th>
+                    <th style="width:20%;">Source (File / URL)</th>
+                    <th style="width:70%;">URL</th>
+                </tr>
+                @foreach (var obj in tmplist)
+                {
+                    <tr>
+                        @if (oldEvidencaeTitle != obj.DocumentTitle)
+                        {
+                            oldEvidencaeTitle = obj.DocumentTitle;
+                            <td>@obj.DocumentTitle</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+
+                        @if (obj.EvidenceType == "U")
+                        {
+                            <td>URL</td>
+                        }
+                        else
+                        {
+                            <td>File</td>
+                        }
+                        @if (obj.EvidenceType == "U")
+                        {
+                            var tmpurl = obj.FilePath;
+                            if (!obj.FilePath.ToLower().Contains("http"))
+                            {
+                                tmpurl = "http://" + obj.FilePath;
+                            }
+                            <td>
+                                @if (!string.IsNullOrEmpty(obj.FilePath))
+                                {
+                                    <a href="@tmpurl" target="_blank" rel="noopener noreferrer">@obj.FilePath</a>
+                                }
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                @obj.FilePath.Replace(Model.RegistrationYear + Model.GrievanceID + "/Evidenceimage/", "").Replace(Model.RegistrationYear + Model.GrievanceID + "/Evidencevideo/", "").Replace(Model.RegistrationYear + Model.GrievanceID + "/Evidencevoice/", "")
+                        </td>
+                        }
+
+
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <div style="font-size:20px;">No Evidence</div>
+        }
+    }
+    else
+    {
+        <div style="font-size:20px;">No Evidence</div>
+    }
+
+</body>
+</html>

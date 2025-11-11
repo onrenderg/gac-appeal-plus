@@ -1,0 +1,30 @@
+﻿@model DigitalNagrik.Areas.Public.Models.mIntermediaryDetailPart
+<div style="background-image:@Url.Content("~/assets/img/logoGAC.png")">
+    <div>
+        To: <br />
+        &emsp;@Model.txtIntermediary,<br/>
+        &emsp;[@Model.txturlofintermediary]
+    </div>
+
+    <br />
+
+    <div>
+        The Grievance Appellate Committee (GAC) established by the Government of India under the Information Technology <a href="https://gac.gov.in/Home/PressRelease" traget="_blank">Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021</a>
+        (https://gac.gov.in/Home/PressRelease) notified under the Information Technology Act, 2000 has received an appeal under rule 3A of the said Rules that has been preferred by a person aggrieved by your decision as the Grievance Officer under the said Rules. This appeal has been assigned Appeal No. @Model.GrievanceID/@Model.RegistrationYear.
+        GAC is empowered by the said Rules to resolve appeals preferred by any person aggrieved by the decision of the Grievance Officer of any intermediary on complaint made
+        regarding any violation of the provisions of the said Rules or any other matters pertaining to the computer resources made available by it.
+        As envisaged under the Rules, the GAC has adopted an online dispute resolution mechanism wherein the entire appeal process, from filing of appeal to the decision thereof,
+        is conducted through digital mode.<br /><br />
+        2. The appeal is available at https://gac.gov.in and can be viewed by logging in at https://gac.gov.in/Intermediary.
+        <br /><br />
+        3.  You may show cause why the relief sought in the appeal may not be granted by GAC, by entering in your submissions in this regard through your login on the portal by @Model.LastResponseTime,
+        Indian Standard Time (GMT + 5:30). In case such submissions are not received by the said time and date, the GAC will consider the matter <span style="font-style:italic">ex parte.</span>
+        <br /><br />
+        4. For technical assistance, email may be sent to <b>support-gac[at]gov[dot]in.</b>
+    </div>
+    <br />    
+    <div>
+        Grievance Appellate Committee
+    </div>
+</div>
+

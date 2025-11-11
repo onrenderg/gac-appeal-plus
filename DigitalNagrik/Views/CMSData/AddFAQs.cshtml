@@ -1,0 +1,176 @@
+﻿@using System.Data
+@model DigitalNagrik.Models.CMSDataAddFAQs
+@{
+    ViewBag.Title = "AddFAQs";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+<div class="no-padding bg-light p-3" style="font-size:18px">
+    <div class="row">
+        <div class="col-lg-11">
+            <h4 style="color: black;margin-left:10px; margin-top: 10px;"><i class="bx-plus-circle bx"></i>&nbsp;Add FAQ</h4>
+        </div>
+        <div class="col-lg-1 float-end">
+            <a class="btn btn-warning btn-sm" href='@Url.Action("Index", "AdminDashboard", new {Area="Dashboard"})'>
+                <i class="bx bx-arrow-back align-middle"></i> Back
+            </a>
+        </div>
+    </div>
+    <hr />
+    @using (Html.BeginForm("InsertUpdFAQs", "CMSData", FormMethod.Post, new { id = "frm_AddFAQs", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(x => x.FAQID)
+        <div class="row mb-2">
+            <div class="col-lg-1">
+                <label class="custom-input-label" id="lblDocName">Question</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-10">
+                @Html.TextAreaFor(x => x.Question, new { @id = "Question", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = "Write Question here....", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.Question)
+            </div>
+
+        </div>
+        <div class="row mb-3">
+            <div class="col-lg-1">
+                <label class="custom-input-label" id="lblUploadPDF">Answer</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-10">
+                @Html.TextAreaFor(m => m.Answer, new { @id = "Answer", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = "Write Answer here.....", @autocomplete = "off" })
+                @Html.ValidationMessageFor(m => m.Answer)
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-lg-1">
+                <label class="custom-input-label" id="lblUploadPDF">Hyperlink</label><span class="text-danger"> </span>
+            </div>
+            <div class="col-lg-4">
+                @Html.TextBoxFor(m => m.Hyperlink, new { @id = "Hyperlink", @class = "form-control DisabledInputs", maxlength = "100", placeholder = "URL (if any)", @autocomplete = "off" })
+                @Html.ValidationMessageFor(m => m.Hyperlink)
+            </div>
+
+            <div class="col-lg-1">
+                <label class="custom-input-label" id="lblUploadPDF">is Active</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-2">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="isActive" id="isActiveY" value="Y" checked>
+                    <label class="form-check-label" for="isActiveY">Yes</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="isActive" id="isActiveN" value="N">
+                    <label class="form-check-label" for="isActiveN">No</label>
+                </div>
+            </div>
+            <div class="col-lg-1">
+                <label class="custom-input-label" id="lblUploadPDF">Display Order</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-2">
+                @Html.TextBoxFor(m => m.DisplayOrder, new { @id = "DisplayOrder", @class = "form-control DisabledInputs", maxlength = "5", placeholder = "Display Order", @autocomplete = "off" })
+                @Html.ValidationMessageFor(m => m.DisplayOrder)
+            </div>
+
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-12 text-center">
+                <button type="button" class="btn btn-success" id="btnSubmit"><i class="bx bx-check-circle align-middle"></i>&nbsp;Submit</button>
+                <button type="button" class="btn btn-danger" id="btnCancel"><i class=" bx bx-window-close align-middle"></i>&nbsp;Cancel </button>
+            </div>
+        </div>
+    }
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4 style="color: black;margin-left:10px"><i class="bx bx-list-check me-1"></i>FAQ List</h4>
+        </div>
+        <div class="col-12 p-3">
+            <div class="row">
+                <div class="col-12 overflow-auto">
+                    <table id="tableFAQList" class="table table-bordered">
+                        <thead>
+                            <tr class="table-primary  text-secondary">
+                                <th scope="col">Sl.No</th>
+                                <th scope="col">Question</th>
+                                <th scope="col">Answer</th>
+                                <th scope="col">is Active</th>
+                                <th scope="col">Display Order</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size:18px;">
+                            @{
+                                int counter = 1;
+                            }
+                            @if (Model.QAListTable != null && Model.QAListTable.Count > 0)
+                            {
+                                foreach (var row in Model.QAListTable)
+                                {
+                                    <tr>
+                                        <td>@counter</td>
+                                        <td>@row.Question</td>
+                                        <td>@row.Answer</td>
+                                        <td>@row.isActive</td>
+                                        <td>@row.DisplayOrder</td>
+                                        <td class="text-center">
+                                            <a href="@Url.Action("EditFAQs", "CMSData", new { Area = "", qs = SecureQueryString.SecureQueryString.Encrypt("FAQID=" + row.FAQID) })"><i class="bx bx-edit h4 text-success"></i></a>
+                                            <a href="javascript:void(0);" onclick="OpenDialogDeleteFAQ($(this))" data-qs="@Url.Action("DeleteFAQs", "CMSData", new { Area = "", qs = SecureQueryString.SecureQueryString.Encrypt("FAQID=" + row.FAQID) })"><i class="bx bx-trash text-danger"></i></a>
+                                        </td>
+
+                                    </tr>
+                                    counter = counter + 1;
+                                }
+                                <script>
+                                    $(document).ready(function () {
+                                        $("#tableFAQList").DataTable()
+                                    });
+                                </script>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5">No Records Found</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmModalDelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure to delete this FAQ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a id="aDeleteMemo" class="btn btn-sm btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#btnCancel').click(function () {
+        $('#divAddNewDocument').hide();
+    });
+    $("#btnSubmit").click(function () {
+        if ($("#frm_AddFAQs").valid()) {
+            $('#frm_AddFAQs').submit();
+        }
+    });
+    function OpenDialogDeleteFAQ(elem) {
+        $("#aDeleteMemo").attr("href", elem.attr("data-qs"));
+        $("#confirmModalDelete").modal('show');
+    }
+</script>
+

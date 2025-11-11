@@ -1,0 +1,16 @@
+﻿@{
+    String pdfBytes = "";
+    pdfBytes = Convert.ToBase64String((byte[])(Session["SelectedFileForUpload"]));
+}
+
+<div class="col-sm-12">
+    <div class="card margin-bottom-10">
+        <div class="card-head label-sm">
+        </div>
+        <div class="card-foot">
+            <object id="template" data="data:application/pdf;base64,@pdfBytes" width="100%" height="100%" type="application/pdf"></object>
+                <hr class="no-margin" />
+                <a target="_blank" class="text-primary" href="@Url.Action("DocumentPreview", "GACGridViewInbox", new { Area = "GridView" })" title="Click to view Document"><i class="fa fa-paperclip" aria-hidden="true"></i>&nbsp;&nbsp;View Document</a>
+        </div>
+    </div>
+</div>

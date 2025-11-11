@@ -1,0 +1,163 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.IntermediaryResponse
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="bx bx-reply me-1"></i>Add New Reposnse</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        @using (Html.BeginForm("SaveIntermediaryResponseQuestion", "IntermediaryResponseQuestion", FormMethod.Post, new { id = "frm_SaveIntermediaryQuestion", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.ResponseID)
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">Response Text</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-10">
+                    @Html.TextAreaFor(x => x.ResponseText, new { @id = "ResponseText", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = "Response Text", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.IsSubResponse)
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">is Sub Response?</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-2">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="IsSubResponse" id="IsSubResponseY" value="Y">
+                        <label class="form-check-label" for="IsSubResponseY">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="IsSubResponse" id="IsSubResponseN" value="N">
+                        <label class="form-check-label" for="IsSubResponseN">No</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">Change On</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-2">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="ChangeOn" id="ChangeOnY" value="Y">
+                        <label class="form-check-label" for="IsSubResponseY">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="ChangeOn" id="ChangeOnN" value="N">
+                        <label class="form-check-label" for="IsSubResponseN">No</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3" id="divHasFiles" style="display:none;">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">Has Files?</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-2">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="HasFiles" id="HasFilesY" value="Y">
+                        <label class="form-check-label" for="HasFilesY">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="HasFiles" id="HasFilesN" value="N">
+                        <label class="form-check-label" for="HasFilesN">No</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3" id="divHasFilesOutput" style="display:none;">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">Minimun Files (Nos)</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.MinNoOfFiles, new { @id = "MinNoOfFiles", @class = "form-control DisabledInputs", maxlength = "1", placeholder = "No", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.MinNoOfFiles)
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">Maximum Files (Nos)</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.MaxNoOfFiles, new { @id = "MaxNoOfFiles", @class = "form-control DisabledInputs", maxlength = "1", placeholder = "No", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.MaxNoOfFiles)
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">Maximum Size (Mb)</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.MaxFileSizeMb, new { @id = "MaxFileSizeMb", @class = "form-control DisabledInputs", maxlength = "1", placeholder = "No", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.MaxFileSizeMb)
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    Is Active
+                </div>
+                <div class="col-2">
+                    <div class="form-check form-switch">
+                        @if (Model.IsActive == "Y")
+                        {
+                            <input class="form-check-input" type="checkbox" role="switch" id="IsActive" name="IsActive" checked>
+                        }
+                        else
+                        {
+                            <input class="form-check-input" type="checkbox" role="switch" id="IsActive" name="IsActive">
+                        }
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="btnSubmit"><i class="bx-check-circle bx align-middle"></i>&nbsp;Submit</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1 align-middle"></i>Close</button>
+    </div>
+</div>
+
+<script>
+    $('input[type=radio][name=IsSubResponse]').change(function () {
+        if (this.value == 'N') {
+            $('#divHasFiles').show();
+        }
+        else if (this.value == 'Y') {
+            $('#divHasFiles').hide();
+        }
+    });
+    $('input[type=radio][name=HasFiles]').change(function () {
+        if (this.value == 'Y') {
+            $('#divHasFilesOutput').show();
+        }
+        else if (this.value == 'N') {
+            $('#MinNoOfFiles').val('')
+            $('#MaxNoOfFiles').val('')
+            $('#MaxFileSizeMb').val('')
+            $('#divHasFilesOutput').hide();
+        }
+    });
+    if ('@Model.ResponseID' != null && '@Model.ResponseID' != "") {
+    $("input[type=radio][name=IsSubResponse][value=@Model.IsSubResponse]").prop('checked', true);
+    var IsSubResponse = $("input[type=radio][name=IsSubResponse]:checked").val();
+    if (IsSubResponse == 'Y') {
+        $('#divHasFiles').hide();
+    }
+    else {
+        $('#divHasFiles').show();
+            $("input[type=radio][name='HasFiles'][value=@Model.HasFiles]").prop('checked', true);
+        if ($("input[type=radio][name=HasFiles]:checked").val() == 'Y') {
+            $('#divHasFilesOutput').show();
+        }
+        else {
+            $('#MinNoOfFiles').val('')
+            $('#MaxNoOfFiles').val('')
+            $('#MaxFileSizeMb').val('')
+            $('#divHasFilesOutput').hide();
+        }
+    }
+        $("input[type=radio][name='ChangeOn'][value=@Model.ChangeOn]").prop('checked', true);
+    }
+    $('#frm_SaveIntermediaryQuestion').removeData("validator").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse($('#frm_SaveIntermediaryQuestion'));
+    $("#btnSubmit").click(function () {
+        if ($("#frm_SaveIntermediaryQuestion").valid()) {
+            $('#frm_SaveIntermediaryQuestion').submit();
+        }
+    });
+</script>

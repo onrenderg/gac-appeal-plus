@@ -1,0 +1,986 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+@{
+    List<DigitalNagrik.Models.ITRuleProvisionForHomePage> ITRuleProvision = ViewData["ITRuleProvision"] as List<DigitalNagrik.Models.ITRuleProvisionForHomePage>;
+
+}
+<div class="col-lg-4 mt-4" style="background-color: #fafcfa; border-radius: 12px;">
+    <div>
+        <div class="fw-bold ">
+            Rights of Users of IT Intermediaries*
+        </div>
+        <div class="mt-2">
+            <div class="row mb-3 ">
+                <div class="row">
+                    <div class="col-md-1">I.</div>
+                    <div class="col-md-11" style="text-align: justify;">
+                        Right to know the rules, regulations, privacy policies and user agreements of IT intermediaries
+                    </div>  
+                    <div class="col-md-1"></div>
+                    <div class="col-md-11" style="text-align: right; font-size: 14px; font-style: italic;">
+                        <a href="#" onclick="$('#provision1').modal('show'); return false;">More..</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">II.</div>
+                    <div class="col-md-11"  style="text-align: justify;">Right to have IT intermediary computer resources free from illegal or harmful information</div> 
+                    <div class="col-md-1"></div>
+                    <div class="col-md-11" style="text-align: right; font-size: 14px; font-style: italic;">
+                        <a href="#" onclick="$('#provision2').modal('show'); return false;">More..</a>
+                        @*<a href="#" onclick="$('#provision2').modal('show'); return false;">IT Rules provision</a>*@
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1" style="padding-right :0px;">III.</div>
+                    <div class="col-md-11"  style="text-align: justify;">Right to redress of grievances against IT intermediary </div>  
+                    <div class="col-md-1"></div>
+                    <div class="col-md-11" style="text-align:right;font-size:14px;font-style:italic;">
+                        <a href="#" onclick="$('#provision3').modal('show'); return false;">More..</a>
+                        @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="$('#provision3').modal('show'); return false;">IT Rules provision</a>*@
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1" style="padding-right :0px;">IV.</div>
+                    <div class="col-md-11"  style="text-align: justify;">Right to have information removed from the computer resource of IT intermediary in a timebound manner  </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-11" style="text-align: right; font-size: 14px; font-style: italic;">
+                        <a href="#" onclick="$('#provision4').modal('show'); return false;">More..</a>
+                        @*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="$('#provision4').modal('show'); return false;">IT Rules provision</a>*@
+                    </div>
+                </div>
+                @*<div class="row">
+                    <div class="col-md-1">V.</div>
+                    <div class="col-md-11">
+                        Right to be notified prior to removal of disablement of access of information, data or communication link of the user, and to have opportunity to dispute such disablement
+                    </div>
+                    <div class="col-md-7"></div>
+                    <div class="col-md-5" style="text-align:right;font-size:14px;font-style:italic;">
+                        <a href="#" onclick="$('#provision5').modal('show'); return false;">IT Rules provision</a>
+                    </div>
+                </div>*@
+            </div>
+            <div class="row mb-3 " style="margin-top:55px;">                
+                    <div class="col-md-12" style="font-size:12px;border-bottom:1px solid #000000;text-align:justify;">
+                        <b>Note:</b> The above attempts to explain in plain language some of the key features of the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 from a user well-being perspective. However, the reader should refer to the actual provisions of the said Rules for understanding the precise legal position set out in the Rules.
+                    </div>                
+            </div>
+            <div class="row mb-1">                
+                    <div class="col-md-12" style="font-size:12px;text-align:left;">
+                        <span style="color:red;">*</span> Corresponding to diligence requirements of IT intermediaries under the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021
+                    </div>
+            </div>
+
+        </div>
+
+    </div>
+    @*<section id="about" class="about">
+            <div class="container" data-aos="fade-up">
+                <div class="section-title pb-0">
+                    <h4 style="color: #1A6C94;font-weight: 800;">Rights of Users* of IT Intermediaries </h4>
+                </div>
+
+            </div>
+        </section>*@
+</div>
+<div class="modal modal-lg fade" id="section2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding-top:250px;">
+    <div class="modal-dialog">
+        <div class="modal-content modal-popup-window-outer">
+            <div class="modal-header modal-popup-window-title">
+
+                <h1 class="modal-title fs-5" id="exampleModalLabel">II. Right to have IT intermediary computer resources free from illegal or harmful information</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-popup-window-body">
+                <ol>
+                    <li>Right to be free from information hosted, displayed etc. by person not having right over it</li>
+                    <li>Right to be free from information that is obscene, pornographic, paedophilic or invasive of privacy including bodily privacy</li>
+                    <li>Right to be free from information that is insulting or objectionable to a gender, race or ethnicity</li>
+                    <li>Right to be free from information relating to or encouraging money laundering or gambling</li>
+                    <li>Right to be free from information that promotes enmity on grounds of religion or caste</li>
+                    <li>Right to be free from information harmful to child</li>
+                    <li>Right to be free from information that violates intellectual property rights</li>
+                    <li>Right to be free from misinformation and information that is patently false or misleading</li>
+                    <li>Right to be free from information that impersonates another person</li>
+                    <li>Right to be free from information that threatens India’s unity, integrity, defence, security or sovereignty, friendly relations with foreign States, or public order, or incites commission of any cognizable offence, or is insulting other nation</li>
+                    <li>Right to be free from information that prevents investigation of any offence</li>
+                    <li>Right to be free from software designed to endanger computer resource</li>
+                    <li>Right to be free from information that violates any Indian law</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-lg fade modal-popup-window" id="section3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding-top:250px;">
+    <div class="modal-dialog">
+        <div class="modal-content  modal-popup-window-outer">
+            <div class="modal-header  modal-popup-window-title">
+
+                <h1 class="modal-title fs-5" id="exampleModalLabel">III.	Right to redress of grievances against IT intermediary</h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-popup-window-body">
+                <ol>
+                    <li>Right to redress of grievances against violation of the IT rules </li>
+                    <li>Right to redress of other grievances against IT intermediary website/app</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-lg fade modal-popup-window" id="section4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding-top:250px;">
+    <div class="modal-dialog">
+        <div class="modal-content  modal-popup-window-outer">
+            <div class="modal-header  modal-popup-window-title">
+
+                <h1 class="modal-title fs-5" id="exampleModalLabel">IV. Right to have information removed from the computer resource of IT intermediary in a timebound manner  </h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-popup-window-body">
+                <ol>
+                    <li>Right to removal, within 24 hours, of content exposing private area of or showing the user of the IT intermediary in the nude or in sexual act, or impersonating or morphing the user’s image </li>
+                    <li>Right to removal, within 15 days, of information hosted, displayed etc. by person not having any right over it, or violating intellectual property right or any Indian law </li>
+                    <li>Right to removal, within 72 hours, of any other information that violates the right to have IT intermediary computer resources free from illegal or harmful information</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-xl fade modal-popup-window" id="provision1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding-top: 100px;">
+    <div class="modal-dialog">
+        <div class="modal-content  modal-popup-window-outer">
+            <div class="modal-header  modal-popup-window-title">
+
+                <h1 class="modal-title fs-5" id="exampleModalLabel">I. Right to know the rules, regulations, privacy policies and user agreements of IT intermediaries <i>(IT Rules provision)</i> </h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-popup-window-body" style="text-align:justify;">
+                <div><b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—</div>
+                <div class="row">
+                    <div class="col-sm-1" style="padding:0px;text-align:right;">(a)</div>
+                    <div class="col-sm-11">
+                        the intermediary shall prominently publish on its website, mobile based application or both, as the case may be, the rules and regulations, privacy policy and user agreement in English or any language specified in the Eighth Schedule to the Constitution for access or usage of its computer resource by any person in the language of his choice and ensure compliance of the same;
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                    <div class="col-sm-11">
+                        the intermediary shall inform its rules and regulations, privacy policy and user agreement to the user in English or any language specified in the Eighth Schedule to the Constitution in the language of his choice …;
+                    </div>
+                    <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1" style="padding:0px;text-align:right;">(f) </div>
+                    <div class="col-sm-11">
+                        the intermediary shall periodically, and at least once in a year, inform its users in English or any language specified in the Eighth Schedule to the Constitution in the language of his choice of its rules and regulations, privacy policy or user agreement or any change in the rules and regulations, privacy policy or user agreement, as the case may be;
+                    </div>
+                </div>
+                @*@if (ITRuleProvision != null)
+                    {
+                        @Html.Raw(ITRuleProvision.Where(x => x.itrule.ToString() == "1").FirstOrDefault().extractOfRule)
+                    }*@
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal modal-xl fade modal-popup-window" id="provision2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding-top:100px;">
+    <div class="modal-dialog">
+        <div class="modal-content  modal-popup-window-outer">
+            <div class="modal-header  modal-popup-window-title">
+
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    II. Right to have IT intermediary computer resources free from illegal or harmful information
+                </h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-popup-window-body" >
+                <ol>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from information hosted, displayed etc. by person not having right over it
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(1)">IT Rules provision</a>
+                            </div>                            
+                        </div>                        
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from information that is obscene, pornographic, paedophilic or invasive of privacy including bodily privacy
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(2)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from information that is insulting or objectionable to a gender, race or ethnicity
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(3)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from information relating to or encouraging money laundering or gambling
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(4)">IT Rules provision</a>
+                            </div>
+                        </div>                        
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from information that promotes enmity on grounds of religion or caste
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(5)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from information harmful to child
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(6)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from information that violates intellectual property rights
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(7)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from misinformation and information that is patently false or misleading
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(8)">IT Rules provision</a>
+                            </div>
+                        </div>    
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from information that impersonates another person
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(9)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from information that threatens India’s unity, integrity, defence, security or sovereignty, friendly relations with foreign States, or public order, or incites commission of any cognizable offence, or is insulting other nation
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(10)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from information that prevents investigation of any offence
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(11)">IT Rules provision</a>
+                            </div>
+                        </div>                        
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from software designed to endanger computer resource
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(12)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to be free from information that violates any Indian law
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection2(13)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+
+                </ol>
+                <div style="background-color: #196d95;color:#ffffff;border-radius:5px;padding:3px;" class="fw-bold">
+                    <i>(IT Rules provision)</i>
+                </div>
+                <div id="twolist1" style="display:none;text-align:justify;" >
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary shall … make reasonable efforts to cause the user of its computer resource not to host, display, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(i)</div>
+                        <div class="col-sm-10">
+                            belongs to another person and to which the user does not have any right;
+                        </div>
+                    </div>
+                </div>
+
+                <div id="twolist2" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary … shall make reasonable efforts to cause the user of its computer resource not to host, display, upload, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(ii)</div>
+                        <div class="col-sm-10">
+                            is … pornographic, paedophilic, invasive of another’s privacy including bodily privacy …;
+                        </div>
+                    </div>
+                </div>
+
+                <div id="twolist3" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary … shall make reasonable efforts to cause the user of its computer resource not to host, display, upload, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(ii)</div>
+                        <div class="col-sm-10">
+                            is … insulting or harassing on the basis of gender, racially or ethnically objectionable…;
+                        </div>
+                    </div>
+                </div>
+                <div id="twolist4" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary … shall make reasonable efforts to cause the user of its computer resource not to host, display, upload, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(ii)</div>
+                        <div class="col-sm-10">
+                            is … relating or encouraging money laundering or gambling…;
+                        </div>
+                    </div>
+                </div>
+                <div id="twolist5" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary … shall make reasonable efforts to cause the user of its computer resource not to host, display, upload, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(ii)</div>
+                        <div class="col-sm-10">
+                            is … promoting enmity between different groups on the grounds of religion or caste with the intent to incite violence;
+                        </div>
+                    </div>
+                </div>
+
+                <div id="twolist6" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary … shall make reasonable efforts to cause the user of its computer resource not to host, display, upload, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(iii)</div>
+                        <div class="col-sm-10">
+                            is harmful to child;
+                        </div>
+                    </div>
+                </div>
+
+                <div id="twolist7" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary … shall make reasonable efforts to cause the user of its computer resource not to host, display, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(iv)</div>
+                        <div class="col-sm-10">
+                            infringes any patent, trademark, copyright or other proprietary rights;
+                        </div>
+                    </div>
+                </div>
+                <div id="twolist8" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary … shall make reasonable efforts to cause the user of its computer resource not to host, display, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(v)</div>
+                        <div class="col-sm-10">
+                            deceives or misleads the addressee about the origin of the message or knowingly and intentionally communicates any misinformation or information which is patently false and untrue or misleading in nature;
+                        </div>
+                    </div>
+                </div>
+
+                <div id="twolist9" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary shall inform its rules and regulations, privacy policy and user agreement to the user in English or any language specified in the Eighth Schedule to the Constitution in the language of his choice and shall make reasonable efforts to cause the user of its computer resource not to host, display, upload, modify, publish, transmit, store, update or share any information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(vi)</div>
+                        <div class="col-sm-10">
+                            impersonates another person;
+                        </div>
+                    </div>
+                </div>
+
+                <div id="twolist10" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary … shall make reasonable efforts to cause the user of its computer resource not to host, display, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(vii)</div>
+                        <div class="col-sm-10">
+                            threatens the unity, integrity, defence, security or sovereignty of India, friendly relations with foreign States, or public order, or causes incitement to the commission of any cognisable offence, … or is insulting other nation;
+                        </div>
+                    </div>
+                </div>
+                <div id="twolist11" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary … shall make reasonable efforts to cause the user of its computer resource not to host, display, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(vii)</div>
+                        <div class="col-sm-10">
+                            … prevents investigation of any offence…;
+                        </div>
+                    </div>
+                </div>
+                <div id="twolist12" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary … shall make reasonable efforts to cause the user of its computer resource not to host, display, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(viii)</div>
+                        <div class="col-sm-10">
+                            contains software virus or any other computer code, file or program designed to interrupt, destroy or limit the functionality of any computer resource;
+                        </div>
+                    </div>
+                </div>
+                <div id="twolist13" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (1) Due diligence by an intermediary:</b> An intermediary, including social media intermediary and significant social media intermediary, shall observe the following due diligence while discharging its duties, namely:—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">…</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            the intermediary … shall make reasonable efforts to cause the user of its computer resource not to host, display, … information that,—
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">…</div>
+                        <div class="col-sm-10"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2" style="padding:0px;text-align:right;">(ix)</div>
+                        <div class="col-sm-10">
+                            violates any law for the time being in force;
+                        </div>
+                    </div>
+                </div>
+
+                @*@if (ITRuleProvision != null)
+                    {
+                        @Html.Raw(ITRuleProvision.Where(x => x.itrule.ToString() == "2").FirstOrDefault().extractOfRule)
+                    }*@
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal modal-xl fade modal-popup-window" id="provision3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding-top: 100px;">
+    <div class="modal-dialog">
+        <div class="modal-content  modal-popup-window-outer">
+            <div class="modal-header  modal-popup-window-title">
+
+                <h1 class="modal-title fs-5" id="exampleModalLabel">III. Right to redress of grievances against IT intermediary  <i>(IT Rules provision)</i> </h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-popup-window-body">
+                <ol>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to redress of grievances against violation of the IT rules
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection3(1)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to redress of other grievances against IT intermediary website/app
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection3(2)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+                <div style="background-color: #196d95;color:#ffffff;border-radius:5px;padding:3px;" class="fw-bold">
+                    <i>(IT Rules provision)</i>
+                </div>
+                <div id="threelist1" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (2) Grievance redressal mechanism of intermediary:</b> (a)The intermediary shall prominently publish on its website, mobile based application or both, as the case may be, the name of the Grievance Officer and his contact details as well as mechanism by which a user or a victim may make complaint against violation of the provisions of this rule …, and the Grievance Officer shall—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(i)</div>
+                        <div class="col-sm-11">
+                            acknowledge the complaint within twenty-four hours and resolve such complaint within a period of fifteen days from the date of its receipt:
+                            Provided that the complaint in the nature of request for removal of information or communication link relating to clause (b) of sub-rule (1) of rule 3, except sub-clauses (i), (iv) and (ix), shall be acted upon as expeditiously as possible and shall be resolved within seventy-two hours of such reporting;
+                            Provided further that appropriate safeguards may be developed by the intermediary to avoid any misuse by users;
+                        </div>
+                    </div>
+                </div>
+
+                <div id="threelist2" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (2) Grievance redressal mechanism of intermediary:</b>  (a)The intermediary shall prominently publish on its website, mobile based application or both, as the case may be, the name of the Grievance Officer and his contact details as well as mechanism by which a user or a victim may make complaint against … any other matters pertaining to the computer resources made available by it, and the Grievance Officer shall—
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(i)</div>
+                        <div class="col-sm-11">
+                            acknowledge the complaint within twenty-four hours and resolve such complaint within a period of fifteen days from the date of its receipt:
+                            Provided that the complaint in the nature of request for removal of information or communication link relating to clause (b) of sub-rule (1) of rule 3, except sub-clauses (i), (iv) and (ix), shall be acted upon as expeditiously as possible and shall be resolved within seventy-two hours of such reporting;
+                            Provided further that appropriate safeguards may be developed by the intermediary to avoid any misuse by users;
+                        </div>
+                    </div>
+                </div>
+                @*@if (ITRuleProvision != null)
+                    {
+                        @Html.Raw(ITRuleProvision.Where(x => x.itrule.ToString() == "3").FirstOrDefault().extractOfRule)
+                    }*@
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal modal-xl fade modal-popup-window" id="provision4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding-top:100px;">
+    <div class="modal-dialog">
+        <div class="modal-content  modal-popup-window-outer">
+            <div class="modal-header  modal-popup-window-title">
+
+                <h1 class="modal-title fs-5" id="exampleModalLabel">IV. Right to have information removed from the computer resource of IT intermediary in a timebound manner  <i>(IT Rules provision)</i> </h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-popup-window-body">
+                <ol>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to removal, within 24 hours, of content exposing private area of or showing the user of the IT intermediary in the nude or in sexual act, or impersonating or morphing the user’s image
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection4(1)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to removal, within 15 days, of information hosted, displayed etc. by person not having any right over it, or violating intellectual property right or any Indian law
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection4(2)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Right to removal, within 72 hours, of any other information that violates the right to have IT intermediary computer resources free from illegal or harmful information
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="#" style="font-style:italic" onclick="opendivsection4(3)">IT Rules provision</a>
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+                <div style="background-color: #196d95;color:#ffffff;border-radius:5px;padding:3px;" class="fw-bold">
+                    <i>(IT Rules provision)</i>
+                </div>
+
+                <div id="fourlist1" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (2) Grievance redressal mechanism of intermediary: ...</b>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                        <div class="col-sm-11">
+                            The intermediary shall, within twenty-four hours from the receipt of a complaint made by an individual or any person on his behalf under this sub-rule, in relation to any content which is prima facie in the nature of any material which exposes the private area of such individual, shows such individual in full or partial nudity or shows or depicts such individual in any sexual act or conduct, or is in the nature of impersonation in an electronic form, including artificially morphed images of such individual, take all reasonable and practicable measures to remove or disable access to such content which is hosted, stored, published or transmitted by it.
+                        </div>
+                    </div>
+                </div>
+                <div id="fourlist2" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (2) Grievance redressal mechanism of intermediary:</b> (a) The intermediary shall prominently publish on its website, mobile based application or both, as the case may be, the name of the Grievance Officer and his contact details as well as mechanism by which a user or a victim may make complaint against violation of the provisions of this rule or any other matters pertaining to the computer resources made available by it, and the Grievance Officer shall-
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(i)</div>
+                        <div class="col-sm-11">
+                            acknowledge the complaint within twenty-four hours and resolve such complaint within a period of fifteen days from the date of its receipt:
+                            <div>
+                                &nbsp;&nbsp;&nbsp;Provided that the complaint in the nature of request for removal of information or communication link relating to clause (b) of sub-rule (1) of rule 3, except sub-clauses (i), (iv) and (ix), shall be acted upon as expeditiously as possible and shall be resolved within seventy-two hours of such reporting;
+                            </div>
+                            <div>
+                                &nbsp;&nbsp;&nbsp;Provided further that appropriate safeguards may be developed by the intermediary to avoid any misuse by users;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="fourlist3" style="display: none; text-align: justify;">
+                    <div>
+                        <b>3. (2) Grievance redressal mechanism of intermediary: </b> (a)The intermediary shall prominently publish on its website, mobile based application or both, as the case may be, the name of the Grievance Officer and his contact details as well as mechanism by which a user or a victim may make complaint against violation of the provisions of this rule …, and the Grievance Officer shall-
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1" style="padding:0px;text-align:right;">(i)</div>
+                        <div class="col-sm-11">
+                            acknowledge the complaint within twenty-four hours and resolve such complaint within a period of fifteen days from the date of its receipt:
+                            <div>
+                                &nbsp;&nbsp;&nbsp;Provided that the complaint in the nature of request for removal of information or communication link relating to clause (b) of sub-rule (1) of rule 3, except sub-clauses (i), (iv) and (ix), shall be acted upon as expeditiously as possible and shall be resolved within seventy-two hours of such reporting;
+                            </div>
+                            <div>
+                                &nbsp;&nbsp;&nbsp; Provided further that appropriate safeguards may be developed by the intermediary to avoid any misuse by users;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*@if (ITRuleProvision != null)
+                    {
+                        @Html.Raw(ITRuleProvision.Where(x => x.itrule.ToString() == "4").FirstOrDefault().extractOfRule)
+                    }*@
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal modal-xl fade modal-popup-window" id="provision5" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding-top: 100px;">
+    <div class="modal-dialog">
+        <div class="modal-content  modal-popup-window-outer">
+            <div class="modal-header  modal-popup-window-title">
+
+                <h1 class="modal-title fs-5" id="exampleModalLabel">V. Right to be notified prior to removal of disablement of access of information, data or communication link of the user, and to have opportunity to dispute such disablement  <i>(IT Rules provision)</i> </h1>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body modal-popup-window-body">
+                <div>
+                    <div>
+                        <b>4.Additional due diligence to be observed by significant social media intermediary.— ...</b>
+                        <div>
+                            (8) Where a significant social media intermediary removes or disables access to any information, data or communication link, under clause (b) of sub-rule (1) of rule 3 on its own accord, such intermediary shall,—
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-1" style="padding:0px;text-align:right;">(a)</div>
+                    <div class="col-sm-11">
+                        ensure that prior to the time at which such intermediary removes or disables access, it has provided the user who has created, uploaded, shared, disseminated, or modified information, data or communication link using its services with a notification explaining the action being taken and the grounds or reasons for such action;
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1" style="padding:0px;text-align:right;">(b)</div>
+                    <div class="col-sm-11">
+                        ensure that the user who has created, uploaded, shared, disseminated, or modified information using its services is provided with an adequate and reasonable opportunity to dispute the action being taken by such intermediary and request for the reinstatement of access to such information, data or communication link, which may be decided within a reasonable time;
+                    </div>
+                </div>
+            </div>
+            @*@if (ITRuleProvision != null)
+                {
+                    @Html.Raw(ITRuleProvision.Where(x => x.itrule.ToString() == "5").FirstOrDefault().extractOfRule)
+                }*@
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function opendivsection2(itrule) {
+        $("#twolist1").hide();
+        $("#twolist2").hide();
+        $("#twolist3").hide();
+        $("#twolist4").hide();
+        $("#twolist5").hide();
+        $("#twolist6").hide();
+        $("#twolist7").hide();
+        $("#twolist8").hide();
+        $("#twolist9").hide();
+        $("#twolist10").hide();
+        $("#twolist11").hide();
+        $("#twolist12").hide();
+        $("#twolist13").hide();
+
+        if (itrule == "1") {
+            $("#twolist1").show();
+        }
+        if (itrule == "2") {
+            $("#twolist2").show();
+        }
+        if (itrule == "3") {
+            $("#twolist3").show();
+        }
+        if (itrule == "4") {
+            $("#twolist4").show();
+        }
+        if (itrule == "5") {
+            $("#twolist5").show();
+        }
+        if (itrule == "6") {
+            $("#twolist6").show();
+        }
+        if (itrule == "7") {
+            $("#twolist7").show();
+        }
+        if (itrule == "8") {
+            $("#twolist8").show();
+        }
+        if (itrule == "9") {
+            $("#twolist9").show();
+        }
+        if (itrule == "10") {
+            $("#twolist10").show();
+        }
+        if (itrule == "11") {
+            $("#twolist11").show();
+        }
+        if (itrule == "12") {
+            $("#twolist12").show();
+        }
+        if (itrule == "13") {
+            $("#twolist13").show();
+        }
+    }
+    function opendivsection3(itrule) {
+        $("#threelist1").hide();
+        $("#threelist2").hide();
+
+        if (itrule == "1") {
+            $("#threelist1").show();
+        }
+        if (itrule == "2") {
+            $("#threelist2").show();
+        }
+    }
+
+    function opendivsection4(itrule) {
+        $("#fourlist1").hide();
+        $("#fourlist2").hide();
+        $("#fourlist3").hide();
+
+        if (itrule == "1") {
+            $("#fourlist1").show();
+        }
+        if (itrule == "2") {
+            $("#fourlist2").show();
+        }
+        if (itrule == "3") {
+            $("#fourlist3").show();
+        }
+    }
+    $(document).ready(function () {
+        // Configure/customize these variables.
+        var showChar = 0;  // How many characters are shown by default
+        //var ellipsestext = "";
+        var moretext = "Objective of GAC as (read more)...";
+        var lesstext = "< Show less";
+
+
+        $('.more').each(function () {
+            var content = $(this).html();
+
+            if (content.length > showChar) {
+
+                var c = content.substr(0, showChar);
+                var h = content.substr(showChar, content.length - showChar);
+
+                var html = c + '<span class="morecontent"><span>' + h + '</span><a href="" class="morelink mt-1">' + moretext + '</a></span>';
+
+                $(this).html(html);
+            }
+
+        });
+        $(".morelink").click(function () {
+            if ($(this).hasClass("less")) {
+                $(this).removeClass("less");
+                $(this).html(moretext);
+            } else {
+                $(this).addClass("less");
+                $(this).html(lesstext);
+            }
+            $(this).parent().prev().toggle();
+            $(this).prev().toggle();
+            return false;
+        });
+
+        $("#IntermediaryTable").DataTable();
+    });
+</script>

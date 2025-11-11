@@ -1,0 +1,96 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.ChangePasswordIntermediary
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<div class="row">
+    <div class="col-lg-4">
+        <label class="custom-input-label mb-1">@LabelDictionary["EnterOTP"]</label><span class="text-danger"> *</span>
+    </div>
+    <div class="col-lg-4 mb-3">
+        @Html.TextBoxFor(x => x.OTP, new { @id = "OTP", @class = "form-control DisabledInputs", @MaxLength = "6", @Type = "Password", placeholder = @LabelDictionary["EnterOTP"], @autocomplete = "off" })
+        @Html.ValidationMessageFor(x => x.OTP)
+        <div id="OTPErrorMessage" style="color: orange !important; font-size: 15px;"></div>
+    </div>
+    <div class="col-lg-4 mb-3">
+        <button type="button" class="btn btn-warning" id="btnResend">@LabelDictionary["Resend"]</button>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-lg-12 text-center">
+        <button type="button" class="btn btn-success" id="btnSubmit">@LabelDictionary["ChangePassword"]</button>
+    </div>
+</div>
+<script>
+    function countdown() {
+        if (timeLeft == -1) {
+            clearInterval();
+            $('#btnResend').prop('disabled', false);
+            $("#btnResend").html('Resend OTP');
+        } else {
+            $('#btnResend').prop('disabled', true);
+            $("#btnResend").html('Resend OTP after ' + timeLeft + ' seconds');
+            timeLeft--;
+        }
+    }
+
+    $("#btnSubmit").click(function () {
+        var OTP = $('#OTP').val();
+        if (OTP != null && OTP != "") {
+            $.ajax({
+                url: '@Url.Action("VerifyOTPforPasswordChange", "IntermediaryDashboard", new { area = "Intermediary" })', //VerifyOTPForApplicationRegistration
+                type: "GET",
+                dataType: "JSON",
+                data: { OTP: OTP }, //$("#frmApp_VerifyOTP").serialize(),
+                success: function (data) {
+                    if (data.Result != "") {
+                        if (data.Result == "OtpMatched") {
+                            $('.DisabledInputs').prop('disabled', false);
+                            if ($("#frm_ChangePassword").valid()) {
+                                $('#frm_ChangePassword').submit();
+                            }
+                        }
+                        else if (data.Result == "OtpMisMatched") {
+                            $('#OTP').val('');
+                            $('#OTP').focus();
+                            $("#OTPErrorMessage").html("Please Enter valid OTP");
+                        }
+                    }
+                }
+            });
+        }
+        else {
+            $("#OTPErrorMessage").html("Please Enter OTP");
+        }
+    });
+    $("#btnResend").click(function () {  
+            $.ajax({
+                url: '@Url.Action("ResendOTP", "IntermediaryDashboard", new { area = "Intermediary" })', //VerifyOTPForApplicationRegistration
+                type: "GET",
+                dataType: "JSON",               
+                success: function (data) {
+                    if (data.Result == "S") {
+                        alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-check-circle me-1'></i> OTP Successfully Sent. </div>", "success", 5, function () { });
+                        $('#btnResend').prop('disabled', true);
+                        var timeLeft = 30;
+                        var timerId = setInterval(countdown, 1000);
+                        function countdown() {
+                            // console.log(timeLeft);
+                            if (timeLeft == -1) {
+                                clearInterval(timerId);
+                                $('#btnResend').prop('disabled', false);
+                                $("#btnResend").html('Resend OTP');
+                            } else {
+                                $('#btnResend').prop('disabled', true);
+                                $("#btnResend").html('Resend OTP after ' + timeLeft + ' seconds');
+                                timeLeft--;
+                            }
+                        }
+                    }
+                    else if (data.Result == "F") {
+                        alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-window-close me-1'></i> Error while sending OTP (Already 5 OTP requests were initiated) </div>", "error", 5, function () { });
+                    }
+                }
+            });           
+    });
+</script>

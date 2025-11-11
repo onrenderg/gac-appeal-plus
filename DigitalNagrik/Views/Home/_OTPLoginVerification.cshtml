@@ -1,0 +1,219 @@
+﻿@model DigitalNagrik.Areas.Public.Models.UserOTPVerfication
+@{
+
+    var resendOTP = Url.Action("getResendOTP", "Registration", new { Area = "Public" });
+}
+
+
+<style>
+    .Mandatory {
+        color: red;
+    }
+
+    .form-control:disabled, .form-control[readonly] {
+        background-color: #e9ecef;
+        opacity: 1;
+    }
+
+    .field-validation-error {
+        color: red;
+    }
+
+    .validation-summary-errors {
+        color: red;
+    }
+</style>
+@using (Html.BeginForm("OTPLoginVerification", "Home", FormMethod.Post, new { id = "OTPLoginVerification" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    @Html.HiddenFor(m => m.MobileNo)
+    @Html.HiddenFor(m => m.MobileNoOTPID)
+    @Html.HiddenFor(m => m.EmailorMobile)
+    <div class="text-danger mt-2">
+        Fields marked with * are mandatory
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <label class="form-label" for="form2Example17">
+                @if (Model.EmailorMobile == "M")
+                {
+                    <span>
+                        Enter OTP Sent on Mobile Number <b>xxxxxx</b><b>@Model.MobileNo.Substring(6, 4) </b> with OTP ID <b>
+                            <span id="otpid">@Html.DisplayFor(m => m.MobileNoOTPID)</span>
+                        </b>
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        Enter OTP Sent on Email <b>xxxxxx</b><b>@Model.MobileNo.Substring(6, Model.MobileNo.ToString().Length-6) </b> with OTP ID <b>
+                            <span id="otpid">@Html.DisplayFor(m => m.MobileNoOTPID)</span>
+                        </b>
+                    </span>
+                }
+            </label>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            @Html.TextBoxFor(m => m.txtMobileOTP, new { @class = "form-control" })
+            @Html.ValidationMessageFor(x => x.txtMobileOTP)
+        </div>
+        <div class="col-sm-1">
+            <a id="resendOTP" class="btn btn-warning  btn-block" href="#">
+                Resend
+            </a>
+        </div>
+        <div class="col-sm-7 text-info" style="text-align:right;">
+            <div id="WaitDiv"></div>
+        </div>
+
+    </div>
+    <div class="mt-4 row">
+        <div class="col-md-8">
+            <label class="custom-input-label mb-1">Captcha<span class="text-danger">*</span></label>
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">
+                    <img id="CaptchaImage" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                    <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                </span>
+                @Html.TextBoxFor(x => x.Captcha, new { @id = "txtCaptcha", @class = "form-control DisabledInputs", placeholder = "Enter Captcha", autocomplete = "off", maxlength = "6" })
+            </div>
+            <div id="SpanCaptchaValidation">
+                @Html.ValidationMessageFor(x => x.Captcha)
+            </div>
+        </div>
+        <div class="col-2"></div>
+        <div class="col-2 mt-2">
+            <br />
+            <input type="button" id="btnVerify" class="btn btn-primary  btn-block" value="Verify" />
+
+        </div>
+    </div>
+
+    <br />
+    <div class="row">
+
+        <div class="col-sm-10"></div>
+        <div class="col-sm-2">
+            <a class="btn btn-warning  btn-block" href="@Url.Action("index", "Home", new { Area = "" })">Cancel</a>
+        </div>
+    </div>
+
+
+}
+@if (ViewData["SuccessMessage"] != null)
+{
+    <script type="text/javascript">
+                window.onload = function () {
+                    alertify.success('@ViewData["SuccessMessage"]');
+                 };
+    </script>
+}
+@if (ViewData["ErrorMessage"] != null)
+{
+    <script type="text/javascript">
+                window.onload = function () {
+                    alertify.error('@ViewData["ErrorMessage"]');
+                 };
+    </script>
+}
+<script>
+    $("#btnVerify").click(function () {
+          var data = new FormData();
+                //Add the input element values
+        data.append("MobileNo", $("#MobileNo").val());
+        data.append("MobileNoOTPID", $("#MobileNoOTPID").val());
+        data.append("txtMobileOTP", $("#txtMobileOTP").val());
+        data.append("EmailorMobile", $("#EmailorMobile").val());
+        data.append("Captcha", $("#txtCaptcha").val());
+                $.ajax({
+                type: "POST",
+                url:"@Url.Action("OTPLoginVerification", "Home")",
+                contentType: false,
+                processData: false,
+                data: data,
+                    success: function (response) {
+                        if (response == "LoginSuccess") {
+                            window.location="@Url.Action("CitizenDashboard", "Registration", new { Message = "LoginSuccess", Area = "Public" })"
+                        }
+                        else {
+                          //  console.log(response);
+                          //  RefreshCaptcha();
+
+                            $("#LoginDiv").html(response);
+                            RefreshCaptcha();
+                        }
+
+                },
+                });
+    });
+
+    function countdown() {
+        console.log(timeLeft);
+        if (timeLeft == -1) {
+            clearTimeout();
+            $("#resendOTP").show();
+            $("#WaitDiv").hide();
+        } else {
+            $("#resendOTP").hide();
+            $("#WaitDiv").show();
+            WaitDiv.innerHTML = timeLeft + ' seconds remaining for Resend SMS';
+            timeLeft--;
+        }
+
+    }
+
+     function RefreshCaptcha() {
+        $.ajax({
+            url: '@Url.Action("CaptchaImage", "Home", new { area = "" })',
+            data: {},
+            success: function (data) {
+                $("#CaptchaImage").html(data);
+            }
+        });
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };
+       $(function() {
+           $("#resendOTP").click(function() {
+             var url = "@resendOTP";
+
+
+            var dataValue = {};
+            $.ajax({
+                url: url,
+                type: 'POST',
+                cache: false,
+                data: dataValue,
+                async: true,
+                success: function (result) {
+                    $('#otpid').text(result["MobileNoOTPID"]);
+                    $('#MobileNoOTPID').val(result["MobileNoOTPID"]);
+                    var timeLeft = 30;
+                    var timerId = setInterval(countdown, 1000);
+                    function countdown() {
+                       // console.log(timeLeft);
+                        if (timeLeft == -1) {
+                            clearInterval(timerId);
+                            $("#resendOTP").show();
+                            $("#WaitDiv").hide();
+                        } else {
+                            $("#resendOTP").hide();
+                            $("#WaitDiv").show();
+                            WaitDiv.innerHTML = timeLeft + ' seconds remaining for resend sms';
+                            timeLeft--;
+                        }
+                    }
+                },
+                error: function(xhr, x, e) {
+                alert(e);
+                },
+                complete: function() {
+                }
+            });
+        });
+       });
+</script>

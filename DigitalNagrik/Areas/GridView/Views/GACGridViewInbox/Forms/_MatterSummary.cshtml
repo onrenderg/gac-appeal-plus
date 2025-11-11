@@ -1,0 +1,166 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACAppealMatterSummary
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+    Model.IsAdmit = string.IsNullOrWhiteSpace(Model.IsAdmit) ? "Y" : Model.IsAdmit;
+}
+
+<div class="modal-header pt-3">
+    <h4 class="modal-title">@LabelDictionary["PrepareMatterSummary"] (<span class="h5">@LabelDictionary["AppealNumber"]: </span><span>@Model.GrievanceId/@Model.RegistrationYear</span>)</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<hr class="mb-0 mt-2" />
+@using (Html.BeginForm("GACMatterSummary", "GACGridViewInbox", FormMethod.Post, new { @class = "frmGACMatterSummary" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(x => x.GrievanceId)
+    @Html.HiddenFor(x => x.RegistrationYear)
+    @Html.HiddenFor(x => x.SubmitType, new { id = "hdnSubmitType" })
+
+    <div class="modal-body pb-0 pt-3 pb-4 px-3 overflow-auto">
+        <div class="row gx-3">
+            <div class="col-xl-6">
+                <div class="mb-3">
+                    <div class="px-3 py-2 bg-primary text-white">@LabelDictionary["MatterSummaryText"]</div>
+                    @Html.TextAreaFor(x => x.Summary, new { id = "txtEditor", @class = "form-control", rows = 4 })
+                    @Html.ValidationMessageFor(x => x.Summary)
+                </div>
+
+                <div class="row">
+                    <div class="col-12 mb-2"><div class="px-3 py-2 bg-primary text-white">@LabelDictionary["Observation"]</div></div>
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">@LabelDictionary["Observation"]</label><span class="font-sm ms-1">(@LabelDictionary["Max.characters"]: 5000)</span><span class="text-danger ms-1">*</span>
+                        @Html.TextAreaFor(x => x.ObservationText, new { @class = "form-control", rows = 3, Placeholder = LabelDictionary["Observation"] + " ...", maxlength = "5000" })
+                        @Html.ValidationMessageFor(x => x.ObservationText)
+                    </div>
+
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">@LabelDictionary["Appeal"] <span class="text-danger">*</span></label>
+                        <div>
+                            <div class="form-check form-check-inline">
+                                @Html.RadioButtonFor(x => x.IsAdmit, "Y", new { @class = "form-check-input", id = "rb_IsAdmit_Y" })
+                                <label class="form-check-label" for="rb_IsAdmit_Y">@LabelDictionary["Admissible"]</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                @Html.RadioButtonFor(x => x.IsAdmit, "N", new { @class = "form-check-input", id = "rb_IsAdmit_N" })
+                                <label class="form-check-label" for="rb_IsAdmit_N">@LabelDictionary["NotAdmissible"]</label>
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(x => x.IsAdmit)
+                        <div style="display:none" class="mt-2 gvformcontainer-summary-isadmit">
+                            <label class="form-label">@LabelDictionary["Reason"] <span class="text-danger">*</span></label>
+                            <div>
+                                @if (Model.NoAdmitTypeList != null && Model.NoAdmitTypeList.Count() > 0)
+                                {
+                                    foreach (var Item in Model.NoAdmitTypeList)
+                                    {
+                                        <div class="form-check form-check-inline">
+                                            @Html.RadioButtonFor(x => x.NoAdmitTypeId, Item.Value, new { @class = "form-check-input", id = "rb_NoAdmitTypeId_" + Item.Value })
+                                            <label class="form-check-label" for="rb_NoAdmitTypeId_@(Item.Value)">@Item.Text</label>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(x => x.NoAdmitTypeId)
+                    </div>
+
+                    <div style="display:none" class="col-12 mb-3 gvformcontainer-summary-isadmit">
+                        <label class="form-label">@LabelDictionary["EmailDraft"] <span class="text-danger">*</span></label>
+                        @Html.TextAreaFor(x => x.RejectSummary, new { id = "txtEditorRejectSummary", @class = "form-control", rows = 4 })
+                        @Html.ValidationMessageFor(x => x.RejectSummary)
+                    </div>
+
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary" data-submittype="D" onclick="SubmitMatterSummary($(this))">@LabelDictionary["SaveDraft"]</button>
+                        <a style="display:none" id="btnFinalizeGACMatterSummary" onclick="SubmitMatterSummary($(this))" data-submittype="S" data-url="@Url.Action("FinalizeGACMatterSummary", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="btn btn-success" href="javascript:void(0);">@LabelDictionary["SubmittoCommittee"]</a>
+                        <a style="display:none" id="btnGACRejectAppeal" onclick="SubmitMatterSummary($(this))" data-submittype="R" data-url="@Url.Action("GACRejectAppeal", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="btn btn-danger" href="javascript:void(0);">@LabelDictionary["Reject(NotAdmit)"]</a>
+                        @if (!string.IsNullOrWhiteSpace(Model.PreparedSummary))
+                        {
+                            <a class="btn btn-outline-danger" target="_blank" href="@Url.Action("PrintMatterSummary", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId + "&IsDraft=Y") })"><i class="bx bxs-file-pdf align-middle"></i></a>
+                        }
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6">
+                <div class="bg-white gv-container-comparison-doc"></div>
+
+                <div class="mb-2 ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["AppealDetails"]</div>
+                    <div style="height:370px" class="overflow-auto">
+                        @{ Html.RenderAction("GetAppealDetailsGrid_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+                <hr />
+                <div class="ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["RespondentIntermediaryResponse"]</div>
+                    <div style="height:280px" class="overflow-auto">
+                        @{ Html.RenderAction("IntermediaryResponseView", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $.validator.unobtrusive.parse($(".frmGACMatterSummary"));
+
+    function SubmitMatterSummary(element) {
+        var SubmitType = element.data("submittype");
+        $("#hdnSubmitType").val(SubmitType);
+        var form = element.closest('form');
+        var wordCounts = CKEDITOR.instances.txtEditor.wordCount.wordCount;
+        if (wordCounts < 1) {
+            alertify.alert("<h5 class='m-0'><i class='bx bx-help-circle me-1'></i> @LabelDictionary["TextEditorEmpty"]</h5>", "@LabelDictionary["TextEditorcannotbeempty"]", function () { });
+        }
+        else if (wordCounts > 5000) {
+            alertify.alert("<h5 class='m-0'><i class='bx bx-help-circle me-1'></i> @LabelDictionary["TextEditorFull"]</h5>", "@LabelDictionary["Youhaveexceededwordlimit"] <span class='text-danger'>" + wordCounts + "</span>/5000 @LabelDictionary["words"].", function () { });
+        }
+        else {
+            if (form.valid()) {
+                $(".btn").attr("disabled", "disabled"); form.submit();
+            }
+        }
+    }
+
+    function FinalizeGist(element) {
+        var URL = element.data("url");
+        alertify.confirm('@LabelDictionary["Confirm"]', '@LabelDictionary["MatterSummarywillbesubmittedtoCommittee"]. @LabelDictionary["Areyousuretoproceed"]?', function () { window.location.href = URL; }, function () { });
+    }
+
+    function RejectGist(element) {
+        var URL = element.data("url");
+        alertify.confirm('@LabelDictionary["Confirm"]', '@LabelDictionary["Appealwillnotbeadmitted"]. @LabelDictionary["Areyousuretoproceed"]?', function () { window.location.href = URL; }, function () { });
+    }
+
+    function IsAdmitChange(IsAdmit) {
+        if (IsAdmit == "N") {
+            $("#btnFinalizeGACMatterSummary").hide('fast');
+            $("#btnGACRejectAppeal").show('fast');
+            $(".gvformcontainer-summary-isadmit").show('fast');
+            $("#gvformcontainer-summary-recothertext").hide('fast');
+        }
+        else {
+            $("#btnFinalizeGACMatterSummary").show('fast');
+            $("#btnGACRejectAppeal").hide('fast');
+            $(".gvformcontainer-summary-isadmit").hide('fast');
+        }
+    }
+
+    CKEDITOR.config.height = '300'; CKEDITOR.config.allowedContent = true; CKEDITOR.config.protectedSource.push(/<i[^>]*><\/i>/g); CKEDITOR.config.autoParagraph = false;
+    CKEDITOR.config.editorplaceholder = "Type your matter summary decision here ...";
+    CKEDITOR.config.removeButtons = 'Preview,Source,Save,NewPage,ExportPdf,Print,Templates,Find,SelectAll,Undo,Redo,Cut,Copy,Paste,PasteText,PasteFromWord,Outdent,Indent,Scayt,Form,Radio,TextField,Textarea,Select,Strike,Button,ImageButton,HiddenField,Checkbox,CopyFormatting,RemoveFormat,Blockquote,CreateDiv,BidiLtr,BidiRtl,Language,Anchor,Image,Flash,Smiley,PageBreak,Iframe,ShowBlocks,About,Replace,Styles,Font';
+    CKEDITOR.config.removePlugins = 'uploadfile'; CKEDITOR.config.extraPlugins = 'wordcount';
+    CKEDITOR.replace('txtEditor');
+    CKEDITOR.config.height = '200'; CKEDITOR.replace('txtEditorRejectSummary');
+
+    $(function () { IsAdmitChange('@Model.IsAdmit'); });
+
+    $("input[name=IsAdmit][type=radio]").change(function () {
+        var IsAdmit = $(this).val();
+        IsAdmitChange(IsAdmit);
+    });
+</script>

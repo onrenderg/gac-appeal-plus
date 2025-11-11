@@ -1,0 +1,31 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACAppealDecision
+<style>
+    table, div, p, span {
+        font-size: 22px !important;
+        font-family: Calibri !important;
+    }
+
+    .watermark {
+        width: 100% !important;
+        position: absolute !important;
+        top: 20% !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        left: 0 !important;
+        background-repeat: repeat !important;
+        z-index: 99999 !important;
+        opacity: 0.1 !important;
+    }
+</style>
+
+<div class="watermark" style="background-image: url(@Server.MapPath("~/assets/img/logo_gac.jpg"));"><img src="@Server.MapPath("~/assets/img/logo_gac.jpg")" width="100%" /></div>
+<div style="z-index:0 !important">
+    @*<div style="text-align:center">
+        <img id="Header" src="@Server.MapPath("~/assets/img/logo_gac.jpg")" style="height: 120px;" />
+    </div>*@
+    <div style="margin-top:-15px;">
+        @Html.Raw(Model.DraftDecision)
+    </div>
+</div>
+
+

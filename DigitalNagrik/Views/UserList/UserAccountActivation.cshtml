@@ -1,0 +1,131 @@
+﻿@model DigitalNagrik.Models.VerifyOtp
+@{
+    ViewBag.Title = "UserAccountActivation";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+<div class="container no-padding p-3">
+    <div class="card p-3">
+        @using (Html.BeginForm("checkMobOTP", "UserList", FormMethod.Post, new { id = "checkMobOTPForm" }))
+        {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-lg-2">
+                <label class="custom-input-label mb-1">User ID</label>
+            </div>
+            <div class="col-lg-4 mb-3">
+                <label class="custom-input-label mb-1" style="font-weight:bold">@Model.UserId</label>
+
+                @Html.HiddenFor(x => x.UserId, new { @id = "UserId", })
+                @Html.HiddenFor(x => x.Mobile, new { @id = "Mobile", })
+                @Html.HiddenFor(x => x.UserName, new { @id = "UserName", })
+
+            </div>
+            <div class="col-lg-2">
+                <label class="custom-input-label mb-1">User Name</label>
+            </div>
+            <div class="col-lg-4 mb-3">
+                <label class="custom-input-label mb-1" style="font-weight:bold">@Model.UserName</label>
+
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2">
+                <label class="custom-input-label mb-1">Mobile No.</label>
+            </div>
+            <div class="col-lg-4 mb-3">
+                <label class="custom-input-label mb-1" style="font-weight:bold">@Model.Mobile</label>
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-lg-2">
+                <label class="custom-input-label mb-1">Enter OTP</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-4 mb-3">
+                @Html.PasswordFor(x => x.mobOTP, new { @id = "mobOTP", @class = "form-control DisabledInputs allow_Numbers", maxlength = "6", placeholder = "Enter OTP", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.mobOTP)
+
+            </div>
+        </div>
+        <div id="divPasswords" style="display: none;">
+
+
+            <div class="row">
+                <div class="col-lg-2">
+                    <label class="custom-input-label mb-1">Password</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4 mb-3">
+                    @Html.PasswordFor(x => x.Password, new { @id = "Password", @class = "form-control", maxlength = "10", placeholder = "Enter Password", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.Password)
+
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label mb-1">Confirm Password</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4 mb-3">
+                    @Html.PasswordFor(x => x.ConfPassword, new { @id = "ConfPassword", @class = "form-control ", maxlength = "10", placeholder = "Confirm Password", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.ConfPassword)
+
+                </div>
+            </div>
+        </div>
+
+
+        @Html.HiddenFor(x => x.HasPass, new { @id = "HasPassID", })
+        @Html.HiddenFor(x => x.Seed, new { @id = "SeedID", })
+
+
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <button type="button" class="btn btn-success" id="btnSubmit"><i class="fa fa-paper-plane"></i>&nbsp;Submit</button>
+                <button type="button" class="btn btn-danger" id="btnCancel"><i class=" fa fa-close"></i>&nbsp;Cancel </button>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+<script src="~/assets/js/sha256.js"></script>
+<script>
+
+
+    $(document).ready(function () {
+
+
+        if ($("#UserId").val().includes("nic.in")) {
+            $("#divPasswords").css("display", 'none');
+        } else if ($("#UserId").val().includes("gov.in")) {
+            $("#divPasswords").css("display", 'none');
+        } else {
+            $("#divPasswords").css("display", 'block');
+        }
+
+
+
+
+        $("#btnSubmit").click(function () {
+            //if ($("#Password").val() != '') {
+            //    if ($("#Password").val() != $("#ConfPassword").val()) {
+            //        alert('Password and Confirm password do not match')
+            //        return false
+            //    }
+            //}
+
+            var haspass = sha256($("#Password").val());
+            //   var seed = $("#SeedID").val();
+
+            $("#HasPassID").val(haspass);
+
+
+
+
+            $('#checkMobOTPForm').submit();
+
+        });
+    });
+
+
+
+
+</script>

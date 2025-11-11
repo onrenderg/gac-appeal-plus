@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="GACAppeal.HomePage"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    ios:Page.UseSafeArea="true"
+    Title="Dashboard"
+    IconImageSource="Dashboard_ico.png">
+    <NavigationPage.TitleView >
+        <StackLayout x:Name="Custom_Navigation" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" BackgroundColor="Transparent" >
+            <Image Source="goi_icon.png" HeightRequest="40" VerticalOptions="CenterAndExpand"/>
+            <Label x:Name="Lbl_Nav_title" Style="{StaticResource NavBar_LabelStyle}" />
+            <Image Source="app_nic_header.png" x:Name="Image_Nav_nic"  HeightRequest="30" VerticalOptions="CenterAndExpand"/>
+        </StackLayout>
+    </NavigationPage.TitleView>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="language_ico.png" Clicked="Language_Clicked"/>
+        <ToolbarItem IconImageSource="Log_out_ico.png" Clicked="ToolbarItem_Clicked"/>
+    </ContentPage.ToolbarItems>
+    <Grid Margin="6">
+        <StackLayout>
+            <ScrollView VerticalOptions="FillAndExpand">
+                <StackLayout VerticalOptions="FillAndExpand">
+                    <BoxView Style="{StaticResource BoxView_Line}"/>
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                        <Label x:Name="Lbl_Title" Style="{StaticResource LabelStyle_PageTitle}" VerticalOptions="CenterAndExpand" HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+                    
+                    <BoxView Style="{StaticResource BoxView_Line}"/>
+                    <Grid HorizontalOptions="FillAndExpand">
+                        
+                        <Frame Style="{StaticResource FrameStyle}" HorizontalOptions="FillAndExpand" Grid.Row="0" Grid.Column="0">
+                            <StackLayout HorizontalOptions="FillAndExpand">
+                                <StackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="Draft_Tapped"/>
+                                </StackLayout.GestureRecognizers>
+                                <Image Source="Draft_c_ico.png" HeightRequest="35" Margin="0,0,0,10" HorizontalOptions="Start"/>
+                                <Label x:Name="Lbl_Draft_lbl" Text = "Draft" Style="{StaticResource LabelStyle}"/>
+                                <Label x:Name="Lbl_Draft" Text="0" FontAttributes="Bold" Style="{StaticResource LabelStyle}"/>
+                            </StackLayout>
+                        </Frame>
+                        <Frame Style="{StaticResource FrameStyle}" Grid.Row="0" Grid.Column="1">
+                            <StackLayout HorizontalOptions="FillAndExpand">
+                                <StackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="UnderProcess_Tapped"/>
+                                </StackLayout.GestureRecognizers>
+                                <Image Source="Submitted_c_ico.png" HeightRequest="35" Margin="0,0,0,10" HorizontalOptions="Start"/>
+                                <Label x:Name="Lbl_Submitted_lbl" Text = "Under Process" Style="{StaticResource LabelStyle}"/>
+                                <Label x:Name="Lbl_Submitted" Text="0" Style="{StaticResource LabelStyle}" FontAttributes="Bold"/>
+                            </StackLayout>
+                        </Frame>
+                        <Frame Style="{StaticResource FrameStyle}" HorizontalOptions="FillAndExpand" Grid.Row="1" Grid.Column="0">
+                            <StackLayout HorizontalOptions="FillAndExpand">
+                                <StackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="NotSubmitted_Tapped"/>
+                                </StackLayout.GestureRecognizers>
+                                <Image Source="Rejected_c_ico.png" HeightRequest="35" Margin="0,0,0,10" HorizontalOptions="Start"/>
+                                <Label x:Name="Lbl_Rejected_lbl" Text = "Not Admitted" Style="{StaticResource LabelStyle}"/>
+                                <Label x:Name="Lbl_Rejected" Text="0" FontAttributes="Bold" Style="{StaticResource LabelStyle}"/>
+                            </StackLayout>
+                        </Frame>
+                        <!--<Frame Style="{StaticResource FrameStyle}" HorizontalOptions="FillAndExpand" Grid.Row="2" Grid.Column="0" IsVisible="false">
+                            <StackLayout HorizontalOptions="FillAndExpand">
+                                <StackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="Query_Tapped"/>
+                                </StackLayout.GestureRecognizers>
+                                <Image Source="Query_c_ico.png" HeightRequest="35" Margin="0,0,0,10" HorizontalOptions="Start"/>
+                                <Label Text = "Query Raised" Style="{StaticResource LabelStyle}"/>
+                                <Label x:Name="Lbl_Query" Text="0" FontAttributes="Bold" Style="{StaticResource LabelStyle}"/>
+                            </StackLayout>
+                        </Frame>-->
+                        <Frame Style="{StaticResource FrameStyle}" HorizontalOptions="FillAndExpand" Grid.Row="1" Grid.Column="1">
+                            <StackLayout HorizontalOptions="FillAndExpand">
+                                <StackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="Disposed_Tapped"/>
+                                </StackLayout.GestureRecognizers>
+                                <Image Source="Disposed_c_ico.png" HeightRequest="35" Margin="0,0,0,10" HorizontalOptions="Start"/>
+                                <Label x:Name="Lbl_Disposed_lbl" Text = "Disposed of" Style="{StaticResource LabelStyle}"/>
+                                <Label x:Name="Lbl_Disposed" Text="0" FontAttributes="Bold" Style="{StaticResource LabelStyle}"/>
+                            </StackLayout>
+                        </Frame>
+                        <Frame Style="{StaticResource FrameStyle}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+                            <StackLayout HorizontalOptions="FillAndExpand">
+                                <StackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="Total_Tapped"/>
+                                </StackLayout.GestureRecognizers>
+                                <Image Source="Total_c_ico.png" HeightRequest="35" Margin="0,0,0,10" HorizontalOptions="Start"/>
+                                <Label x:Name="Lbl_Total_lbl" Text = "Total" Style="{StaticResource LabelStyle}"/>
+                                <Label x:Name="Lbl_Total" Text="0" Style="{StaticResource LabelStyle}" FontAttributes="Bold"/>
+                            </StackLayout>
+                        </Frame>
+                    </Grid>
+                    <BoxView Style="{StaticResource BoxView_Line}"/>
+                    <!--<Frame Style="{StaticResource FrameStyle}" Padding="20" VerticalOptions="Start">
+                        <StackLayout>
+                            <StackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Profile_Tapped"/>
+                            </StackLayout.GestureRecognizers>
+                            <Label Text="Change user profile" Style="{StaticResource LabelStyle}" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                        </StackLayout>
+                    </Frame>-->
+                    <StackLayout VerticalOptions="FillAndExpand" IsVisible="false">
+                        <Label Text="My Appeals" Style="{StaticResource LabelStyle_PageTitle}"/>
+                        <ListView x:Name="MyApeals_List" HasUnevenRows="True" ItemTapped="MyApeals_List_ItemTapped" VerticalOptions="FillAndExpand" SelectionMode="None">
+                            <ListView.ItemTemplate >
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="35"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackLayout Grid.Column="0" VerticalOptions="CenterAndExpand">
+                                                <Label Text="{Binding GrievanceId}" Style="{StaticResource LabelStyle}"/>
+                                                <Label Text="{Binding IntermediaryTitle}" Style="{StaticResource LabelStyle}"/>
+                                            </StackLayout>
+                                            <Image Source="Disposed_ico.png" HorizontalOptions="End" VerticalOptions="CenterAndExpand" Grid.Column="1"/>
+                                        </Grid>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackLayout>
+                </StackLayout>
+            </ScrollView>
+            <Button Style="{StaticResource ButtonStyle}" Text="File New Appeal" x:Name="Btn_AddNew" Clicked="Btn_AddNew_Clicked"/>
+            <!--<ImageButton Source="Add_icon.png" HeightRequest="50" x:Name="Btn_AddNew" Clicked="Btn_AddNew_Clicked" VerticalOptions="End" HorizontalOptions="CenterAndExpand" BackgroundColor="Transparent"/>-->
+        </StackLayout>
+        <ContentView x:Name="Loading_activity" BackgroundColor="#C0808080" Padding="20, 20" IsVisible="false">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <Frame Style="{StaticResource FrameLoadingStyle}">
+                    <StackLayout Orientation="Horizontal" Padding="6">
+                    <ActivityIndicator IsVisible="true" IsRunning="true" Margin="5"/>
+                    <Label x:Name="Lbl_PleaseWait" Text="Please Wait ..." Style="{StaticResource LabelStyle}" HorizontalOptions="FillAndExpand" WidthRequest="600"/>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </ContentView>
+    </Grid>
+</ContentPage>
+

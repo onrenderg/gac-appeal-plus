@@ -1,0 +1,54 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.Dashboard_ReliefSought
+@using Newtonsoft.Json
+@{
+    string CD = "ReliefWise";
+    string[] SeriesData_ReliefWise = { };
+    string[] XAxis_Relief = { };
+    if (Model.DataList != null && Model.DataList.Count > 0)
+    {
+        SeriesData_ReliefWise = Model.DataList.Select(x => x.NoOfAppeals).ToArray();
+        XAxis_Relief = Model.DataList.Select(x => x.ReliefTitle).ToArray();
+    }
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between pb-0">
+        <div class="card-title mb-0">
+            <h4 class="m-0 me-2">@LabelDictionary["ReliefSoughtwiseAppeals"]</h4>
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="CC_ReliefWise@(CD)">
+            <script>
+                $(function () {
+                    const ChartOptions@(CD) = {
+                        series: [{ name: "No of Appeals", data: JSON.parse('@Html.Raw(JsonConvert.SerializeObject(SeriesData_ReliefWise))') }],
+                        chart: { height: 280, stacked: false, type: 'bar', toolbar: { show: false } },
+                        plotOptions: {
+                            bar: {
+                                distributed: true,
+                                horizontal: true,
+                                columnWidth: '35%',
+                                borderRadius: 12,
+                                startingShape: 'rounded',
+                                endingShape: 'rounded'
+                            }
+                        },
+                        tooltip: { enabled: true, style: { fontSize: '15px' } },
+                        colors: [config.colors.primary, config.colors.success, config.colors.info, config.colors.warning],
+                        dataLabels: { enabled: true, style: { fontSize: '20px' } },
+                        legend: { show: false, },
+                        grid: { borderColor: borderColor, strokeDashArray: 3, padding: { top: -20, bottom: -15, left: 10, right: 0 } },
+                        xaxis: {
+                            categories: JSON.parse('@Html.Raw(JsonConvert.SerializeObject(XAxis_Relief))'), labels: { formatter: function (val) { return val.toFixed(0); }, style: { fontSize: '18px', colors: axisColor } },
+                            axisTicks: { show: true }, axisBorder: { show: false }
+                        },
+                        yaxis: { labels: { style: { fontSize: '16px', colors: axisColor } } },
+                    };
+                    var Chart = new ApexCharts(document.querySelector('#CC_ReliefWise@(CD)'), ChartOptions@(CD)); Chart.render();
+                });
+            </script>
+        </div>
+    </div>
+</div>

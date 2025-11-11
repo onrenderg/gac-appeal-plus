@@ -1,0 +1,9 @@
+﻿
+.field-validation-error {
+    color: #b40d2b !important;
+    font-weight: normal !important;
+}
+
+.field-validation-valid {
+    display: none !important;
+}

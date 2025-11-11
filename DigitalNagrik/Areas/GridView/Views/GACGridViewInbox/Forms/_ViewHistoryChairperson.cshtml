@@ -1,0 +1,87 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACDecisionbyChairperson
+<style>
+
+    .timeline-with-icons {
+        border-left: 1px solid hsl(0, 0%, 90%);
+        position: relative;
+        list-style: none;
+    }
+
+        .timeline-with-icons .timeline-item {
+            position: relative;
+        }
+
+            .timeline-with-icons .timeline-item:after {
+                position: absolute;
+                display: block;
+                top: 0;
+            }
+
+        .timeline-with-icons .timeline-icon {
+            position: absolute;
+            left: -48px;
+            background-color: hsl(217, 88.2%, 90%);
+            color: hsl(217, 88.8%, 35.1%);
+            border-radius: 50%;
+            height: 31px;
+            width: 31px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+</style>
+@if (Model.DraftDecisionnHistory.Count > 0)
+{
+    <div class="h3 mb-1"><i class="bx bx-history ms-2 me-1"></i>Updation History (Appeal No: @Model.GrievanceId/@Model.RegistrationYear)</div>
+    <hr />
+    <div style="height: 770px;" class="overflow-auto ps-5">
+        <ul class="timeline-with-icons">
+            @foreach (var History in Model.DraftDecisionnHistory)
+            {
+                <li class="timeline-item mb-5">
+                    <span class="timeline-icon">
+                        <i class="fas fa-user-check text-primary fa-sm fa-fw"></i>
+                    </span>
+                    <h5 class="fw-bold">@History.UserDetails</h5>
+                    <span class="mb-2 me-2 font-lg">Last updated the Draft Decision on: @History.UpdationDateTime</span>(<span class="text-primary">@Html.Raw(History.TimeDiifference) ago</span>)
+                    <h5 class="fw-bold mb-0 me-2"><span>Do you agree with the appeal? </span><span class="@(@History.AgreeDisagree=="Agree"?"text-success":"text-danger")">@History.AgreeDisagree</span> </h5>
+                    <h5 class="fw-normal me-2"><span>Remarks/ Comments: </span>@History.Recommendations </h5>
+                </li>
+
+            }
+        </ul>
+    </div>
+    @*<div style="height: 770px;" class="overflow-auto">
+            <table class="table table-bordered mb-0 table-sm" id="dashTableSelectGround">
+                <thead class="table-primary">
+                    <tr>
+                        <th scope="col">User Details</th>
+                        <th scope="col">Draft Decision</th>
+                        <th scope="col">Updation Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var History in Model.DraftDecisionnHistory)
+                    {
+                        <tr class="cursor-pointer">
+                            <td>
+                                <div class="h5 mb-0">@Html.Raw(History.UserDetails)</div>
+                            </td>
+                            <td>
+                                <div class="h5 mb-0">@Html.Raw(History.DraftDecision)</div>
+                            </td>
+                            <td>
+                                <div class="h5 mb-0">@Html.Raw(History.UpdationDateTime)</div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>*@
+}
+else
+{
+    <h3 class="text-center">No Record(s) Found</h3>
+}
+
+

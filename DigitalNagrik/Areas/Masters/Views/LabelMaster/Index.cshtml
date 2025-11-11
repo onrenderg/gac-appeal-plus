@@ -1,0 +1,85 @@
+﻿@{
+    ViewBag.Title = "LabelList";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<style>
+    .min-vh-50 {
+        min-height: 80vh !important;
+    }
+</style>
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+<div class="col-lg-12 min-vh-50">
+    <div class="row p-3">
+        <div class="col-6">
+            <h3> <i class="bx bx-user text-primary align-middle me-1"></i> Add/ Update Labels</h3>
+        </div>
+        <div class="col-6">
+            <a class="btn btn-warning float-end me-2" href='@Url.Action("Index", "AdminDashboard", new {Area="Dashboard"})'>
+                <i class="bx bx-arrow-back align-middle"></i> Back
+            </a>
+            <a class="btn btn-success float-end me-2" href="javascript:void(0);" title="Add New Relief Sought" onclick="NewAction(null,null,null,null,'N')">
+                <i class="bx bx-plus-circle me-1 align-middle"></i>Add New Label
+            </a>
+        </div>
+    </div>
+    <hr class="m-0" />
+    <div class="row gx-3">
+        @{ Html.RenderAction("Parameters", "LabelMaster", new { Area = "Masters" }); }
+    </div>
+    <div class="row gx-3">
+        <div class="gv-container-action-form">
+            @{ Html.RenderAction("LabelList", "LabelMaster", new { Area = "Masters" }); }
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="gv-action-modal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="gv-action-modal-content"></div>
+    </div>
+</div>
+<script>
+    var _FormLoadHtml = '<div class="px-4 py-4 my-4 h-100 font-lg text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">Fetching Data...</span></div><br>Fetching Data...</div>';
+    var _FormLoadHtml_Modal = '<div class="px-4 py-4 my-4 h-100 font-lg text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">Fetching Data...</span></div><br>Fetching Data...</div>';
+    function NewAction(ModuleID,FormID,LanguageCode,LabelKey,ActionType) {
+            $.ajax({
+            url: '@Url.Action("AddUpdateLabelShowPopUp", "LabelMaster", new { area = "Masters" })',
+                type: "GET", data: { ModuleID: ModuleID, FormID: FormID, LanguageCode: LanguageCode, LabelKey: LabelKey, ActionType: ActionType}, dataType: "HTML", //, ExamStageID: ExamStageID, ApplicationNo: ApplicationNo
+            success: function (data) {
+                if (data) { $("#gv-action-modal-content").html('').html(_FormLoadHtml_Modal).html(data); }
+            }
+          }).done(function () { $("#gv-action-modal").modal('toggle'); });
+    }
+
+     $("#ModuleID").change(function () {
+         var ModuleID = $(this).val();
+        $('#FormID').empty();
+        $.ajax({
+            url: '@Url.Action("GetFormMaster", "LabelMaster", new { area = "Masters" })',
+            type: "GET",
+            dataType: "JSON",
+            data: { ModuleID: ModuleID },
+            success: function (data) {
+                if (data) {
+                    $("#FormID").empty();
+                    $("#FormID").append("<option value=''>Select</option>");
+                    $.each(data, function (Index, d) {
+                                $("#FormID").append("<option value='" + d.Value + "'>" + d.Text + "</option>")
+                            });
+                        }
+            },
+            error: function () {
+                        $("#FormID").empty();
+                        $("#FormID").append("<option value=''>Select</option>");
+                    }
+        });
+         ChangeList(ModuleID);
+     });
+    function ChangeList(ModuleID) {
+        var ActionContainer = $(".gv-container-action-form");
+        ActionContainer.html(_FormLoadHtml);
+        setTimeout(function () { $.ajax({ url: '@Url.Action("LabelList", "LabelMaster", new { Area = "Masters" })', data: { ModuleID: ModuleID }, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { ActionContainer.html(data); } } }); }, 400);
+    }
+</script>

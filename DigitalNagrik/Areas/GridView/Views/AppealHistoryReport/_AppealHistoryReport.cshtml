@@ -1,0 +1,96 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.AppealHistoryReport
+
+@if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+{
+    int counter = 0;
+    string qs = SecureQueryString.SecureQueryString.Encrypt("FromDt=" + Model.FromDt + "&ToDt=" + Model.ToDt);
+    <span class="float-end d-inline-block mt-0 mt-lg-n5">
+        <a target="_blank" title="Export to PDF" class="btn btn-sm btn-danger" href="@Url.Action("ExportAppealHistoryReport", "AppealHistoryReport", new { Area = "GridView", qs = qs, ET = "PDF" })"><i class="fa fa-file-pdf font-hxl"></i></a>
+        <a target="_blank" title="Export to Excel" class="btn btn-sm btn-success" href="@Url.Action("ExportAppealHistoryReport", "AppealHistoryReport", new { Area = "GridView", qs = qs, ET = "EXL" })"><i class="fa fa-file-excel font-hxl"></i></a>
+        <a title="Export to Word" class="btn btn-sm btn-info" href="@Url.Action("ExportAppealHistoryReport", "AppealHistoryReport", new { Area = "GridView", qs = qs, ET = "WRD" })"><i class="fa fa-file-word font-hxl"></i></a>
+    </span>
+
+    <table class="table table-bordered table-sm table-responsive mb-0 tablePaging">
+        <thead style="line-height:1.1rem;">
+            <tr class="table-primary">
+                <td style="width:1%">#</td>
+                <td>Appeal No.</td>
+                <td>Date of Appeal</td>
+                <td>Name of Appellant</td>
+                <td>Name of Intermediary</td>
+                <td>Summary of Appeal</td>
+                <td>GAC</td>
+                <td>Assistant Manager/ Manager action/comment</td>
+                <td>GO response</td>
+                <td>GAC Member-1 Comment</td>
+                <td>GAC Member-2 Comment</td>
+                <td>Chairperson’s Comment</td>
+                <td>Final decision</td>
+                <td>Notification Sent to Appellant</td>
+            </tr>
+        </thead>
+        <tbody style="line-height:1.2rem;">
+            @foreach (var Appeal in Model.HistoryList)
+            {
+                <tr>
+                    <td>@(++counter)</td>
+                    <td>@Appeal.GrievanceId/@Appeal.RegistrationYear</td>
+                    <td>@Appeal.AppealDt</td>
+                    <td>@Appeal.AppellantNm</td>
+                    <td>@Appeal.IntermediaryNm</td>
+                    <td>
+                        <div class="font-lg" style="max-height:200px;overflow:auto">@Html.Raw(Appeal.MatterSummary)</div>
+                    </td>
+                    <td>@Appeal.GACNm</td>
+                    <td>@Appeal.AssistantManagerObservation</td>
+                    <td>
+                        <div class="font-lg" style="max-height:200px;overflow:auto">
+                            To,<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;Grievance Appellate Committee<br /><br />
+                            Madam/sir,<br /><br />
+                            I hereby submit my response to Appeal No. @Appeal.GrievanceId/@Appeal.RegistrationYear filed with Grievance Appellate Committee under sub-rule (3) of rule 3A of the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021. The details are as submitted by me herewith online.
+                            <table class="table table-bordered" style="width:100%;">
+                                <tr>
+                                    <td style="vertical-align:top;padding-left: 5px;" width="90%">
+                                        1. @Html.Raw(Appeal.IntermediaryResponseText)
+                                        <br />
+                                        @if (!string.IsNullOrWhiteSpace(Appeal.IntermediaryResponseDetails))
+                                        {
+                                            <span>Any relevant detail/ reason:</span><b> @Appeal.IntermediaryResponseDetails</b>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(Appeal.IntermediaryResponseURLs))
+                                        {
+                                            <div>URL(s) : <span style="color: #3f7834"></span>@Appeal.IntermediaryResponseURLs</div>
+                                        }
+                                    </td>
+                                    <td style="vertical-align:top;" width="10%">
+                                        <b style="color:@(Appeal.IntermediaryResponseValue == "Yes" ? "green" : "red")">@Appeal.IntermediaryResponseValue</b>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                    <td>@Appeal.MemberComment_1</td>
+                    <td>@Appeal.MemberComment_2</td>
+                    <td>@Appeal.ChairpersonComment</td>
+                    <td>
+                        <div class="font-lg" style="max-height: 200px; overflow: auto">@Html.Raw(@Appeal.FinalDecision)</div>
+                    </td>
+                    <td>
+                        <div class="font-lg" style="max-height: 200px; overflow: auto">@Html.Raw(@Appeal.NotifAppellant)</div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <script>
+        $(".tablePaging").dataTable();
+    </script>
+}
+else
+{
+    <div class="p-3 text-muted text-center">No Appeals Found</div>
+}
+
+

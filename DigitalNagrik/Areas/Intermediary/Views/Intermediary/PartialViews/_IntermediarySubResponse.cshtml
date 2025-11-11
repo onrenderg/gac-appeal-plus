@@ -1,0 +1,51 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.GACApplicationAssigned
+    @{  int counter1 = 1;}
+@foreach (var row in Model.IntermediarySubResponseMaster)
+{
+    <div class="row mt-2 mb-2 ms-2">
+        <div class="col-lg-12">
+            <div class="form-check">
+                <input data-val="true" data-val-required="Select Option" class="form-check-input sev_check_@row.ResponseID" type="checkbox" name="chksubresponse_@(row.ResponseID)-@(row.SubResponseID)" id="rdlCheckbox_@(row.ResponseID)-@(row.SubResponseID)" onclick="ViewTextBox(this,@row.ResponseID,@row.SubResponseID);">
+                <label class="form-check-label" for="rdlSubresponse_@row.ResponseID@row.SubResponseID">
+                    @counter1.&nbsp;@row.SubResponseText
+                </label><br />
+                <span class="field-validation-valid" data-valmsg-for="chksubresponse_@row.ResponseID" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        @{ counter1=counter1+1;}
+        <div class="col-lg-12 mt-2 hideclass hideclass_@row.ResponseID hideclass_@(row.ResponseID)-@(row.SubResponseID)" id="divResponseText_@(row.ResponseID)-@(row.SubResponseID)" style="display:none;">
+            <textarea data-val="true" data-val-required="Enter Text" id="subResponseText_@(row.ResponseID)-@(row.SubResponseID)" name="subResponseText_@(row.ResponseID)-@(row.SubResponseID)" class="form-control DisabledInputs" maxlength="500" placeholder="Enter Text here......" autocomplete="off"></textarea>
+            <span class="field-validation-valid" data-valmsg-for="subResponseText_@row.ResponseID-@(row.SubResponseID)" data-valmsg-replace="true"></span>
+            @*@Html.TextAreaFor(x => x.ResponseText, new { @id = "ResponseText_" + row.ResponseID + row.SubResponseID, @name = "ResponseText_"+row.ResponseID+row.SubResponseID, @class = "form-control DisabledInputs", maxlength = "500", placeholder = "Enter Text here......", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.ResponseText)*@
+        </div>
+        <div class="col-lg-12 hideclass hideclass_@row.ResponseID hideclass_@(row.ResponseID)-@(row.SubResponseID)" id="divUploadPDF_@(row.ResponseID)-@(row.SubResponseID)" style="display:none;">
+            @for (int i = 0; i < Convert.ToInt32(row.MaxNoOfFiles); i++)
+            {
+                <div class="row">
+                    <div class="col-8">
+                        <input type="file" accept=".pdf" class="form-control fileinput-button" id="fusubDocumenttoUpload_@(row.ResponseID)-@(row.SubResponseID)-@(Convert.ToString(i+1))" name="fusubDocumenttoUpload_@(row.ResponseID)-@(row.SubResponseID)-@(Convert.ToString(i+1))" />
+                    </div>
+                    <div class="col-4">
+                        <div class="text-danger mt-1"> (PDF upto 4MB) </div>
+                    </div>
+                </div>
+                 @*@Html.TextBoxFor(m => m.DocumenttoUpload, new { type = "file", @accept = ".pdf", @class = "form-control fileinput-button", @id = "DocumenttoUpload_" + row.ResponseID + row.SubResponseID + Convert.ToString(i), @name = "DocumenttoUpload_" + row.ResponseID + row.SubResponseID + Convert.ToString(i) })
+            @Html.ValidationMessageFor(m => m.DocumenttoUpload)*@
+            }
+
+        </div>
+    </div>
+    <hr />
+    <script>
+        function ViewTextBox(element, responseid, subresponseid) {
+            $('.sev_check_' + responseid).not(element).prop('checked', false);
+            let isChecked = $('#rdlCheckbox_' + responseid + '-' + subresponseid).is(':checked');
+            $('.hideclass_' + responseid).hide();
+            if (isChecked == true) {
+                $('.hideclass_' + responseid).hide();
+                $('.hideclass_' + responseid + '-' + subresponseid).show();
+            }
+        };
+    </script>
+}

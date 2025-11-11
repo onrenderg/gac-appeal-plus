@@ -1,0 +1,26 @@
+﻿
+.field-validation-error {
+    color: #b40d2b !important;
+    font-weight: normal !important;
+    font-size: 14px;
+}
+
+.field-validation-valid {
+    display: none !important;
+}
+
+.fw-600 {
+    font-weight: 600;
+}
+
+.lh-11 {
+    line-height: 1.1rem;
+}
+
+.font-xs {
+    font-size: 0.8rem;
+}
+
+.font-sm {
+    font-size: 0.92rem;
+}

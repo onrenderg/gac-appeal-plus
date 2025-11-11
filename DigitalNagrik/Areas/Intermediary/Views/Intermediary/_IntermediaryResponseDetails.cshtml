@@ -1,0 +1,314 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.GACApplicationAssigned
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+@if (Model.IsPartialView == "N")
+{
+    ViewBag.Title = "IntemediaryResponse";
+    Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+
+}
+<style>
+    .form-control {
+        font-size: 17px !important;
+    }
+</style>
+
+@using (Html.BeginForm("SaveIntermediaryResponse", "Intermediary", FormMethod.Post, new { id = "frm_SaveintermediaryResponse", enctype = "multipart/form-data" }))
+{
+    if (Model.OpenInModal == "Y")
+    {
+        <div class="modal-header pt-3" id="gv-action-modal-content">
+            <h3 class="modal-title" id="gv-action-modal-title">@Model.HeaderText</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <hr class="mb-0 mt-2" />
+    }
+    <div class="@(Model.OpenInModal == "Y"  ? "modal-body pb-0 pt-3 px-3" : "")">
+        <div class="row p-2">
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.GrievanceId)
+            @Html.HiddenFor(x => x.RegistrationYear)
+            @Html.HiddenFor(x => x.OpenInModal)
+            @Html.HiddenFor(x => x.FormName)
+            @if (Model.GACAppealAssigned != null && Model.GACAppealAssigned.Count > 0)
+            {
+                foreach (var row1 in Model.GACAppealAssigned)
+                {
+                    <div class="accordion p-0" id="accordionPanelsStayOpenExample">
+                        @*<h3 class="text-center">Intermediary Response</h3>*@
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                                <button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                                    <h4><i class="text-primary bx bx-user-check align-middle me-1"></i>@LabelDictionary["AppealDetails"]</h4>
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                                <div class="accordion-body">
+                                    <div class="row ms-1 mt-2">
+                                        <table class="table table-bordered table-hover table-responsive" width="100%">
+                                            <tbody style="font-size:17px">
+                                                <tr>
+                                                    <td width="50%" colspan="2">@LabelDictionary["AppealNumber"]: <b>@row1.GrievanceId/@row1.RegistrationYear</b></td>
+                                                    <td width="50%" colspan="2">@LabelDictionary["AppealDate"]: <b> @row1.ReceiptDate</b></td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="100%" colspan="4">
+                                                        @LabelDictionary["BriefofComplaint"]: <b>@row1.BriefofComplaint</b>
+                                                        <a target="_blank" href="@Url.Action("AppealPDF", "Registration", new { Area = "Public", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" class="btn btn-outline-primary btn-sm ms-2">
+                                                            <i class="bx bxs-file-pdf me-1 text-danger align-middle font-lg"></i><span>@LabelDictionary["ViewAppeal"]</span>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="100%" colspan="4">
+                                                        @LabelDictionary["Justification"]: <b>@row1.GrievanceDesc</b>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="100%" colspan="4"> @LabelDictionary["GroundforAppeal"]: <b>@row1.GroundTitle</b></td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="100%" colspan="4">@LabelDictionary["ReliefSought"]: <b>@row1.RelieftSoughtSpecification</b></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+                    <div class="row mb-2">
+                        <div class="col-lg-6">
+                            <h4><i class="text-success bx bx-check-circle align-middle me-1"></i> @LabelDictionary["Response"]</h4>
+                        </div>
+                        @if (row1.isResponse == "Y")
+                        {
+                            <div class="col-lg-6">
+                                <button type="button" title="Click to Download Letter" class="btn btn-warning btn-sm float-end" onclick="GetAuthLetterPdf('@Model.RegistrationYear','@Model.GrievanceId')"><i class="bx bx-download align-middle me-1"></i> @LabelDictionary["DownloadResponse"]</button>
+                            </div>
+                        }
+                    </div>
+
+                    if (row1.isResponse == "N")
+                    {
+                        if (Model.IntermediaryResponseMaster != null && Model.IntermediaryResponseMaster.Count > 0)
+                        {
+                            int counter = 1;
+                            <table class="table table-borderless table-responsive" width="100%">
+                                <tbody style="font-size:18px">
+                                    @foreach (var row in Model.IntermediaryResponseMaster)
+                                    {
+                                        <tr>
+                                            <td class="h4"> <b>@LabelDictionary["IntermediaryResponseText"]</b><span class="text-danger"> *</span></td>
+                                            <td class="text-center h5" style="width:20%">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="radio" name="rdlResponse_@row.ResponseID" data-changeon="@row.ChangeOn" data-subresponse="@row.IsSubResponse" data-responseid="@row.ResponseID" data-hasfiles="@row.HasFiles" data-minfiles="@row.MinNoOfFiles" data-maxfiles="@row.MaxNoOfFiles" id="rdlResponse_@row.ResponseID" value="Y">
+                                                    <label class="form-check-label" for="inlineRadioY_@row.ResponseID">@LabelDictionary["Yes"]</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input data-val="true" data-val-required="Select Option" class="form-check-input" type="radio" name="rdlResponse_@row.ResponseID" data-changeon="@row.ChangeOn" data-subresponse="@row.IsSubResponse" data-responseid="@row.ResponseID" data-hasfiles="@row.HasFiles" data-minfiles="@row.MinNoOfFiles" data-maxfiles="@row.MaxNoOfFiles" id="rdlResponse_@row.ResponseID" value="N">
+                                                    <label class="form-check-label" for="inlineRadioN_@row.ResponseID">@LabelDictionary["No"]</label>
+                                                </div>
+                                                <br />
+                                                <span class="field-validation-valid" data-valmsg-for="rdlResponse_@row.ResponseID" data-valmsg-replace="true"></span>
+                                            </td>
+                                        </tr>
+                                        counter = counter + 1;
+                                        string LabelPlaceholder = LabelDictionary["PlaceHolderIntermediaryY"];
+                                        string LabelRemarks = LabelDictionary["Anyrelevantdetail/reason"];
+                                        <tr>
+                                            <td colspan="3">
+                                                <div class="row ms-3" id="divSubresponse_@row.ResponseID"></div>
+                                                <div class="col-lg-12 mb-3 hideclass_R hideclass_@row.ResponseID hideclass_@row.ResponseID" id="divResponseText_@row.ResponseID" style="display:none;">
+                                                    <div class="row">
+                                                        <div class="col-lg-3 mb-2">
+                                                            <span id="LabelRemarks">@(LabelRemarks)</span> <span class="text-danger"> *</span>
+                                                        </div>
+                                                        <div class="col-lg-9 mb-3">
+                                                            <textarea data-val="true" data-val-required="Enter Text" id="ResponseText_@row.ResponseID" name="ResponseText_@row.ResponseID" class="form-control DisabledInputs" maxlength="4000" placeholder="@(LabelPlaceholder)" autocomplete="off"></textarea>
+                                                            <div class="float-end text-success"><span id="display_count">0</span> word(s) / <span id="display_count_total"></span></div>
+                                                            <span class="field-validation-valid" data-valmsg-for="ResponseText_@row.ResponseID" data-valmsg-replace="true"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-3 mb-2">
+                                                            @LabelDictionary["Supportingdocument(s),ifany"]
+                                                            
+                                                        </div>
+                                                        <div class="col-lg-9 mb-3 hideclass_R hideclass_@row.ResponseID hideclass_@row.ResponseID" id="divUploadPDF_@row.ResponseID" style="display:none;">
+                                                            @if (row.MaxNoOfFiles != "")
+                                                            {
+                                                                for (int i = 0; i < Convert.ToInt32(@row.MaxNoOfFiles); i++)
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="col-8">
+                                                                            <input type="file" accept=".pdf" class="form-control fileinput-button" id="fuDocumenttoUpload_@(row.ResponseID)-@(Convert.ToString(i + 1))" name="fuDocumenttoUpload_@(row.ResponseID)-@(Convert.ToString(i + 1))">
+
+                                                                        </div>
+                                                                        <div class="col-4">
+                                                                            <div class="text-danger mt-1"> @LabelDictionary["(PDFupto10MB)"]</div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                    @*@Html.TextBoxFor(m => m.DocumenttoUpload, new { type = "file", @accept = ".pdf", @class = "form-control fileinput-button", @id = "DocumenttoUpload_" + @row.ResponseID + Convert.ToString(i + 1) })
+                                                                        @Html.ValidationMessageFor(m => m.DocumenttoUpload)*@
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-3 mb-2">
+                                                            @LabelDictionary["URL(s),Ifany"]
+                                                            
+                                                        </div>
+                                                        <div class="col-lg-9 hideclass_R hideclass_@row.ResponseID hideclass_@row.ResponseID" id="ResponseTextURL_@row.ResponseID" style="display:none;">
+                                                            <span class="h5"></span><textarea data-val="true" id="ResponseTextURL_@row.ResponseID" name="ResponseTextURL_@row.ResponseID" class="form-control DisabledInputs" maxlength="500" placeholder="Enter comma seperated URL(s)" autocomplete="off"></textarea>
+                                                            @*<span class="field-validation-valid" data-valmsg-for="ResponseTextURL_@row.ResponseID" data-valmsg-replace="true"></span>*@
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        }
+                        <hr class="mt-1" />
+                        <div class="row mt-1">
+                            <div class="col-lg-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="Y" id="chkDec1">
+                                    <h4 class="form-check-label" for="chkDec1">
+                                        <b>
+                                            @LabelDictionary["DeclarationIntermediary"]
+                                        </b>
+                                    </h4>
+                                </div>
+                                @*<div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="Y" id="chkDec2">
+                                        <label class="form-check-label" for="chkDec2">
+
+
+                                        </label>
+                                    </div>*@
+                                @*@SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=2022" + "&GrievanceId=37")*@
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <hr />
+                            <div class="col-lg-12 text-center">
+                                <button type="button" class="btn btn-info" id="btnSubmit"><i class="bx bx-check-circle align-middle"></i>&nbsp;@LabelDictionary["Submit"]</button>
+                                @*<button type="button" class="btn btn-danger" id="btnCancel"><i class=" fa fa-close"></i>&nbsp;Cancel </button>*@
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row ms-3 mb-3">
+                            <div class="col-lg-12">
+                                @{Html.RenderAction("IntermediaryResponseView", "Intermediary", new { Area = "Intermediary", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) });
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $("#ResponseText_3").on('keyup', function () {
+            var words = 0;
+            if ((this.value.match(/\S+/g)) != null) {
+                words = this.value.match(/\S+/g).length;
+            }
+            var noofwords = 0;
+            if ($('input[name="rdlResponse_3"]:checked').val() == "Y") {
+                noofwords = 250;
+            }
+            else {
+                noofwords = 1000;
+            }
+            /*      $('#display_count_total').text(noofwords);*/
+            if (words > noofwords) {
+                // Split the string on first 200 words and rejoin on spaces
+                var trimmed = $(this).val().split(/\s+/, noofwords).join(" ");
+                // Add a space at the end to make sure more typing creates new words
+                $(this).val(trimmed + " ");
+            }
+            else {
+                $('#display_count').text(words);
+                //$('#word_left').text(200 - words);
+            }
+        });
+    });
+
+</script>
+<script>
+    $('input[type=radio][id^=rdlResponse_]').change(function () {
+        var responseid = $('#' + this.id).data('responseid');
+        var changeon = $('#' + this.id).data('changeon'); //getter
+        var subresponse = $('#' + this.id).data('subresponse'); //getter
+        var value = $(this).val();
+        if (subresponse == "Y") {
+            $("#divSubresponse_" + responseid).html('');
+            $.ajax({
+                url: '@Url.Action("OpenIntermediarySubResponse", "Intermediary", new { area = "Intermediary" })',
+                type: "GET",
+                dataType: "html",
+                data: { responseid: responseid, changeon: changeon, value: value },
+                success: function (data) { if (data) { $("#divSubresponse_" + responseid).html('').html(data); } }
+            });
+        }
+        else if (subresponse == 'N') {
+
+         /*   $('.hideclass_R').hide();*/
+           /* if (changeon == value) {*/
+                $('.hideclass_' + responseid).show();
+            //}
+
+        }
+        if (value == "Y") {
+            $("#ResponseText_" + responseid).attr("placeholder", "@LabelDictionary["PlaceHolderIntermediaryY"]");
+            $('#display_count_total').text('250');
+            $("#LabelRemarks").text('@LabelDictionary["Anyrelevantdetail/reason"]');
+
+        }
+        else {
+            $("#ResponseText_" + responseid).attr("placeholder","@LabelDictionary["PlaceHolderIntermediaryN"]");
+            $('#display_count_total').text('1000');
+            $("#LabelRemarks").text('@LabelDictionary["Reasonwhythereliefsoughtshouldnotbegranted"]');
+        }
+    });
+    $("#btnSubmit").click(function () {
+        if ($('#chkDec1').is(':checked')) {
+            $('#frm_SaveintermediaryResponse').removeData("validator").removeData("unobtrusiveValidation");
+            $.validator.unobtrusive.parse($('#frm_SaveintermediaryResponse'));
+                if ($("#frm_SaveintermediaryResponse").valid()) {
+                    $('#frm_SaveintermediaryResponse').submit();
+                }
+        }
+        else {
+            alertify.notify("<div class='animated fadeIn m-0'><i class='bx bx-message-x align-middle me-1'></i>Please accept the declarations </div>", "error", 5, function () { });
+        }
+    });
+
+    function GetAuthLetterPdf(RegistrationYear, GrievanceId) {
+        if (RegistrationYear != "" && RegistrationYear != null && GrievanceId != "" && GrievanceId != null) {
+            var qs = '@SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + @Model.RegistrationYear+ "&GrievanceId=" + @Model.GrievanceId)';
+            var url = '@Url.Action("IntermediaryDownloadPDF", "Intermediary", new { Area = "Intermediary" })?qs1=' + qs;
+            window.open(url, "_blank");
+        }
+        else {
+            return false;
+        }
+    }
+</script>

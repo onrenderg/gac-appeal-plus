@@ -1,0 +1,86 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+
+<div class="row mt-1" id="dvOuterPIN">
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { id = "AppellantLogin", autocomplete = "off" }))
+    {
+        @*@Html.ValidationSummary(true)*@
+        @Html.HiddenFor(x => x.hdActionAppellant)
+        @Html.AntiForgeryToken()
+
+        @Html.ValidationMessage("AppellantErrorMessage")
+
+        <div class="row mt-2">
+            <div class="col-md-12 ">
+                <label class="fw-bold" for="form2Example17">Enter Mobile Number<span class="text-danger">*</span></label>
+                @Html.TextBoxFor(m => m.AppellantMobile, new { @class = "form-control", @maxlength = "10", @placeholder = "Ten Digit Mobile Number", @OnKeyPress = "return AllowNumericOnly();" })
+                @Html.ValidationMessageFor(x => x.AppellantMobile)
+            </div>
+
+        </div>
+
+
+
+        <div class="mt-4 row">
+            <div class="col-md-12">
+                <label class="custom-input-label mb-1">Captcha<span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text" id="basic-addon1">
+                        <img id="CaptchaImage" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                        <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                    </span>
+                    @Html.TextBoxFor(x => x.Captcha, new { @class = "form-control DisabledInputs", placeholder = "Enter Captcha", autocomplete = "off", maxlength = "6" })
+                </div>
+                <div id="SpanCaptchaValidation">
+                    @Html.ValidationMessageFor(x => x.Captcha)
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-md-12 " style="text-align:center;margin-top: 10px;">
+            <button type="button" class="btn btn-primary"  id="btnAppellantSendOTP">&nbsp;Send OTP</button>
+            @*<input type="submit" id="btnLogin" class="btn btn-loginpanel  btn-block" value="Send OTP" />*@
+        </div>
+        <div class="row" style="font-style:italic;">
+            <div class="col-md-12 mt-2" style="text-align:center;font-size:14px;">
+                @Html.ActionLink("Change Your Registered Mobile Number", "ExistMobileorEmailforChangeMob")
+
+            </div>
+        </div>
+        <div class="alert alert-danger" role="alert" id="dvMessage" style="display :none ;">
+
+        </div>
+    }
+</div>
+
+<script>
+
+    function AllowNumericOnly(e) {
+        var ch = String.fromCharCode(event.keyCode);
+        var filter = /[0-9]/;
+        if (!filter.test(ch)) {
+            event.returnValue = false;
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    @*function RefreshCaptcha() {
+        $.ajax({
+            url: '@Url.Action("CaptchaImageNew", "Home", new { area = "" })',
+            data: {},
+            success: function (data) {
+                $("#CaptchaImage").html(data);
+            }
+        });
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };*@
+    $("#btnAppellantSendOTP").click(function () {
+        if ($("#AppellantLogin").valid()) {
+            $('#hdActionAppellant').val("A");
+            $('#AppellantLogin').submit();
+        };
+    });
+</script>
+

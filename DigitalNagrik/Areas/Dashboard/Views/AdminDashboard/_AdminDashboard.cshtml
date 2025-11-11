@@ -1,0 +1,29 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.AdminDashboard
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+
+<div class="row gx-3">
+    @{ Html.RenderPartial("PartialViews/_Stats", Model.Stats, new ViewDataDictionary { { "GACId", Model.GACId }, { "LabelDictionary", LabelDictionary } }); }
+</div>
+
+<div class="row gx-3">
+    <div class="col-xl-4 mb-3">
+        @{ Html.RenderPartial("PartialViews/_GACStats", Model.GACStats, new ViewDataDictionary { { "GACId", Model.GACId }, { "LabelDictionary", LabelDictionary } }); }
+    </div>
+
+    <div class="col-xl-4">
+        @{ Html.RenderPartial("PartialViews/_GroundWise", Model.AppealGround, new ViewDataDictionary { { "GACId", Model.GACId }, { "LabelDictionary", LabelDictionary } }); }
+    </div>
+
+    <div class="col-lg-4">
+        <div class="row gx-3">
+            <div class="col-12 mb-3">
+                @{ Html.RenderPartial("PartialViews/_6Months", Model.SixMonths, new ViewDataDictionary { { "GACId", Model.GACId }, { "LabelDictionary", LabelDictionary } }); }
+            </div>
+            <div class="col-12 mb-3">
+                @{ Html.RenderPartial("PartialViews/_ReliefWise", Model.ReliefSought, new ViewDataDictionary { { "GACId", Model.GACId }, { "LabelDictionary", LabelDictionary } }); }
+            </div>
+        </div>
+    </div>
+</div>

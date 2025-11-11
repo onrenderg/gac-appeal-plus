@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{72F16827-58E1-409F-95AF-7048337DDAF7}</ProjectGuid>
+    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TemplateGuid>{6143fdea-f3c2-4a09-aafa-6e230626515e}</TemplateGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>GACAppeal.iOS</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>GACAppeal.iOS</AssemblyName>
+    <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
+    <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
+    <ProvisioningType>automatic</ProvisioningType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchArch>x86_64</MtouchArch>
+    <MtouchLink>None</MtouchLink>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignProvision></CodesignProvision>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchLink>None</MtouchLink>
+    <MtouchArch>x86_64</MtouchArch>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchArch>ARM64</MtouchArch>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchLink>None</MtouchLink>
+    <MtouchInterpreter>-all</MtouchInterpreter>
+    <CodesignProvision></CodesignProvision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchArch>ARM64</MtouchArch>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <CodesignProvision></CodesignProvision>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <None Include="Entitlements.plist" />
+    <None Include="Info.plist" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="IOS_SQLite.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon1024.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon180.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon167.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon152.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon120.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon87.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon80.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon76.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon60.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon58.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon40.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon29.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon20.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Xamarin.iOS" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2578" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.5" />
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="sqlite-net-pcl">
+      <Version>1.8.116</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\GACAppeal\GACAppeal.csproj">
+      <Project>{97E2C253-0C2E-4D44-85B5-E02C25445267}</Project>
+      <Name>GACAppeal</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="appstore.png" />
+    <BundleResource Include="playstore.png" />
+    <BundleResource Include="Resources\Add_icon.png" />
+    <BundleResource Include="Resources\app_icon.png" />
+    <BundleResource Include="Resources\Change_pin_ico.png" />
+    <BundleResource Include="Resources\Dashboard_ico%401x.png" />
+    <BundleResource Include="Resources\Dashboard_ico%402x.png" />
+    <BundleResource Include="Resources\Dashboard_ico%403x.png" />
+    <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Resources\Default-Portrait.png" />
+    <BundleResource Include="Resources\Default-Portrait%402x.png" />
+    <BundleResource Include="Resources\Default.png" />
+    <BundleResource Include="Resources\Default%402x.png" />
+    <BundleResource Include="Resources\Disposed_c_ico.png" />
+    <BundleResource Include="Resources\Disposed_ico.png" />
+    <BundleResource Include="Resources\Disposed_ico%401x.png" />
+    <BundleResource Include="Resources\Disposed_ico%402x.png" />
+    <BundleResource Include="Resources\Disposed_ico%403x.png" />
+    <BundleResource Include="Resources\Draft_c_ico.png" />
+    <BundleResource Include="Resources\Draft_ico.png" />
+    <BundleResource Include="Resources\Draft_ico%401x.png" />
+    <BundleResource Include="Resources\Draft_ico%402x.png" />
+    <BundleResource Include="Resources\Draft_ico%403x.png" />
+    <BundleResource Include="Resources\Edit_profile_ico.png" />
+    <BundleResource Include="Resources\Final_ico.png" />
+    <BundleResource Include="Resources\goi_icon.png" />
+    <BundleResource Include="Resources\Home_ico%401x.png" />
+    <BundleResource Include="Resources\Home_ico%402x.png" />
+    <BundleResource Include="Resources\Home_ico%403x.png" />
+    <BundleResource Include="Resources\Log_out_ico%401x.png" />
+    <BundleResource Include="Resources\Log_out_ico%402x.png" />
+    <BundleResource Include="Resources\Log_out_ico%403x.png" />
+    <BundleResource Include="Resources\Profile_setting_ico%401x.png" />
+    <BundleResource Include="Resources\Profile_setting_ico%402x.png" />
+    <BundleResource Include="Resources\Profile_setting_ico%403x.png" />
+    <BundleResource Include="Resources\Query_c_ico.png" />
+    <BundleResource Include="Resources\Query_ico.png" />
+    <BundleResource Include="Resources\Query_ico%401x.png" />
+    <BundleResource Include="Resources\Query_ico%402x.png" />
+    <BundleResource Include="Resources\Query_ico%403x.png" />
+    <BundleResource Include="Resources\Rejected_c_ico.png" />
+    <BundleResource Include="Resources\Rejected_ico%401x.png" />
+    <BundleResource Include="Resources\Rejected_ico%402x.png" />
+    <BundleResource Include="Resources\Rejected_ico%403x.png" />
+    <BundleResource Include="Resources\Setting_ico%401x.png" />
+    <BundleResource Include="Resources\Setting_ico%402x.png" />
+    <BundleResource Include="Resources\Setting_ico%403x.png" />
+    <BundleResource Include="Resources\Submitted_c_ico.png" />
+    <BundleResource Include="Resources\Submitted_ico%401x.png" />
+    <BundleResource Include="Resources\Submitted_ico%402x.png" />
+    <BundleResource Include="Resources\Submitted_ico%403x.png" />
+    <BundleResource Include="Resources\Total_c_ico.png" />
+    <BundleResource Include="Resources\Total_ico%401x.png" />
+    <BundleResource Include="Resources\Total_ico%402x.png" />
+    <BundleResource Include="Resources\Total_ico%403x.png" />
+    <BundleResource Include="Resources\trash_ico.png" />
+    <BundleResource Include="Resources\logogac.png" />
+    <BundleResource Include="Resources\Aadhaar_logo.png" />
+    <BundleResource Include="Resources\language_icon.png" />
+    <BundleResource Include="Resources\language_ico%401x.png" />
+    <BundleResource Include="Resources\language_ico%402x.png" />
+    <BundleResource Include="Resources\language_ico%403x.png" />
+    <BundleResource Include="Resources\logogac_hi.png" />
+  </ItemGroup>
+</Project>

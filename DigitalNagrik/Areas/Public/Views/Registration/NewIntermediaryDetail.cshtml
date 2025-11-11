@@ -1,0 +1,709 @@
+﻿@model DigitalNagrik.Areas.Public.Models.mIntermediaryDetailPart
+@{
+    ViewBag.Title = "NewIntermediaryDetail";
+    Layout = "~/Views/Shared/_LayoutCitizen.cshtml";
+    var GetIntermediaryUrl = Url.Action("fillIntermediary");
+    var fillGroundforAppeal = Url.Action("fillGroundforAppeal");
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+
+
+
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script>
+    $(function () {
+        var availableTags = "@ViewData["KeyWords"].ToString()";
+        availableTags = $.parseJSON(availableTags.replace(/&quot;/g, '"'));
+        function split(val) {
+            return val.split(' ');
+        }
+        function extractLast(term) {
+            return split(term).pop();
+        }
+
+        $("#Keyword")
+            // don't navigate away from the field on tab when selecting an item
+            .on("keydown", function (event) {
+                if (event.keyCode === $.ui.keyCode.TAB &&
+                    $(this).autocomplete("instance").menu.active) {
+                    event.preventDefault();
+                }
+            })
+            .autocomplete({
+                minLength: 0,
+                source: function (request, response) {
+                    //response($.ui.autocomplete.filter(
+                    //    availableTags, extractLast(request.term)));
+                    var re = $.ui.autocomplete.escapeRegex(extractLast(request.term));
+                    var matcher = new RegExp("^" + re, "i");
+                    var a = $.grep(availableTags, function (item, index) {
+                        return matcher.test(item);
+                    });
+                    response(a);
+
+                },
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                select: function (event, ui) {
+                    var terms = split(this.value);
+                    // remove the current input
+                    terms.pop();
+                    // add the selected item
+                    terms.push(ui.item.value);
+                    // add placeholder to get the comma-and-space at the end
+                    terms.push("");
+                    this.value = terms.join(" ");
+                    return false;
+                }
+            });
+    });
+</script>
+
+@using (Html.BeginForm("NewIntermediaryDetail", "Registration", FormMethod.Post, new { id = "IntermediaryDetailForm" }))
+{
+    <style>
+
+
+        .ui-widget.ui-widget-content {
+            border: 1px solid #008758;
+            background-color: #dbf3e0;
+            z-index: 10000000;
+            border-radius: 5px;
+            padding: 8px;
+            width: 300px;
+        }
+    </style>
+    @Html.AntiForgeryToken()
+
+    <section>
+        <div class="container  h-100">
+
+            <div class="card" style="border-radius: 1rem;">
+                <div class="row g-0">
+
+                    <div class="col-md-12 col-lg-12 align-items-center">
+                        <div class="card-body p-4 p-lg-5 text-black">
+
+
+
+
+                            @Html.HiddenFor(m => m.GrievanceID)
+                            @Html.HiddenFor(m => m.RegistrationYear)
+
+                            @Html.HiddenFor(m => m.GrievnaceStatus)
+                            <div class="card">
+                                <div class=" card-header loginpanel text-white   ">
+                                    <div class="row">
+                                        <div class="col-md-11">
+                                            <i class="fa fa-layer-group "></i>&nbsp;&nbsp;&nbsp; @Model.HeaderText&nbsp;&nbsp;&nbsp;
+                                            @{ var strToDisplay = "";}
+                                            @if (!string.IsNullOrEmpty(Model.GrievanceID))
+                                            {
+                                                {
+                                                    strToDisplay = "(" + LabelDictionary["AppealNumber"] + " : " + Model.GrievanceID + "/" + Model.RegistrationYear + ")";
+                                                }
+                                                @strToDisplay
+                                            }
+                                        </div>
+                                        <div class="col-sm-1">
+                                            <a href="@Url.Action("CitizenDashboard", "Registration")" style="padding:5px;" class="btn btn-warning  btn-block">@LabelDictionary["Back"]</a>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="card-body ">
+
+                                    <div class="mt-2 mb-4" style="width: 100%; height: 20px; border-bottom: 1px solid black; text-align: center;">
+                                        <span style="font-size: 20px; background-color: rgb(26 108 148); color: #ffffff; padding: 5px; border-radius: 5px;">
+                                            @LabelDictionary["AppellantDetails"]
+                                        </span>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <label for="form2Example17">@LabelDictionary["FirstName"]<span class="Mandatory">*</span></label>
+                                            @Html.TextBoxFor(m => m.txtFirstName, new { @class = "form-control text-uppercase", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(x => x.txtFirstName)
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="form2Example17">@LabelDictionary["MiddleName"]</label>
+                                            @Html.TextBoxFor(m => m.txtMiddleName, new { @class = "form-control text-uppercase", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(x => x.txtMiddleName)
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="form2Example17"> @LabelDictionary["LastName"] </label>
+                                            @Html.TextBoxFor(m => m.txtLastName, new { @class = "form-control text-uppercase", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(x => x.txtLastName)
+                                        </div>
+
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <label for="form2Example17"> @LabelDictionary["Mobile"]</label>
+                                            @Html.TextBoxFor(m => m.MobileNo, new { @class = "form-control", @maxlength = "10", @readonly = "readonly" })
+                                            @Html.ValidationMessageFor(x => x.MobileNo)
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="form2Example17">@LabelDictionary["Email"]<span class="Mandatory">*</span></label>
+                                            @Html.TextBoxFor(m => m.txtEmail, new { @class = "form-control", @maxlength = "100" })
+                                            @Html.ValidationMessageFor(x => x.txtEmail)
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="form2Example17"></label>
+                                            <div style="font-style:italic;font-size:14px;">
+                                                @LabelDictionary["EmailHelpMessage"]
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-3 mb-3" style="width: 100%; height: 20px; border-bottom: 1px solid black; text-align: center;">
+
+                                        <span style="font-size: 20px; background-color: rgb(26 108 148); color: #ffffff; padding: 5px; border-radius: 5px;">
+                                            @LabelDictionary["RespondentIntermediaryDetails"]
+                                        </span>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-sm-4 col-md-4">
+                                            <label>@LabelDictionary["DateofComplaint"] <br />@LabelDictionary["DateofComplaintHelpMsg"]</label>
+                                            @Html.TextBoxFor(m => m.txtDateofComplaint, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(x => x.txtDateofComplaint, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-sm-4 col-md-4">
+                                            <label>@LabelDictionary["DateofDecision"]<br />@LabelDictionary["DateofDecisionHelpMsg"]</label>
+                                            @Html.TextBoxFor(m => m.txtdateofDecision, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(x => x.txtdateofDecision, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-sm-4 col-md-4">
+                                            <label>@LabelDictionary["TicketDocketNumber"]<br />@LabelDictionary["TicketDocketNumberMsg"]</label>
+                                            @Html.TextBoxFor(m => m.TicketDocketNumber, new { @class = "form-control" })
+                                            @Html.ValidationMessageFor(x => x.TicketDocketNumber, "", new { @class = "text-danger", @maxlength = "50" })
+                                        </div>
+
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-sm-4 col-md-4">
+                                            <label>@LabelDictionary["RespondentIntermediaryName"]<span class="Mandatory">*</span></label>
+                                            @Html.TextBoxFor(m => m.txtIntermediary, new { @Placeholder = @LabelDictionary["SelectRespondentIntermediary"], @class = "form-control text-uppercase", @maxlength = "100" })
+                                            @Html.HiddenFor(m => m.IntermediaryId)
+                                            @Html.ValidationMessageFor(x => x.txtIntermediary, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-sm-4 col-md-4">
+
+                                            <label>URL / website link of the respondent intermediary (Max 200 Characters)<span class="Mandatory">*</span></label>
+                                            @Html.TextBoxFor(m => m.txturlofintermediary, new { @class = "form-control", @readonly = "readonly", @maxlength = "200" })
+                                            @Html.ValidationMessageFor(x => x.txturlofintermediary)
+                                        </div>
+                                        <div class="col-sm-4 col-md-4">
+                                            <br />
+                                            <label>@LabelDictionary["RespondentIntermediaryEmail"] (Max 100 Characters)<span class="Mandatory">*</span></label>
+
+                                            @Html.TextBoxFor(m => m.GROIntermediaryEmail, new { @class = "form-control text-uppercase", @readonly = "readonly", @maxlength = "100" })
+                                            @Html.ValidationMessageFor(x => x.GROIntermediaryEmail)
+
+                                        </div>
+
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-sm-12">
+                                            <label>@LabelDictionary["RespondentIntermediaryContactDetails"] (Max 300 Characters)</label>
+                                            @Html.TextAreaFor(m => m.txtCorrespondenceAddress, new { @class = "form-control text-uppercase", @rows = "2", @readonly = "readonly", @maxlength = "300" })
+                                            @Html.ValidationMessageFor(x => x.txtCorrespondenceAddress)
+                                        </div>
+
+                                    </div>
+                                    <div class="mt-3 mb-3" style="width: 100%; height: 20px; border-bottom: 1px solid black; text-align: center;">
+                                        <span style="font-size: 20px; background-color: rgb(26 108 148); color: #ffffff; padding: 5px; border-radius: 5px;">
+                                            @LabelDictionary["AppealDetails"]
+                                        </span>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-sm-12 col-md-12">
+                                            <label>
+                                                @LabelDictionary["SubjectKeyword"]<span class="Mandatory">*</span>
+                                            </label>
+                                            @Html.TextAreaFor(x => x.Keyword, new { @Placeholder = "", @class = "form-control text-uppercase", @rows = "2", @maxlength = "100" })
+                                            <span style="font-size:14px;font-style:italic;">
+                                                @LabelDictionary["SubjectKeywordHelpMsg"]
+                                            </span>
+                                            @Html.ValidationMessageFor(x => x.Keyword)
+                                        </div>
+
+                                    </div>
+                                    <div class="row mt-3">
+
+                                        <div class="col-sm-12">
+                                            @LabelDictionary["BriefofComplaint"] (Max 1000 Characters)<span class="Mandatory">*</span>
+                                            @Html.TextAreaFor(m => m.BriefofComplaint, new { @class = "form-control text-uppercase", @rows = "3", @maxlength = "1000" })
+                                            @Html.ValidationMessageFor(x => x.BriefofComplaint)
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-sm-12">
+                                            <label>@LabelDictionary["Justificationforappeal"] <label style="text-align:justify;font-size:14px;font-style :italic  ">@LabelDictionary["max250words"]</label><span class="Mandatory">*</span></label>
+                                            @Html.TextAreaFor(m => m.txtJustification, new { @class = "form-control text-uppercase", @rows = "3", @maxlength = "4000" })
+                                            <div class="float-end text-success" style="font-size:14px;"><span id="display_count">0</span> word(s) / <span id="display_count_total" style="font-size:14px;">250</span></div>
+                                            @Html.ValidationMessageFor(x => x.txtJustification)
+                                        </div>
+
+                                    </div>
+                                    <div class="row mt-3">
+
+                                        <div class="col-sm-12 col-md-12" id="dvReliefSoughtSpecification">
+                                            <label id="lblReliefSoughtSpecification">@LabelDictionary["ReliefSoughtDetails"]<span class="Mandatory">*</span></label>
+                                            @Html.TextAreaFor(m => m.ReliefSoughtSpecification, new { @class = "form-control text-uppercase", @rows = "3", @maxlength = "500" })
+                                            @Html.ValidationMessageFor(x => x.ReliefSoughtSpecification)
+                                        </div>
+                                    </div>
+
+                                    <div id="AppealDocuments">
+
+                                    </div>
+                                    <hr />
+                                    <div>
+                                        Self declaration / Undertaking
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <ol class="list-group list-group-numbered" >
+                                                <li class="list-group-item" style="border :none; padding:0px;">Case under investigation or sub-judice</li>
+                                                <li class="list-group-item" style="border: none; padding: 0px;">Non-relevant issues to Significant Social Media Intermediaries</li>
+                                                <li class="list-group-item" style="border: none; padding: 0px;">Consumer-related matters</li>
+                                                <li class="list-group-item" style="border: none; padding: 0px;">Statutory matters</li>
+                                            </ol>
+                                        </div>
+                                           
+                                        <div class="col-sm-11">
+                                           
+                                            <div class="form-check" style="margin-left :15px;">
+                                                 @Html.CheckBox("disclaimer", new { @class = "form-check-input" })
+                                                <label class="form-check-label" for="flexCheckIndeterminate" >
+                                                    My appeal do not fall under any of the above mentioned four categories
+                                                </label>
+                                            </div>
+                                        </div>
+                                        </div>
+
+                                    @Html.HiddenFor(x => x.actionDraftProceed)
+                                <div class="row mt-3">
+                                    <div class="col-sm-1 ">
+                                        <input type="button" class="btn btn-loginpanel   btn-block" value="@LabelDictionary["SaveDraft"]" id="btnDraft" onclick="return CheckConfirmDraftbox();" />
+                                    </div>
+
+                                    <div class="col-sm-1">
+                                        @if (Model.GrievnaceStatus == "1")
+                                        {
+
+                                            @*<a href="javascript:void(0);" class="btn btn-danger " data-qs="@Url.Action("DeleteIntermediaryDetail", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + @Model.RegistrationYear + "&GrievanceId=" + @Model.GrievanceID) })" title="Delete Appeal" onclick="return confirmforDelete($(this),'@LabelDictionary["DeleteAppeal"] :<b>' +@Model.GrievanceID+'/'+@Model.RegistrationYear+'</b>?');">@LabelDictionary["Delete"] </a>*@
+                                            @*<a href="javascript:void(0);" data-qs="@Url.Action("DeleteIntermediaryDetail", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + @Model.RegistrationYear + "&GrievanceId=" + @Model.GrievanceID) })" title="Delete Appeal" onclick="return confirmforDeleteNew('@Model.RegistrationYear','@Model.GrievanceID','@LabelDictionary["DeleteAppeal"] <b> '+@Model.GrievanceID+'/'+@Model.RegistrationYear+'</b>?');"><i class="fa fa-1x  fa-trash text-info"></i></a>*@
+                                            <a href="javascript:void(0);" data-qs="@Url.Action("DeleteIntermediaryDetail", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + @Model.RegistrationYear + "&GrievanceId=" + @Model.GrievanceID) })" title="Delete Appeal" onclick="return confirmforDeleteNew('@Model.RegistrationYear','@Model.GrievanceID','@LabelDictionary["DeleteAppeal"] <b> '+@Model.GrievanceID+'/'+@Model.RegistrationYear+'</b>?');" class="btn btn-danger    btn-block">Delete</a>
+                                        }
+                                    </div>
+                                    <div class="col-sm-8"></div>
+                                    
+                                    <div class="col-sm-2" style="text-align:right ">
+                                        <input type="button" class="btn btn-loginpanel  btn-block" value="@LabelDictionary["Proceed"]" id="Proceed" onclick="return CheckConfirmbox();" />
+                                    </div>
+                                </div>
+                                    <div class="mt-3">
+                                        @Html.ValidationSummary(false)
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">@LabelDictionary["Confirm"]</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="confirmMessageText">@LabelDictionary["ConfirmSaveAppeal"]</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-block" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+                    <input type="submit" class="btn btn-loginpanel   btn-block" value="Proceed" id="btnSubmit" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+<div class="modal fade" id="confirmModalDeleteAppealNew" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">@LabelDictionary["Confirm"]</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="confirmMessageTextNew"></div>
+            </div>
+            <div class="modal-footer">
+                @using (Html.BeginForm("DeleteIntermediaryDetail", "Registration", FormMethod.Post, new { id = "DeleteIntermediaryDetail" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <button type="button" class="btn btn-sm btn-secondary btn-block" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+                    @Html.Hidden("GrievanceID")
+                    @Html.Hidden("RegistrationYear")
+                    <button type="submit" class="btn btn-sm btn-danger btn-block" onclick="DeleteAppeal()">Delete</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script>
+    $('#txtDateofComplaint').change(function () {
+
+        var minDate1 = $('#txtDateofComplaint').val();
+        console.log(minDate1);
+        $("#txtdateofDecision").datepicker("option", "minDate", minDate1);
+    });
+    $(document).ready(function () {
+        $("#txtDateofComplaint").datepicker({
+            maxDate:0,
+            dateFormat: "dd/mm/yy",
+        }).attr('readonly', 'readonly');
+
+
+
+        $("#txtdateofDecision").datepicker({
+            maxDate: 0,
+
+            dateFormat: "dd/mm/yy"
+        }).attr('readonly', 'readonly');
+
+        var txtgroundtext = "";
+        if ($("#IntermediaryId").val() == "0") {
+            $("#txturlofintermediary").attr('readonly', false);
+            $("#GROIntermediaryEmail").attr('readonly', false);
+            $("#txtCorrespondenceAddress").attr('readonly', false);
+        }
+        else {
+            // check intermediary detail exists
+             var url = "@GetIntermediaryUrl";
+            var dataValue = { "IntermediaryTitle": "", "URL": "", "func": "ID", "IntermediaryId": $("#IntermediaryId").val() };
+            //console.log(dataValue);
+            $.ajax({
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                url: url,
+                data: JSON.stringify(dataValue),
+                dataType: "json",
+                success: function (data) {
+                    console.log(data[0]["URL"]);
+
+                    if (data[0]["URL"].toUpperCase() == $("#txturlofintermediary").val().toUpperCase()) {
+                            $("#txturlofintermediary").attr('readonly', true);
+                        }
+                        else {
+                            $("#txturlofintermediary").attr('readonly', false);
+                        }
+                    if (data[0]["GOEmail"].toUpperCase() != "") {
+                            $("#GROIntermediaryEmail").attr('readonly', true);
+                        }
+                        else {
+                            $("#GROIntermediaryEmail").attr('readonly', false);
+                    }
+
+                    if (data[0]["Address"].toUpperCase() != "") {
+                            $("#txtCorrespondenceAddress").attr('readonly', true);
+                        }
+                        else {
+                            $("#txtCorrespondenceAddress").attr('readonly', false);
+                        }
+
+
+                }
+            })
+        }
+        fillDocumentList();
+
+        var groundID = "@Model.ddlGroundAppeal";
+
+
+        $("#txtIntermediary").autocomplete({
+
+              minLength: 1,
+            source: function (request, response) {
+            var url = "@GetIntermediaryUrl";
+                $("#IntermediaryId").val("0");
+            var dataValue = { "IntermediaryTitle": request.term, "URL": "", "func": "title","IntermediaryId":"" };
+             //console.log(dataValue);
+                $.ajax({
+                  type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    url: url,
+                    data: JSON.stringify(dataValue),
+                    dataType: "json",
+                    success: function (data) {
+                          response($.map(data, function (item) {
+                              return {
+                              label: item.IntermediaryTitle,
+                                id: item.IntermediaryId,
+                                url: item.URL,
+                                GOEmail: item.GOEmail,
+                                  Address: item.Address
+                              };
+                          }))
+                    }
+                  })
+            },
+            select: function (event, ui) {
+                //console.log("a");
+                $("#txtIntermediary").val(ui.item.label);
+                $("#txturlofintermediary").val(ui.item.url);
+                $("#GROIntermediaryEmail").val(ui.item.GOEmail);
+                $("#txtCorrespondenceAddress").val(ui.item.Address);
+                $("#IntermediaryId").val(ui.item.id);
+                if ($("#txturlofintermediary").val() == "") {
+                    $("#txturlofintermediary").attr('readonly', false);
+                }
+                else {
+                    $("#txturlofintermediary").attr('readonly', true);
+                }
+
+                if ($("#GROIntermediaryEmail").val() == "") {
+                    $("#GROIntermediaryEmail").attr('readonly', false);
+                }
+                else {
+                    $("#GROIntermediaryEmail").attr('readonly', true);
+                }
+                //console.log("Address"+$("#txtCorrespondenceAddress").val()+"s");
+                if ($("#txtCorrespondenceAddress").val() == "") {
+                    $("#txtCorrespondenceAddress").attr('readonly', false);
+                }
+                else {
+                    $("#txtCorrespondenceAddress").attr('readonly', true);
+                }
+
+              return false;
+            },
+            focus: function (event, ui) {
+                //console.log("a");
+                $("#txtIntermediary").val(ui.item.label);
+                $("#txturlofintermediary").val(ui.item.url);
+                $("#GROIntermediaryEmail").val(ui.item.GOEmail);
+                $("#txtCorrespondenceAddress").val(ui.item.Address);
+                $("#IntermediaryId").val(ui.item.id);
+                if ($("#txturlofintermediary").val() == "") {
+                    $("#txturlofintermediary").attr('readonly', false);
+                }
+                else {
+                    $("#txturlofintermediary").attr('readonly', true);
+                }
+
+                if ($("#GROIntermediaryEmail").val() == "") {
+                    $("#GROIntermediaryEmail").attr('readonly', false);
+                }
+                else {
+                    $("#GROIntermediaryEmail").attr('readonly', true);
+                }
+               //console.log("Address" + $("#txtCorrespondenceAddress").val() + "s");
+                if ($("#txtCorrespondenceAddress").val() == "") {
+                    $("#txtCorrespondenceAddress").attr('readonly', false);
+                }
+                else {
+                    $("#txtCorrespondenceAddress").attr('readonly', true);
+                }
+
+                return false;
+            },
+         });
+        $("#txtIntermediary").on('keydown focusout', function (event) {
+            if (event.type == "focusout") {
+
+              //  console.log(event.type);
+                //console.log($("#IntermediaryId").val());
+                if ($("#txtIntermediary").val() == "") {
+                    $("#IntermediaryId").val("0");
+                    $("#txturlofintermediary").attr('readonly', false);
+                    $("#GROIntermediaryEmail").attr('readonly', false);
+                    $("#txtCorrespondenceAddress").attr('readonly', false);
+                    $("#IntermediaryId").val("0");
+                    $("#txturlofintermediary").val("");
+                    $("#GROIntermediaryEmail").val("");
+                    $("#txtCorrespondenceAddress").val("");
+                }
+                if ($("#IntermediaryId").val() == "0") {
+                    $("#txturlofintermediary").attr('readonly', false);
+                    $("#GROIntermediaryEmail").attr('readonly', false);
+                    $("#txtCorrespondenceAddress").attr('readonly', false);
+                    $("#IntermediaryId").val("0");
+                    $("#txturlofintermediary").val("");
+                    $("#GROIntermediaryEmail").val("");
+                    $("#txtCorrespondenceAddress").val("");
+                }
+                else {
+                    if ($("#txturlofintermediary").val() == "") {
+                        $("#txturlofintermediary").attr('readonly', false);
+                    }
+                    else {
+                        $("#txturlofintermediary").attr('readonly', true);
+                    }
+
+                    if ($("#GROIntermediaryEmail").val() == "") {
+                        $("#GROIntermediaryEmail").attr('readonly', false);
+                    }
+                    else {
+                        $("#GROIntermediaryEmail").attr('readonly', true);
+                    }
+                   // console.log("Address" + $("#txtCorrespondenceAddress").val() + "s");
+                    if ($("#txtCorrespondenceAddress").val() == "") {
+                        $("#txtCorrespondenceAddress").attr('readonly', false);
+                    }
+                    else {
+                        $("#txtCorrespondenceAddress").attr('readonly', true);
+                    }
+                }
+            }
+
+        });
+
+        @*$("#GroundTitleText").autocomplete({
+            source: function (request, response) {
+                var url = "@fillGroundforAppeal";
+                $("#ddlGroundAppeal").val("99");
+                $("#GroundTitle").val("");
+                 txtgroundtext = request.term;
+                var dataValue = { "Groundtext": request.term, "Func": "search","GroundId":"" };
+             //console.log(dataValue);
+                $.ajax({
+                  type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    url: url,
+                    data: JSON.stringify(dataValue),
+                    dataType: "json",
+                    success: function (data) {
+                          response($.map(data, function (item) {
+                              return {
+                                  id: item.GroundId,
+                                  label: item.GroundTitle
+                              };
+                          }))
+                    }
+                  })
+            },
+            focus: function (event, ui) {
+
+                $("#GroundTitle").val(ui.item.label);
+                $("#ddlGroundAppeal").val(ui.item.id);
+                console.log($("#ddlGroundAppeal").val());
+              return false;
+            },
+            select: function (event, ui) {
+               // console.log(txtgroundtext);
+                $("#GroundTitleText").val(txtgroundtext);
+                return false;
+            },
+         });*@
+    });
+
+    function fillDocumentList() {
+        var RegistrationYear = "@Model.RegistrationYear";
+        var GrievanceID = "@Model.GrievanceID";
+         $.ajax({
+            type: "POST",
+            url: "@Url.Action("ViewAppealDocument", "Registration")",
+             data: '{RegistrationYear:"' + RegistrationYear + '", GrievanceID: "' + GrievanceID + '" }',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (response) {
+                $("#AppealDocuments").html(response);
+
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+ 
+
+    function confirmforDeleteNew(GriYear, GriNo, msg) {
+        
+        $("#confirmMessageTextNew").html(msg);
+        $("#RegistrationYear").val(GriYear);
+        $("#GrievanceID").val(GriNo);
+        $("#confirmModalDeleteAppealNew").modal('show');
+    }
+    function DeleteAppeal() {
+        if ($("#DeleteIntermediaryDetail").valid()) {
+            $("#DeleteIntermediaryDetail").submit();
+        }
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        var justificationString = $("#txtJustification").val();
+        var wordCount = 0;
+        if ((justificationString.match(/\S+/g)) != null) {
+            wordCount = justificationString.match(/\S+/g).length;
+        }
+        $('#display_count').text(wordCount);
+
+        $("#txtJustification").on('keyup', function () {
+            var words = 0;
+            if ((this.value.match(/\S+/g)) != null) {
+                words = this.value.match(/\S+/g).length;
+            }
+            var noofwords = 250;
+            if (words > noofwords) {
+                var trimmed = $(this).val().split(/\s+/, noofwords).join(" ");
+                $(this).val(trimmed + " ");
+            }
+            else {
+                $('#display_count').text(words);
+            }
+        });
+    });
+
+</script>
+<script>
+    function CheckConfirmDraftbox() {
+        if ($("#IntermediaryDetailForm").valid()) {
+            $('#actionDraftProceed').val("Draft");
+            $("#IntermediaryDetailForm").submit();
+        }
+    }
+    function CheckConfirmbox() {
+        if ($('#disclaimer').is(":checked")) {
+            if ($("#IntermediaryDetailForm").valid()) {
+                $('#actionDraftProceed').val("Proceed");
+                $("#IntermediaryDetailForm").submit();
+            }
+        }
+        else {
+            alertify.error("Please Check Self declaration / Undertaking.");
+            return false;
+        }
+    }
+</script>
+

@@ -1,0 +1,588 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.AppealHistory
+@using DigitalNagrik.Areas.GridView.Data
+@using DigitalNagrik.Models
+@{
+    List<SelectListItem> MemberDrafts = new List<SelectListItem>();
+    string ChairpersonName = string.Empty;
+}
+<script src="@Url.Content("~/DashAssets/js/htmldiff.js")"></script>
+<style>
+    .bg-label-success, .text-success {
+        color: #5fc429 !important;
+    }
+
+    ins {
+        background: #94fd94;
+        text-decoration: none;
+    }
+
+    del {
+        background: pink;
+    }
+
+    .timeline-with-icons {
+        border-left: 1px solid hsl(0, 0%, 90%);
+        position: relative;
+        list-style: none;
+    }
+
+        .timeline-with-icons .timeline-item {
+            position: relative;
+        }
+
+            .timeline-with-icons .timeline-item.active {
+                background: #f9f5ff;
+            }
+
+            .timeline-with-icons .timeline-item:after {
+                position: absolute;
+                display: block;
+                top: 0;
+            }
+
+        .timeline-with-icons .timeline-icon {
+            position: absolute;
+            left: -48px;
+            background-color: hsl(217, 88.2%, 90%);
+            color: hsl(217, 88.8%, 35.1%);
+            border-radius: 50%;
+            height: 31px;
+            width: 31px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+    .AHContainerHTML {
+        display: none;
+    }
+
+    .highlight {
+        background-color: #fff1a5 !important;
+    }
+</style>
+<div class="modal-header px-4 py-3">
+    <h4 class="modal-title" id="gv-action-modal-title">Appeal History (<span>Appeal Number: </span><span class="h4 fw-bold">@Model.GrievanceId/@Model.RegistrationYear</span>)</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<hr class="my-0" />
+<div class="modal-body px-4 py-2">
+    @if (Model.HistoryList != null && Model.HistoryList.Count > 0)
+    {
+        int counter = 0;
+        string TransferedToGAC = string.Empty;
+        string Title = string.Empty;
+        <div class="row gx-2">
+            @if (Model.IsIntermediaryReply == "N")
+            {
+                <div class="text-danger col-12 mb-2">
+                    Note: Intermediary Response not yet received for this Appeal
+                </div>
+            }
+            <div class="col-lg-6">
+                <div class="px-3" style="height:620px;overflow-y:auto">
+                    <ul class="timeline-with-icons">
+                        @foreach (var History in Model.HistoryList)
+                        {
+                            <li class="timeline-item pt-3">
+                                <span class="timeline-icon">
+                                    <i class="fa fa-calendar-alt text-primary fa-sm fa-fw"></i>
+                                </span>
+                                <div class="text-orange mb-1">
+                                    @History.ActionDateTime
+                                    @if (!string.IsNullOrWhiteSpace(History.ActionByUserName))
+                                    {
+                                        <span class="badge bg-label-danger d-inline-block ms-2 fw-semibold">@History.ActionByUserName</span>
+                                    }
+                                </div>
+                                @switch (History.ActionId)
+                                {
+                                    case GACGridViewInbox.AppealAction.Submitted:
+                                        Title = "Appeal Submitted by Appellant";
+                                        <div>
+                                            <h5 class="mb-0">
+                                                @Title
+                                                <a class="ms-2 font-xl" data-title="@Title" data-date="@History.ActionDateTime" data-type="DOC" data-url="@Url.Action("AppealPDF", "Registration", new { Area = "Public", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Appeal</a>
+                                            </h5>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.AssignedToGAC:
+                                        Title = "Appeal Assigned to GAC - " + Model.AssignedToGAC;
+                                        <div>
+                                            <h5 class="mb-0">@Title</h5>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.PrepareSummary:
+                                        Title = "Matter Summary Finalized";
+                                        <div>
+                                            <h5 class="mb-0">
+                                                @Title
+                                                <a class="ms-2 font-xl" data-type="HTML" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Summary</a>
+                                            </h5>
+                                            <div class="AHContainerHTML">
+                                                <div class="text-orange">
+                                                    @History.ActionDateTime
+                                                    <h5 class="mb-2">@Title</h5>
+                                                </div>
+                                                <hr class="my-2" />
+                                                <div>Observation: <span class="fw-semibold">@Model.ObservationText</span></div>
+                                                <div>Summary: </div>
+                                                <div>
+                                                    @Html.Raw(Model.MatterSummary)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.InformationFromIntermediary:
+                                        Title = "Additional info sought from Intermediary";
+                                        <div>
+                                            <h5 class="mb-0">
+                                                @Title<br />
+                                                <a class="font-xl" data-type="HTML" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Details</a>
+                                            </h5>
+                                            <div class="AHContainerHTML">
+                                                <div class="text-orange">
+                                                    @History.ActionDateTime
+                                                    <h5 class="mb-2">@Title</h5>
+                                                </div>
+                                                <hr class="my-2" />
+                                                @{
+                                                    if (Model.AdditionalInputList.Where(x => x.InputId == History.AdditionInputId).Count() > 0)
+                                                    {
+                                                        var Input = Model.AdditionalInputList.Where(x => x.InputId == History.AdditionInputId).ToList()[0];
+                                                        <table class="table table-bordered table-sm">
+                                                            <tr>
+                                                                <td style="width:20%">Request No</td>
+                                                                <td class="fw-semibold">@Input.InputRequestNo</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Query</td>
+                                                                <td class="fw-semibold"><span class="highlight">@Input.SeekQuery</span></td>
+                                                            </tr>
+                                                        </table>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.SeekExpertAssistance:
+                                        Title = "Info sought from Subject Expert";
+                                        <div>
+                                            <h5 class="mb-0">
+                                                @Title<br />
+                                                <a class="font-xl" data-type="HTML" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Details</a>
+                                            </h5>
+                                            <div class="AHContainerHTML">
+                                                <div class="text-orange">
+                                                    @History.ActionDateTime
+                                                    <h5 class="mb-2">@Title</h5>
+                                                </div>
+                                                <hr class="my-2" />
+                                                @{
+                                                    if (Model.ExpertOpinionList.Where(x => x.InputId == History.ExpertInputId).Count() > 0)
+                                                    {
+                                                        var Input = Model.ExpertOpinionList.Where(x => x.InputId == History.ExpertInputId).ToList()[0];
+                                                        <table class="table table-bordered table-sm">
+                                                            <tr>
+                                                                <td style="width:30%">Request No</td>
+                                                                <td class="fw-semibold">@Input.InputRequestNo</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Expert Name</td>
+                                                                <td class="fw-semibold">@Input.ExpertName</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Mobile</td>
+                                                                <td class="fw-semibold">@Input.ExpertMobile</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Email Id</td>
+                                                                <td class="fw-semibold">@Input.ExpertEmail</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Query</td>
+                                                                <td class="fw-semibold"><span class="highlight">@Input.SeekRemarks</span></td>
+                                                            </tr>
+                                                        </table>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.DecisionGAC:
+                                        Title = "Appeal Disposed";
+                                        <div>
+                                            <h5 class="mb-0">
+                                                <span class="text-success">@Title</span>
+                                                <a class="ms-2 font-xl" data-title="@Title" data-date="@History.ActionDateTime" data-type="DOC" data-url="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + Model.DecisionFilePath + "&FileType=pdf") })" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Decision Copy</a>
+                                            </h5>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.Reject:
+                                        Title = "Appeal not Admitted";
+                                        <div>
+                                            <h5 class="mb-0">
+                                                <span class="text-danger">@Title</span>
+                                                <a class="ms-2 font-xl" data-type="HTML" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Details</a>
+                                            </h5>
+                                            <div class="AHContainerHTML">
+                                                <div class="text-orange">
+                                                    @History.ActionDateTime
+                                                    <h5 class="mb-2">@Title</h5>
+                                                </div>
+                                                <hr class="my-2" />
+                                                <div>Reason: <span class="fw-semibold">@Model.RejectReason</span></div>
+                                                <div>Email to Appellant: </div>
+                                                <div>
+                                                    @Html.Raw(Model.RejectSummary)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.ReassignGAC:
+                                        Title = "Appeal Transferred";
+                                        <div>
+                                            <h5 class="mb-0">@Title</h5>
+                                            <div>Transfered To GAC @TransferedToGAC</div>
+                                            <div>Remarks: <span class="fw-semibold">@History.Remarks</span></div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.IntermediaryResponse:
+                                        Title = "Intermediary Response Received";
+                                        <div>
+                                            <h5 class="mb-0">
+                                                @Title
+                                                <a class="ms-2 font-xl" data-title="@Title" data-date="@History.ActionDateTime" data-type="DOC" data-url="@Url.Action("IntermediaryDownloadPDF", "Intermediary", new { Area = "Intermediary", qs1 = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) })" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Response</a>
+                                            </h5>
+                                            <div>Time Taken to Respond: <span class="fw-semibold">@Html.Raw(BALCommon.ConvertMinToDHM(Model.IntermediaryTime))</span></div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.SubmitTransRequest:
+                                        Title = "Transfer Request Submitted";
+                                        TransferedToGAC = History.ToGACId;
+                                        <div>
+                                            <h5 class="mb-0">@Title</h5>
+                                            <div>Remarks: <span class="fw-semibold">@History.Remarks</span></div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.RejectTransRequest:
+                                        Title = "Transfer Request Rejected";
+                                        <div>
+                                            <h5 class="mb-0">@Title</h5>
+                                            <div style="line-height:1.2rem;">Remarks: <span class="fw-semibold">@History.Remarks</span></div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.VerifyIntermediary:
+                                        Title = "Intermediary Details Verified";
+                                        <div>
+                                            <h5 class="mb-0">@Title</h5>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.AdditionInputReceived:
+                                        Title = "Additional Input Reply received from Intermediary";
+                                        <div>
+                                            <h5 class="mb-0">
+                                                @Title<br />
+                                                <a class="font-xl" data-type="HTML" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Details</a>
+                                            </h5>
+                                            <div class="AHContainerHTML">
+                                                <div class="text-orange">@History.ActionDateTime</div>
+                                                <h5 class="mb-2">@Title</h5>
+                                                <hr class="my-2" />
+                                                @{
+                                                    if (Model.AdditionalInputList.Where(x => x.InputId == History.AdditionInputId_Reply).Count() > 0)
+                                                    {
+                                                        var Input = Model.AdditionalInputList.Where(x => x.InputId == History.AdditionInputId_Reply).ToList()[0];
+                                                        <table class="table table-bordered table-sm">
+                                                            <tr>
+                                                                <td style="width:20%">Request No</td>
+                                                                <td class="fw-semibold">@Input.InputRequestNo</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Query</td>
+                                                                <td class="fw-semibold">@Input.SeekQuery</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Reply</td>
+                                                                <td class="fw-semibold"><span class="highlight">@Input.InputRemarks</span></td>
+                                                            </tr>
+                                                            @if (!string.IsNullOrWhiteSpace(Input.FilePath))
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="2">
+                                                                        <object width="100%" height="410px" data="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + Model.ComplianceSupportingDocument + "&FileType=pdf") })"></object>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.ExpertOpinionReceived:
+                                        Title = "Reply received from Subject Expert";
+                                        <div>
+                                            <h5 class="mb-0">
+                                                @Title<br />
+                                                <a class="font-xl" data-type="HTML" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Details</a>
+                                            </h5>
+                                            <div class="AHContainerHTML">
+                                                <div class="text-orange">
+                                                    @History.ActionDateTime
+                                                    <h5 class="mb-2">@Title</h5>
+                                                </div>
+                                                <hr class="my-2" />
+                                                @{
+                                                    if (Model.ExpertOpinionList.Where(x => x.InputId == History.ExpertInputId_Reply).Count() > 0)
+                                                    {
+                                                        var Input = Model.ExpertOpinionList.Where(x => x.InputId == History.ExpertInputId_Reply).ToList()[0];
+                                                        <table class="table table-bordered table-sm">
+                                                            <tr>
+                                                                <td style="width:30%">Request No</td>
+                                                                <td class="fw-semibold">@Input.InputRequestNo</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Expert Name</td>
+                                                                <td class="fw-semibold">@Input.ExpertName</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Mobile</td>
+                                                                <td class="fw-semibold">@Input.ExpertMobile</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Email Id</td>
+                                                                <td class="fw-semibold">@Input.ExpertEmail</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Query</td>
+                                                                <td class="fw-semibold">@Input.SeekRemarks</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Reply</td>
+                                                                <td class="fw-semibold"><span class="highlight">@Input.InputRemarks</span></td>
+                                                            </tr>
+                                                            @if (!string.IsNullOrWhiteSpace(Input.FilePath))
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="2">
+                                                                        <object width="100%" height="410px" data="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + Model.ComplianceSupportingDocument + "&FileType=pdf") })"></object>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </table>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.DecisonByMember:
+                                        Title = "GAC Member Comment";
+                                        <div>
+                                            <h5 class="mb-0">@Title</h5>
+                                            Opinion:
+                                            @if (History.IsAgree == "Y")
+                                            {
+                                                <span class="text-success">Agree</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">Disagree</span>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(History.Remarks))
+                                            {
+                                                <div>Remarks: <span class="fw-semibold">@History.Remarks</span></div>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(History.DraftDecisionLog))
+                                            {
+                                                <div><a class="font-xl" data-type="HTML" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Draft Decision</a></div>
+                                            }
+                                            <div class="AHContainerHTML">
+                                                <div class="text-orange">
+                                                    @History.ActionDateTime
+                                                    <h5 class="mb-2">@Title</h5>
+                                                </div>
+                                                <hr class="my-2" />
+                                                @if (!string.IsNullOrWhiteSpace(History.DraftDecisionLog))
+                                                {
+                                                    MemberDrafts.Add(new SelectListItem { Value = History.ActionByUserName, Text = History.DraftDecisionLog });
+                                                    <div>Draft Decision: </div>
+                                                    @Html.Raw(History.DraftDecisionLog)
+                                                }
+                                            </div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.DecisonByChairperson:
+                                        Title = "Chairperson’s Comment";
+                                        ChairpersonName = History.ActionByUserName;
+                                        <div>
+                                            <h5 class="mb-0">
+                                                @Title
+                                                @if (!string.IsNullOrWhiteSpace(Model.DraftDecision) && MemberDrafts.Count > 0)
+                                                {
+                                                    <a onclick="CompareAHDrafts()" href="javascript:void(0)" class="font-xl ms-2">Compare Drafts</a>
+                                                }
+
+                                            </h5>
+                                            Opinion:
+                                            @if (History.IsAgree == "Y")
+                                            {
+                                                <span class="text-success">Agree</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">Disagree</span>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(History.Remarks))
+                                            {
+                                                <div>Remarks: <span class="fw-semibold">@History.Remarks</span></div>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(History.DraftDecisionLog))
+                                            {
+                                                <div><a class="font-xl" data-type="HTML" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Decision</a></div>
+                                            }
+                                            <div class="AHContainerHTML">
+                                                <div class="text-orange">
+                                                    @History.ActionDateTime
+                                                    <h5 class="mb-2">@Title</h5>
+                                                </div>
+                                                <hr class="my-2" />
+                                                @if (!string.IsNullOrWhiteSpace(History.DraftDecisionLog))
+                                                {
+                                                    <div>Decision: </div>
+                                                    @Html.Raw(History.DraftDecisionLog)
+                                                }
+                                            </div>
+                                        </div>
+                                        break;
+                                    case GACGridViewInbox.AppealAction.ComplianceGiven:
+                                        Title = "Compliance given by Intermediary";
+                                        <div>
+                                            <h5 class="mb-0">
+                                                @Title<br />
+                                                <a class="font-xl" data-type="HTML" onclick="RenderAHDetails($(this))" href="javascript:void(0);">View Details</a>
+                                            </h5>
+                                            <div class="AHContainerHTML">
+                                                <div class="text-orange">
+                                                    @History.ActionDateTime
+                                                    <h5 class="mb-2">@Title</h5>
+                                                </div>
+                                                <hr class="my-2" />
+                                                <table class="table table-bordered table-sm">
+                                                    <tr>
+                                                        <td style="width:20%">Compliance Date</td>
+                                                        <td class="fw-semibold">@Model.ComplianceDate</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Remarks</td>
+                                                        <td class="fw-semibold">@Model.ComplianceRemarks</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>URL</td>
+                                                        <td style="word-break:break-all"><a target="_blank" rel="noopener noreferrer" href="@Model.ComplianceURL">@Model.ComplianceURL</a></td>
+                                                    </tr>
+                                                    @if (!string.IsNullOrWhiteSpace(Model.ComplianceSupportingDocument))
+                                                    {
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                <object width="100%" height="410px" data="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + Model.ComplianceSupportingDocument + "&FileType=pdf") })"></object>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </table>
+                                            </div>
+                                        </div>
+                                        break;
+                                }
+                                <hr class="mb-0" />
+                            </li>
+                            ++counter;
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="shadow rounded-3" id="ContainerAHDetails">
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-lighter"><h5>Not Records in Appeal History</h5></div>
+    }
+</div>
+<hr class="my-0" />
+<div class="modal-footer justify-content-center py-3">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.DraftDecision) && MemberDrafts.Count > 0)
+{
+    int i = 0;
+    <div id="containerAHDraftsCompare" class="d-none">
+        <div class="modal-header pt-3">
+            <h4 class="modal-title">Compare Member Drafts with Chairperson Decision (Appeal Number: @Model.GrievanceId/@Model.RegistrationYear)</h4>
+            <button type="button" class="btn btn-danger btn-sm" onclick="$('#gv-comparedraft-modal').modal('hide')" aria-label="Close">Close</button>
+        </div>
+        <hr class="mb-3 mt-2">
+        <div class="modal-body pb-4 pt-0 px-3">
+            <div class="row gx-2">
+                <div class="col-lg-4">
+                    <div class="card p-3">
+                        <h6 class="text-center"><span class="badge bg-label-success font-xxxl fw-semibold">@ChairpersonName (Chairperson)</span></h6>
+                        <div id="AHDraftCompareOriginalHtml">
+                            @Html.Raw(Model.DraftDecision)
+                        </div>
+                    </div>
+                </div>
+                @foreach (var MemberDraft in MemberDrafts)
+                {
+                    <div class="col-lg-4 border-left">
+                        <div class="card p-3">
+                            <h6 class="text-center"><span class="badge bg-label-danger font-xxxl fw-semibold">@MemberDraft.Value</span></h6>
+                            <div id="AHMemberDraft_@(++i)">
+                                <div class="d-none">
+                                    @Html.Raw(MemberDraft.Text)
+                                </div>
+                                <script>
+                                var OriginalHtml@(i) = $("#AHDraftCompareOriginalHtml").html();
+                                var NewHtml@(i) = $("#AHMemberDraft_@(i)").find('.d-none').html();
+                                var Output@(i) = htmldiff(OriginalHtml@(i), NewHtml@(i));
+                                $("#AHMemberDraft_@(i)").html(Output@(i));
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<script>
+    function RenderAHDetails(element) {
+        $('.timeline-item').removeClass('active');
+        element.closest('.timeline-item').addClass('active');
+        var Type = element.data("type");
+        if (Type == "DOC") {
+            var URL = element.data("url");
+            var Title = element.data("title");
+            var Date = element.data("date");
+            $("#ContainerAHDetails").html('<div class="p-3" style="height:620px;overflow-y:auto"><div class="text-orange">' + Date + '<h5 class="mb-2">' + Title + '</h5></div><hr class="my-2" /><object width="100%" height="620px" data="' + URL + '"></object></div>');
+        }
+        else if (Type == "HTML") {
+            var Html = element.parent().siblings(".AHContainerHTML").html();
+            $("#ContainerAHDetails").html("<div class='p-3' style='height:620px;overflow-y:auto'>" + Html + "</div>");
+        }
+    }
+
+    function CompareAHDrafts() {
+        $("#gv-comparedraft-modal-content").html($("#containerAHDraftsCompare").html())
+        $("#gv-comparedraft-modal").modal('show');
+    }
+</script>
+
+

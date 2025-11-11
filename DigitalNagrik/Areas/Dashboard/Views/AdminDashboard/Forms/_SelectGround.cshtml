@@ -1,0 +1,50 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.Dashboard_AssignAppeal
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+@if (Model.AppealGroundList.Count > 0)
+{
+    int counter = 0;
+    <input type="hidden" id="hdnDashSearchGround" />
+    <div class="mb-1">@LabelDictionary["SearchAppealGround"] <input type="text" id="txtDashSearchGround" name="DashSearchGround" class="form-control d-lg-inline-block d-block ms-2 txt-dash-search-ground" style="width:230px" placeholder="@LabelDictionary["SearchAppealGround"]" /></div>
+    <div style="height: 770px;" class="overflow-auto">
+        <table class="table table-bordered table-hover mb-0 table-sm" id="dashTableSelectGround">
+            <tbody>
+                @foreach (var Ground in Model.AppealGroundList)
+                {
+                    <tr title="Click to Select" onclick='SelectGround($(this))' class="cursor-pointer" data-gacid='@(Ground.GACId)' data-groundid='@(Ground.GroundId)' data-groundnm='@Ground.GroundDesc'>
+                        <td class="text-center px-1">@(++counter)</td>
+                        <td>
+                            <div class="h5 mb-0">@Ground.GroundDesc</div>
+                            @if (!string.IsNullOrWhiteSpace(Ground.ITRule))
+                            {
+                                <div class="alert alert-warning p-2 mb-0 font-xl overflow-auto mt-2" style="max-height:100px">@Html.Raw(Ground.ITRule)</div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script>
+    $(document).on("keyup paste", "#txtDashSearchGround", function () {
+        var SearchText = $.trim($(this).val().toLowerCase());
+        if (SearchText !== "") {
+            $("#hdnDashSearchGround").val(SearchText);
+            $("#dashTableSelectGround > tbody tr").filter(function (e, i) {
+                if ($(this).text().toLowerCase().indexOf(SearchText) > -1) {
+                    $(this).toggle(true); $(this).removeHighlight().highlight(SearchText);
+                }
+                else {
+                    $(this).toggle(false); $(this).removeHighlight();
+                }
+            });
+        }
+        else {
+            $('#dashTableSelectGround > tbody tr').removeHighlight(); $("#dashTableSelectGround > tbody tr").filter(function (e, i) { $(this).toggle(true); });
+        }
+    });
+</script>

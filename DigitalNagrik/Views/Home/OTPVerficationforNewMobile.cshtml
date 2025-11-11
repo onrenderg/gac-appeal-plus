@@ -1,0 +1,212 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+@{
+    ViewBag.Title = "OTPVerficationforNewMobile";
+    Layout = "~/Views/Shared/_LayoutPublicCurrent.cshtml";
+    var resendOTP = Url.Action("getResendOTP", "Home", new { Area = "" });
+    var EncKeySalt = "";
+    if (Session["EncKeySalt"] != null)
+    {
+        EncKeySalt = Session["EncKeySalt"].ToString();
+    }
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<script src="~/assets/js/aes.js"></script>
+        <div class="row">
+
+            <div class="col-lg-8 logo-m">
+                @Html.Partial("~/Views/Home/_IndexImageContent.cshtml")
+            </div>
+
+
+            <div class="col-lg-4 mt-4">
+                <div class="card box-shadow">
+                    <div class=" card-header loginpanel text-white   ">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:left ">
+                                <i id="LoginIcon" class="bi bi-phone"></i>
+                                &nbsp;&nbsp;&nbsp;
+                                <span id="LoginHeaderText" class="fw-bold"> @LabelDictionary["OTPVerification"]</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body " id="LoginDiv" style="min-height:250px;">
+                        @using (Html.BeginForm("OTPVerficationforNewMobile", "Home", FormMethod.Post, new { id = "OTPVerficationforNewMobile" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true)
+
+                            @Html.HiddenFor(m => m.OTPMobile)
+                            @Html.HiddenFor(m => m.AppellantEmailID)
+                            @Html.HiddenFor(m => m.OTPID)
+                            @Html.HiddenFor(m => m.OTPEnc)
+                            <div>
+                                @Html.ValidationMessage("validationMessage")
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="form-label" for="form2Example17">
+                                        @LabelDictionary["EnterOTPSentonEmail"] <b>@Model.AppellantEmailID </b>
+                                    </label>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    @Html.PasswordFor(m => m.OTP, new { @class = "form-control", maxlength = "6" })
+                                    @Html.ValidationMessageFor(x => x.OTP)
+                                </div>
+                                <div class="col-sm-8" style="text-align:left">
+                                    <a id="resendOTP" class="btn btn-primary " href="#">
+                                        @LabelDictionary["Resend"]
+                                    </a>
+                                    <div id="WaitDiv" class="text-info"></div>
+                                </div>
+
+
+                            </div>
+                            <div class="mt-4 row">
+                                <div class="col-md-9">
+                                    <label class="custom-input-label mb-1">@LabelDictionary["Captcha"]<span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            <img id="CaptchaImage" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                                            <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                                        </span>
+                                        @Html.TextBoxFor(x => x.Captcha, new { @id = "txtCaptcha", @class = "form-control DisabledInputs", placeholder = @LabelDictionary["EnterCaptchaPlaceHolder"], autocomplete = "off", maxlength = "6" })
+                                    </div>
+                                    <div id="SpanCaptchaValidation">
+                                        @Html.ValidationMessageFor(x => x.Captcha)
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <br />
+                            <div class="row">
+                                <div class="col-3">
+                                    <a class="btn btn-loginpanel btn-block" style="width:75px;" href="@Url.Action("Index", "Home", new { Area = "" })">@LabelDictionary["Cancel"]</a>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <input type="button" id="btnVerify" class="btn btn-loginpanel btn-block" style="width:75px;" value="@LabelDictionary["Verify"]" onclick="return encryptOTP();" />
+                                </div>
+                                <div class="col-sm-6"></div>
+                            </div>
+
+
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+ 
+<script>
+    function RefreshCaptcha() {
+
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };
+</script>
+<script>
+    function encryptOTP() {
+        if ($("#OTPVerficationforNewMobile").valid()) {
+        var OTP = $('#OTP').val();
+        var keynew = "@EncKeySalt";
+        var key = CryptoJS.enc.Utf8.parse(keynew);
+        var iv = CryptoJS.enc.Utf8.parse(keynew);
+
+        var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(OTP), key,
+            {
+                keySize: 128 / 8,
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+
+            encrypted = encrypted.toString();
+
+            $('#OTP').val("000000");
+            $('#OTPEnc').val(encrypted);
+            $('#OTPVerficationforNewMobile').submit();
+            return true;
+        }
+        else {
+            return false;
+        };
+    }
+
+    $(document).ready(function () {
+        $("#resendOTP").hide();
+        var timeLeft = 30;
+        var timerId = setInterval(countdown, 1000);
+        function countdown() {
+            // console.log(timeLeft);
+            if (timeLeft == -1) {
+                clearInterval(timerId);
+                $("#resendOTP").show();
+                $("#WaitDiv").hide();
+            } else {
+                $("#resendOTP").hide();
+                $("#WaitDiv").show();
+                WaitDiv.innerHTML ='@LabelDictionary["OptionresendMsg"] ' + timeLeft + ' @LabelDictionary["seconds"]';
+                timeLeft--;
+            }
+        }
+    });
+
+    function countdown() {
+        console.log(timeLeft);
+        if (timeLeft == -1) {
+            clearTimeout();
+            $("#resendOTP").show();
+            $("#WaitDiv").hide();
+        } else {
+            $("#resendOTP").hide();
+            $("#WaitDiv").show();
+            WaitDiv.innerHTML = '@LabelDictionary["OptionresendMsg"] ' + timeLeft + ' @LabelDictionary["seconds"]';
+            timeLeft--;
+        }
+    }
+
+           $("#resendOTP").click(function() {
+             var url = "@resendOTP";
+               var dataValue = { EmailorMobile:"E", func:"NewMobile"};
+            $.ajax({
+                url: url,
+                type: 'POST',
+                cache: false,
+                data: dataValue,
+                async: true,
+                success: function (result) {
+                    //console.log(result["OTPID"]);
+                    $('#otpshow').text(result["OTPID"]);
+                    $('#OTPID').val(result["OTPID"]);
+                    var timeLeft = 30;
+                    var timerId = setInterval(countdown, 1000);
+                    function countdown() {
+                       // console.log(timeLeft);
+                        if (timeLeft == -1) {
+                            clearInterval(timerId);
+                            $("#resendOTP").show();
+                            $("#WaitDiv").hide();
+                        } else {
+                            $("#resendOTP").hide();
+                            $("#WaitDiv").show();
+                            WaitDiv.innerHTML = 'Option to resend OTP will appear after ' + timeLeft + ' seconds';
+                            timeLeft--;
+                        }
+                    }
+                },
+                error: function(xhr, x, e) {
+                alert(e);
+                },
+                complete: function() {
+                }
+            });
+        });
+
+</script>
+

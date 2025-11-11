@@ -1,0 +1,125 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.ExtendResponseTimeforAppeal
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+@using (Html.BeginForm("SaveExtendedTimeRequest", "IntermediaryDashboard", FormMethod.Post, new { id = "frm_SaveExtendedTimeRequest", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.GrievanceId)
+    @Html.HiddenFor(x => x.RegistrationYear)
+    <div class="modal-header pt-3" id="gv-action-modal-content">
+        <h3 class="modal-title" id="gv-action-modal-title">@LabelDictionary["ExtendTimeforResponse"]</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <hr class="mb-0 mt-2" />
+    <div class="modal-body pb-0 pt-3 px-3">
+        <div class="accordion p-0" id="accordionPanelsStayOpenExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                    <button class="accordion-button p-2" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                        <h3><i class="text-primary bx bx-user-check align-middle me-1"></i> @LabelDictionary["AppealDetails"]</h3>
+                    </button>
+                </h2>
+                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                    <div class="accordion-body">
+                        <div class="row mt-2 ms-3">
+                            <table class="table table-bordered table-responsive">
+                                <tbody style="font-size:17px">
+                                    <tr>
+                                        <td width="50%" colspan="2">@LabelDictionary["AppealNumber"]: <b>@Model.GrievanceId/@Model.RegistrationYear</b></td>
+                                        <td width="50%" colspan="2">@LabelDictionary["AppealDate"]: <b> @Model.ReceiptDate</b></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row mt-3">
+            <div class="col-lg-12">
+                <h3><i class="text-success bx bxs-time-five align-middle me-1"></i> @LabelDictionary["ExtendTimeforResponse"]</h3>
+            </div>
+        </div>
+        @if (@Model.Remarks == null || Model.Remarks == "")
+        {
+            <div class="row mt-2 ms-3" style="font-size:17px">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["ExtensionTime"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.DropDownListFor(m => m.ResponseTimeID, Model.ResponseTimeList, @LabelDictionary["Select"], new { @class = "form-select" })
+                    @Html.ValidationMessageFor(x => x.ResponseTimeID)
+                </div>
+            </div>
+            <div class="row mt-2 ms-3" style="font-size:17px">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["Remarks"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-10">
+                    @Html.TextAreaFor(x => x.Remarks, new { @id = "Remarks", @class = "form-control DisabledInputs", maxlength = "500", placeholder = @LabelDictionary["Remarks"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.Remarks)
+                </div>
+            </div>
+            <hr />
+            <div class="row mt-3 mb-3">
+                <div class="col-lg-12 text-center">
+                    <button type="button" class="btn btn-info" id="btnSubmit"><i class="bx bx-check-circle align-middle"></i>&nbsp;@LabelDictionary["Submit"]</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-light" style="font-size:18px">
+                <div class="row mt-2 ms-3" role="alert">
+                    <div class="col-lg-12">
+                        <strong>@LabelDictionary["ExtendTimeRequestMessage"]</strong>
+                    </div>
+                    <div class="col-lg-2">
+                        <label class="custom-input-label"> @LabelDictionary["ExtensionTime"]</label><span class="text-danger"> </span>
+                    </div>
+                    <div class="col-lg-10">
+                        <span>: @Model.ResponseTimeDesc</span>
+                    </div>
+                    <div class="col-lg-2">
+                        <label class="custom-input-label">@LabelDictionary["Remarks"] </label><span class="text-danger"> </span>
+                    </div>
+                    <div class="col-lg-10">
+                        <span style="word-break:break-all">: @Model.Remarks</span>
+                    </div>
+                    <div class="col-lg-2">
+                        <label class="custom-input-label">@LabelDictionary["Status"] </label><span class="text-danger"> </span>
+                    </div>
+                    <div class="col-lg-10">
+                           <span class="badge @(Model.ApprovalStatus == "P" ? "bg-primary": Model.ApprovalStatus == "N" ? "bg-danger": "bg-success") ">
+                            @Model.ApprovalStatusDesc
+                            @if (Model.ApprovalStatus != "P")
+                            {
+                                <span>on @Model.ApprovalDateTime (Remarks: @Model.ApprovalRemarks)</span>
+                            }
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+            <hr />
+            <div class="row mt-3 mb-3">
+                <div class="col-lg-12 text-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-check-circle align-middle"></i>&nbsp;@LabelDictionary["Close"]</button>
+                </div>
+            </div>
+        }
+    </div>
+
+}
+<script>
+    $('#frm_SaveExtendedTimeRequest').removeData("validator").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse($('#frm_SaveExtendedTimeRequest'));
+    $("#btnSubmit").click(function () {
+        if ($("#frm_SaveExtendedTimeRequest").valid()) {
+            $('#frm_SaveExtendedTimeRequest').submit();
+        }
+    });
+</script>

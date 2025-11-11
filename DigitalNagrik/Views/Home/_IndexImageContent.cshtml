@@ -1,0 +1,63 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+@{
+    List<DigitalNagrik.Areas.Public.Models.IntermediaryMaster> IntermediaryMasters = ViewData["IntermediaryMaster"] as List<DigitalNagrik.Areas.Public.Models.IntermediaryMaster>;
+
+}
+<div class="row">
+    @if (DigitalNagrik.Models.UserSession.LangCulture == "en-IN")
+    {
+        <div class="col-lg-12"><img class="img-fluid" src="~/assets/img/logoOuter.png"></div>
+    }
+    else
+    {
+        <div class="col-lg-12"><img class="img-fluid" src="~/assets/img/logoOuter_hindi.png"></div>
+    }
+</div>
+
+<div class="modal modal-xl fade" id="OpenModelKnowRights" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Intermediaries</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped" id="IntermediaryTable">
+                    @if (ViewData["IntermediaryMaster"] != null)
+                    {
+                        int count = 1;
+                        <thead>
+                            <tr>
+                                <th>Sr No</th>
+                                <th>Intermediary Name (URL)</th>
+                                <th>Grievance Officer Name (Email)</th>
+                                <th>Address</th>
+                                <th>Reporting Portal Link</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in IntermediaryMasters.Where(m => m.IsActive == "Y").ToList())
+                            {
+                                <tr>
+                                    <td style="width:5%;">@count</td>
+                                    <td style="width:20%;">@item.IntermediaryTitle <br />(@item.URL)</td>
+                                    <td style="width:20%;">@item.GOName <br />(@item.GOEmail)</td>
+                                    <td style="width:30%;">@item.Address</td>
+                                    <td style="width:50px;"><a href="@item.HelpLink" target="_blank" rel = "noopener noreferrer">@item.HelpLink</a></td>
+                                </tr>
+                                count += 1;
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-block" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    /*  $("#IntermediaryTable").DataTable();*/
+</script>

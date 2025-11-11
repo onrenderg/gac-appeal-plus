@@ -1,0 +1,61 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACDecisionbyChairperson
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+@if (Model.ObservationsList.Count > 0)
+{
+    for (int i = 0; i < Convert.ToInt32(Model.ObservationsList.Count); i++)
+    {
+        var RemarksList = Model.RemarksList.Where(x => x.ParaId == Model.ObservationsList[i].ParaId).ToList();
+        if (RemarksList.Count > 0)
+        {
+            <div class='row'>
+                <div class="col-lg-3">
+                    @{ var AgreeDisagreeCount = Model.AgreeDisgreeCountList.Where(x => x.ParaID == Model.ObservationsList[i].ParaId).ToList(); }
+                    @if (AgreeDisagreeCount.Count > 0)
+                    {
+                        foreach (var row in AgreeDisagreeCount)
+                        {
+                            switch (row.AgreeDisagree)
+                            {
+                                case "Y":
+                                    <h4 class="text-success"><i class="bx bx-message-check align-top text-success h4"></i> <span class="align-text-top">@LabelDictionary["Agree"]: @row.Records</span> </h4>
+                                    break;
+                                case "N":
+                                    <h4 class="text-danger mt-2"> <i class="bx bx-message-error align-top text-danger h4"></i> <span class="align-text-top">@LabelDictionary["Disagree"]: @row.Records</span></h4>
+                                    break;
+                            }
+                        }
+                    }
+
+                </div>
+                <div class="col-lg-9">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th>@LabelDictionary["Name/Designation"]</th>
+                                <th>@LabelDictionary["Opinion"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var Remarks in Model.RemarksList)
+                            {
+                                <tr style="line-height:1rem;">
+                                    <td class="align-top">
+                                        <span class="fw-semibold">@Remarks.UserName</span><br />
+                                        (<span>@Remarks.Designation</span>)
+                                    </td>
+                                    <td style="width:50%" class="align-top">
+                                        @(Html.Raw(Remarks.AgreeDisagree == "Y" ? "<span class='text-success fw-semibold'>" + @LabelDictionary["Agree"] + "</span>" : "<span class='text-danger fw-semibold'>" + @LabelDictionary["Disagree"] + "</span>"))<br />
+                                        @LabelDictionary["Remarks"]: <span class="fw-semibold">@Remarks.Recomendations</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+}

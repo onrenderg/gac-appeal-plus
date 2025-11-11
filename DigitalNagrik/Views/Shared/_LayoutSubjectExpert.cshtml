@@ -1,0 +1,143 @@
+﻿@using DigitalNagrik.Models
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../DashAssets/" data-template="vertical-menu-template-free">
+@{
+    string DefaultLangCulture = "en-IN";
+    string DefaultLangCultureName = "English";
+    string RegnlLangCulture = "hi-IN";
+    string RegnlLangCultureName = "हिंदी";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>@LabelDictionary["GrievanceAppellateCommittee"]</title>
+    <meta name="description" content="" />
+    <link href=@Url.Content("~/assets/img/favicon.png") rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href=@Url.Content("~/assets/css/font.css") rel="stylesheet" />
+    <link href=@Url.Content("~/assets/vendor/fontawesome-free/css/all.min.css") rel="stylesheet">
+    <link rel="stylesheet" href="@Url.Content("~/DashAssets/css/boxicons.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/DashAssets/css/core.css")" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="@Url.Content("~/DashAssets/css/theme-default.css")" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="@Url.Content("~/DashAssets/css/demo.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/DashAssets/css/apex-charts.css")" />
+    <link href="@Url.Content("~/assets/vendor/bootstrap-icons/bootstrap-icons.css")" rel="stylesheet">
+    <script src=@Url.Content("~/assets/js/jquery.min.js")></script>
+    <script src="@Url.Content("~/DashAssets/js/popper.js")"></script>
+    <script src="@Url.Content("~/DashAssets/js/bootstrap.js")"></script>
+    <script src="@Url.Content("~/DashAssets/js/apexcharts.js")"></script>
+    <script>
+        function RedirectToUrl(Url) {
+            window.location.href = Url;
+        }
+    </script>
+    @*<script type="text/javascript">
+        function preventBack() { window.history.forward(); }
+        setTimeout("preventBack()", 0);
+        window.onunload = function () { null };
+    </script>*@
+
+</head>
+
+
+<body>
+    <div id="topbar">
+        <div class="px-3">
+            <div class="row">
+                <div class="col-lg-8 text-start pt-2">
+                    <a class="btn btn-light btn-sm" href=@Url.Action("Index", "SubjectExpert", new {Area="SubjectExpert"})><i class="fa-home fa align-middle"></i></a>
+                    <a href="javascript:void(0);" class="text-white"
+                       data-bs-toggle="popover" data-bs-placement="right"
+                       data-bs-title="@(LabelDictionary["UserDetails"]):" data-bs-html="true"
+                       data-bs-content="<b>@(LabelDictionary["Mobile"]): </b>@DigitalNagrik.Models.UserSession.Mobile</span>">
+                        @(LabelDictionary["Welcome"]),&nbsp; @DigitalNagrik.Models.UserSession.UserName <i class="bx bx-info-circle text-white"></i>
+                    </a>
+                </div>
+                <div class="col-lg-4  text-end pt-1">
+                    <a class=" me-2 btn btn-sm btn-light" href="javascript:void(0);" onclick="RedirectToUrl('@Url.Action("ChangeLanguage", "CommonControls", new { Area = "", LangCulture = (UserSession.LangCulture == DefaultLangCulture ? RegnlLangCulture : DefaultLangCulture) })');">
+                        @if (UserSession.LangCulture == DefaultLangCulture)
+                        {
+                            <span title="Change language to @RegnlLangCultureName"><i class="fa fa-language"></i>@RegnlLangCultureName</span>
+                        }
+                        else if (UserSession.LangCulture == RegnlLangCulture)
+                        {
+                            <span title="Change language to @DefaultLangCultureName"><i class="fa fa-language"></i>@DefaultLangCultureName</span>
+                        }
+                    </a>
+                    <button class="btn btn-danger btn-sm" id="btnLogOutSSO"><i class="bx bx-power-off ms-1 text-white align-middle"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="mid-header" class=" d-none d-lg-block">
+        <div class="text-center">
+            <div class="banner">
+                @if (DigitalNagrik.Models.UserSession.LangCulture == "en-IN")
+                {
+                    <img class="img-fluid" src="@Url.Content("~/assets/img/logo.png")" alt="" />
+                }
+                else
+                {
+                    <img class="img-fluid" src="@Url.Content("~/assets/img/logo_hindi.png")" alt="" />
+                }
+            </div>
+        </div>
+    </div>
+    @RenderBody()
+    <footer id="footer" style="margin-top: 10px; background-color: #175a7b; color: #ffffff;">
+        <div class="footer-top">
+            <div class="container">
+                <div class="footer-c py-3" style="text-align: center;font-size:17px">
+                    <p class="m-0">@Html.Raw(LabelDictionary["Disclaimer"])</p>
+                    <p class="m-0"> @Html.Raw(LabelDictionary["DesignedDevelopedbyNIC"])</p>
+                    <a href="https://www.nic.in" target="_blank" rel="noopener noreferrer">
+                        <img src="@Url.Content("~/assets/img/iconic_logo_v3.png")" height="40" />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        (function () {
+            "use strict";
+            const select = (el, all = false) => { el = el.trim(); if (all) { return [...document.querySelectorAll(el)] } else { return document.querySelector(el) } }
+            const on = (type, el, listener, all = false) => { let selectEl = select(el, all); if (selectEl) { if (all) { selectEl.forEach(e => e.addEventListener(type, listener)) } else { selectEl.addEventListener(type, listener) } } }
+
+            on('click', '.mobile-nav-toggle', function (e) {
+                select('#navbar').classList.toggle('navbar-mobile');
+                this.classList.toggle('bi-list');
+                this.classList.toggle('bi-x');
+            });
+
+            on('click', '.navbar .dropdown > a', function (e) {
+                if (select('#navbar').classList.contains('navbar-mobile')) {
+                    e.preventDefault(); this.nextElementSibling.classList.toggle('dropdown-active');
+                }
+            }, true);
+
+            on('click', '.scrollto', function (e) {
+                if (select(this.hash)) {
+                    e.preventDefault()
+                    let navbar = select('#navbar')
+                    if (navbar.classList.contains('navbar-mobile')) {
+                        navbar.classList.remove('navbar-mobile');
+                        let navbarToggle = select('.mobile-nav-toggle');
+                        navbarToggle.classList.toggle('bi-list');
+                        navbarToggle.classList.toggle('bi-x');
+                    }
+                    scrollto(this.hash);
+                }
+            }, true);
+        })();
+    </script>
+    <script>
+    $('#btnLogOutSSO').click(function () {
+       window.location.href = '@Url.Action("GACLogout", "SSOLogout", new {Area=""})';
+    });
+        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+    </script>
+</body>
+</html>

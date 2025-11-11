@@ -1,0 +1,137 @@
+﻿@model DigitalNagrik.Areas.Masters.Data.PublicMenuMaster
+@{
+    ViewBag.Title = "Public Menu Management";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+<script src="@Url.Content("~/assets/ckeditor/ckeditor.js")"></script>
+
+<div class="container-fluid">
+    <div class="row py-3 min-vh-50">
+        <div class="col-12">
+            <h2 class="mt-2">Public Menu Master</h2>
+            <a class="btn btn-primary mb-3" href="javascript:void(0);" data-url="@Url.Action("AddMenuForm_PV", "PublicMenuMaster", new { Area = "Masters" })" onclick="TakeAction($(this));"><i class="fa fa-plus-circle me-2"></i>Add New Menu</a>
+            <div class="overflow-auto font-xxxl">
+                @{
+                    var MenuGroups = Model.MenuList.GroupBy(x => x.MenuId);
+                    if (MenuGroups.Count() > 0)
+                    {
+                        int MenuGroupCounter = 0;
+                        <table class="table table-bordered table-striped mb-0">
+                            <thead class="table-secondary">
+                                <tr>
+                                    <th class="px-2" style="width:1%">#</th>
+                                    <th>Menu Name</th>
+                                    <th style="width:1%;white-space:nowrap">Menu Type</th>
+                                    <th style="width:1%">Status</th>
+                                    <th style="width:1%">Order</th>
+                                    <th>Other Languages</th>
+                                    <th style="width:1%"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-light">
+                                @foreach (var MenuGroup in MenuGroups)
+                                {
+                                    var MenuGroupList = MenuGroup.ToList();
+                                    var EngLishLang = MenuGroupList.Where(x => x.LanguageCode == "en-IN").ToList();
+                                    string MenuId = EngLishLang[0].MenuId;
+                                    string LanguageCode = EngLishLang[0].LanguageCode;
+                                    string MenuName = EngLishLang[0].MenuName;
+                                    string MenuType = EngLishLang[0].MenuType;
+                                    string IsActive = EngLishLang[0].IsActive;
+                                    string DisplayOrder = EngLishLang[0].DisplayOrder;
+                                    var OtherLanguages = MenuGroupList.Where(x => x.MenuId == MenuId && x.LanguageCode != "en-IN");
+                                    string OpacityClass = (IsActive == "Y" ? "" : "text-light");
+                                    <tr>
+                                        <td class="px-2 @OpacityClass">@(++MenuGroupCounter).</td>
+                                        <td class="@OpacityClass">@MenuName</td>
+                                        <td class="@OpacityClass" style="white-space:nowrap">
+                                            @if (MenuType == "C")
+                                            {
+                                                <span>Html Content</span>
+                                            }
+                                            else if (MenuType == "A")
+                                            {
+                                                <span>MVC Action</span>
+                                            }
+                                            else if (MenuType == "H")
+                                            {
+                                                <span>Hyperlink</span>
+                                            }
+                                            else if (MenuType == "P")
+                                            {
+                                                <span>Attachment</span>
+                                            }
+                                        </td>
+                                        <td class="@OpacityClass">
+                                            @if (IsActive == "Y")
+                                            {
+                                                <span class="badge bg-label-success">Active</span>
+                                            }
+                                            else if (IsActive == "N")
+                                            {
+                                                <span class="badge bg-label-danger">Inactive</span>
+                                            }
+                                        </td>
+                                        <td class="text-end @OpacityClass">@DisplayOrder</td>
+                                        <td class="@OpacityClass">
+                                            @if (OtherLanguages.Count() > 0)
+                                            {
+                                                foreach (var OtherLangMenu in OtherLanguages)
+                                                {
+                                                    <div class="mb-1">
+                                                        <span class="badge bg-label-primary font-md">@OtherLangMenu.LanguageDesc</span> - &nbsp;@OtherLangMenu.MenuName
+                                                        <a class="ms-2" href="javascript:void(0);" title="Click to edit" data-url="@Url.Action("AddUpdateLanguageForm_PV", "PublicMenuMaster", new { Area = "Masters", qs = SecureQueryString.SecureQueryString.Encrypt("MenuId=" + MenuId + "&LanguageCode=" + OtherLangMenu.LanguageCode + "&Mode=UPDATE_LANG") })" onclick="TakeAction($(this));"><i class="bx bx-edit-alt font-hxl"></i></a>
+                                                        <a class="text-danger" href="javascript:void(0);" title="Click to delete" data-qs="@SecureQueryString.SecureQueryString.Encrypt("MenuId=" + MenuId + "&LanguageCode=" + OtherLangMenu.LanguageCode + "&Mode=DELETE_LANG")" onclick="DeleteConfirm($(this));"><i class="bx bx-trash font-hxl"></i></a>
+                                                    </div>
+                                                }
+                                            }
+                                            <a class="btn btn-info btn-sm" title="Click to add this menu in other language" href="javascript:void(0);" data-url="@Url.Action("AddUpdateLanguageForm_PV", "PublicMenuMaster", new { Area = "Masters", qs = SecureQueryString.SecureQueryString.Encrypt("MenuId=" + MenuId + "&LanguageCode=&Mode=ADD_LANG") })" onclick="TakeAction($(this));"><i class="fa fa-plus-circle me-1"></i>Add</a>
+                                        </td>
+                                        <td style="white-space:nowrap">
+                                            <a href="javascript:void(0);" title="Click to edit" data-url="@Url.Action("AddUpdateLanguageForm_PV", "PublicMenuMaster", new { Area = "Masters", qs = SecureQueryString.SecureQueryString.Encrypt("MenuId=" + MenuId + "&LanguageCode=en-IN&Mode=UPDATE_LANG") })" onclick="TakeAction($(this));"><i class="bx bx-edit-alt font-hxl"></i></a>
+                                            <a class="text-danger" title="Click to delete" href="javascript:void(0);" data-qs="@SecureQueryString.SecureQueryString.Encrypt("MenuId=" + MenuId + "&LanguageCode=en-IN&Mode=DELETE")" onclick="DeleteConfirm($(this));"><i class="bx bx-trash font-hxl"></i></a>
+                                        </td>
+                                    </tr>
+                                    ;
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="p-4 text-center">
+                            <i class="fa fa-sitemap fa-4x opacity-2"></i><br />
+                            <span class="opacity-4 font-xs">No Menu Added</span>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-menu-management" role="dialog" aria-labelledby="modal-menu-management-title" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content" id="modal-menu-management-content">
+        </div>
+    </div>
+</div>
+
+<script>
+    var _LoadHtml = '<div class="px-4 py-5 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><br>@LabelDictionary["FetchingData"]</div>';
+
+    function TakeAction(element) {
+        var URL = element.data("url"); $("#modal-menu-management").modal('show'); _Container = $("#modal-menu-management-content"); _Container.html(_LoadHtml);
+        setTimeout(function () { $.ajax({ url: URL, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { _Container.html(data); } } }); }, 400);
+    }
+
+    function DeleteConfirm(element) {
+        var qs = element.data("qs");
+        if (qs !== "" && qs !== null) {
+            alertify.confirm('<i class="fa fa-trash-alt me-2"></i>Confirm', 'Menu and its corresponding languages(if applicable) will be deleted. Are you sure to proceed?',
+                function () { window.location.href = '@Url.Action("DeleteMenu", "PublicMenuMaster", new { area = "Masters" })' + '?qs=' + qs; }, function () { });
+        }
+    }
+</script>
+

@@ -1,0 +1,97 @@
+﻿@model DigitalNagrik.Areas.Masters.Data.LabelList_Data
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="bx bx-user text-primary me-1"></i>Add/ Update Label</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        @using (Html.BeginForm("SaveLabel", "LabelMaster", FormMethod.Post, new { id = "frm_SaveLabel", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.ActionType)
+            if (Model.ActionType == "A" || Model.ActionType == "E")
+            {
+                @Html.HiddenFor(x => x.FormID)
+                @Html.HiddenFor(x => x.ModuleID)
+                @Html.HiddenFor(x => x.LabelKey)
+                if (Model.ActionType == "E")
+                {
+                    @Html.HiddenFor(x => x.LanguageCode)
+                }
+            }
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">Module Name</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.DropDownListFor(x => x.ModuleID, Model.ModuleList, "--Select--", new { @class = "form-select DisabledInputs" })
+                    @Html.ValidationMessageFor(x => x.ModuleID)
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">Form Name</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.DropDownListFor(x => x.FormID, Model.FormList, "--Select--", new { @class = "form-select DisabledInputs" })
+                    @Html.ValidationMessageFor(x => x.FormID)
+                </div>
+
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">Label Key</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.LabelKey, new { @id = "LabelKey", @class = "form-control DisabledInputs", maxlength = "200", placeholder = "Label Key", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.LabelKey)
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">Language</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.DropDownListFor(x => x.LanguageCode, Model.LanguageList, "--Select--", new { @class = "form-select DisabledInputs DisableLanguage" })
+                    @Html.ValidationMessageFor(x => x.LanguageCode)
+                </div>
+
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">Label Value</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextAreaFor(x => x.LabelValue, new { @id = "LabelValue", @class = "form-control", maxlength = "200", placeholder = "Enter Text here...", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.LabelValue)
+                </div>
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="btnSubmit"> <i class="bx-check-circle bx align-middle"></i>&nbsp;Submit</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1 align-middle"></i>Close</button>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+         if ('@Model.ActionType' == 'N') {
+             $('.DisabledInputs').attr('readonly', false);
+        }
+        else  if ('@Model.ActionType' == 'E') {
+             $('.DisabledInputs').attr('readonly', true);
+             $('.DisabledInputs').attr("disabled", true);
+        }
+        else  if ('@Model.ActionType' == 'A') {
+             $('.DisabledInputs').attr('readonly', true);
+             $('.DisabledInputs').attr("disabled", true);
+             $('.DisableLanguage').attr("disabled", false);
+        }
+    });
+</script>
+<script>
+    $('#frm_SaveLabel').removeData("validator").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse($('#frm_SaveLabel'));
+    $("#btnSubmit").click(function () {
+        if ($("#frm_SaveLabel").valid()) {
+            $('#frm_SaveLabel').submit();
+        }
+    });
+</script>

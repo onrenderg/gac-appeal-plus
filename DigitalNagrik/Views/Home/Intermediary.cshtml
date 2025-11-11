@@ -1,0 +1,180 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_LayoutPublicCurrent.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+    var intLoginMehtod = Model.IntLoginMethod;
+    if (intLoginMehtod == null)
+    {
+        intLoginMehtod = "O";
+    }
+}
+<script src=@Url.Content("~/assets/js/sha256.js")></script>
+
+<div class="row">
+    <div class="col-xl-8 my-3 my-lg-5 py-lg-5 text-center text-xl-start">
+        @Html.Partial("~/Views/Home/_IndexImageContent.cshtml")
+    </div>
+
+    <div class="col-xl-4 my-3 my-lg-5">
+        <div class="card box-shadow">
+            <div class=" card-header loginpanel text-white">
+                <div class="row">
+                    <div class="col-md-12" style="text-align:left">
+                        &nbsp;&nbsp;&nbsp;
+                        <span id="LoginHeaderText" class="fw-bold"> @LabelDictionary["RespondentIntermediaryLogin"]</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body" id="LoginDiv" style="min-height:250px;">
+                @using (Html.BeginForm("Intermediary", "Home", FormMethod.Post, new { id = "IntermediaryLogin" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(x => x.hdActionInter)
+                    @Html.HiddenFor(x => x.Seed)
+                    @Html.HiddenFor(x => x.HashPwd)
+                    @Html.ValidationMessage("IntErrorMessage")
+                    <div class="mb-3 row">
+                        <div class="col-12">
+                            <label class="custom-input-label mb-2">@LabelDictionary["IntLoginMethod"]<span class="text-danger">*</span></label>
+                            @Html.RadioButtonFor(x => x.IntLoginMethod, "O", new { @checked = "checked" })&nbsp;@LabelDictionary["OTP"]
+                            @Html.RadioButtonFor(x => x.IntLoginMethod, "P")&nbsp;@LabelDictionary["Password"]
+                        </div>
+                        <div class="col-12">
+                            @Html.ValidationMessageFor(x => x.IntLoginMethod)
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-12">
+                            <label class="custom-input-label mb-2">@LabelDictionary["EmailID"]<span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(x => x.InterEmailID, new { @class = "form-control DisabledInputs", maxlength = "100", placeholder = @LabelDictionary["EmailID"], @autocomplete = "off" })
+                            @Html.ValidationMessageFor(x => x.InterEmailID)
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row" id="dvPassword" style=" display :none ;">
+                        <div class="col-12">
+                            <label class="custom-input-label mb-1">@LabelDictionary["Password"]<span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(x => x.Password, new { @id = "Password", @class = "form-control DisabledInputs", @type = "Password", maxlength = "100", placeholder = @LabelDictionary["Password"], @autocomplete = "off" })
+                            @Html.ValidationMessageFor(x => x.Password)
+                        </div>
+                    </div>
+                    <div id="divCaptcha">
+                        <div class="mb-2 row">
+                            <div class="col-12">
+                                <label class="custom-input-label mb-1">@LabelDictionary["Captcha"]<span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <img id="CaptchaImageInter" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                                        <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                                    </span>
+                                    @Html.TextBoxFor(x => x.IntCaptcha, new { @id = "txtCaptcha", @class = "form-control DisabledInputs", placeholder = LabelDictionary["EnterCaptchaPlaceHolder"], autocomplete = "off", maxlength = "6" })
+                                </div>
+                                <div id="SpanCaptchaValidation">
+                                    @Html.ValidationMessageFor(x => x.IntCaptcha)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12 text-center">
+                                <button type="button" class="btn btn-loginpanel" id="btnIntermediarySendOTP">&nbsp;@LabelDictionary["SendOTP"]</button>
+                            </div>
+                        </div>
+                        <div class="row" style="font-style:italic;">
+                            <div class="col-md-12 mt-1" style="text-align:center;font-size:14px;">
+                                @LabelDictionary["RespondentLoginMsg"]
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-lg-6" style="text-align: center;">
+                <div class="card box-shadow mt-2">
+                    <div class="card-body" style="padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px;">
+                        <b>@Model.Submitted.Trim()</b><br />@LabelDictionary["AppealsReceived"]
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12 col-lg-6" style="text-align:center;">
+                <div class="card box-shadow mt-2">
+                    <div class="card-body" style="padding-top:6px;padding-bottom:6px; padding-left:5px;padding-right:5px;">
+                        <b>@Model.Disposed.Trim()</b><br />@LabelDictionary["AppealsDisposed"]
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+
+<script>
+    if ("@intLoginMehtod"== "O")
+    {
+        $("#dvPassword").hide();
+        $("#btnIntermediarySendOTP").html('@LabelDictionary["SendOTP"]');
+    }
+    else
+    {
+        $("#dvPassword").show();
+        $("#btnIntermediarySendOTP").html('@LabelDictionary["Login"]');
+    }
+     function RefreshCaptcha() {
+
+      $("#CaptchaImageInter").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+
+    };
+    function AllowNumericOnly(e) {
+        var ch = String.fromCharCode(event.keyCode);
+        var filter = /[0-9]/;
+        if (!filter.test(ch)) {
+            event.returnValue = false;
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    $("input:radio[name='IntLoginMethod']").change(function () {
+        var Selectedvalue = $(this).val();
+        if (Selectedvalue == "O") {
+            $("#dvPassword").hide();
+            $("#btnIntermediarySendOTP").html('@LabelDictionary["SendOTP"]');
+        }
+        else {
+            $("#dvPassword").show();
+            $("#btnIntermediarySendOTP").html('@LabelDictionary["Login"]');
+        }
+        //alert(Selectedvalue);
+    });
+    $("#btnIntermediarySendOTP").click(function () {
+        if ($("#IntermediaryLogin").valid()) {
+
+            $('#hdActionInter').val("I");
+            //console.log($('#hdActionInter').val());
+            var selectedvalue = $("input[name='IntLoginMethod']:checked").val();
+            console.log(selectedvalue);
+            if (selectedvalue == "O") {
+
+                $("#HashPwd").val('xxxxxxxxxxxxxxxx');
+                $('#Password').val('xxxxxxxxxxxxxxxx');
+            }
+            else {
+
+                $("#HashPwd").val(sha256($("#Seed").val() + sha256($('#Password').val())));
+                $('#Password').val('xxxxxxxxxxxxxxxx');
+            }
+            $('#IntermediaryLogin').submit();
+        };
+    });
+
+</script>
+
+
+

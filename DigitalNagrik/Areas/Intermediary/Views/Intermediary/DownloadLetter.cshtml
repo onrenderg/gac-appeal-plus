@@ -1,0 +1,117 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.IntermediaryResponseDownloadPDF
+<style>
+    td {
+        padding: 12px !important;
+    }
+</style>
+<style>
+    table, div, p, span {
+        font-size: 20px !important;
+        font-family: Calibri !important;
+    }
+</style>
+
+<div class="container-lg" style="font-family: Calibri !important; width: 100% !important">
+    <div class="row">
+        <div class="col-lg-12 text-center" style="text-align:center;padding:0px;">
+            <img id="Header" src="@Server.MapPath("~/assets/img/logo.png")" alt="DigitalNagrikHeader" />
+            @*<h2 class="text-primary" style="color: #3b6eb3; padding-top: 5px !important; margin-bottom: 5px !important; margin-top: 17px !important">Respondent Intermediary Response</h2>
+        <hr style="padding-top: 0px!important; margin-top: 17px!important" />*@
+        </div>
+    </div>
+    <div class="col-lg-12 text-center" style="padding: 0px !important; margin-top: 0px !important; ">
+        <h2 class="text-primary" style="text-align:center; padding-top: 5px !important; margin-bottom: 5px !important; margin-top: 17px !important">Appeal Details</h2>
+    </div>
+    <div class="col-lg-12 text-center" style="padding: 0px !important; margin-top: 0px !important; ">
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <td width="50%" colspan="2">Appeal Number: <b>@Model.GrievanceId/@Model.RegistrationYear</b></td>
+                    <td width="50%" colspan="2">Date: <b> @Model.ReceiptDate</b></td>
+                </tr>
+                <tr>
+                    <td width="100%" colspan="4">Brief of Complaint: <b>@Model.BriefofComplaint</b></td>
+                </tr>
+                <tr>
+                    <td width="100%" colspan="4">Justification: <b>@Model.GrievanceDesc</b></td>
+                </tr>
+                <tr>
+                    <td width="100%" colspan="4">Intermediary: <b>@Model.IntermediaryTitle</b></td>
+                </tr>
+                <tr>
+                    <td width="100%" colspan="4">Ground for Appeal: <b>@Model.GroundTitle</b></td>
+                </tr>
+                @*<tr>
+                    <td width="100%" colspan="4">Relief: <b>@Model.ReliefTitle</b></td>
+                </tr>*@
+                <tr>
+                    <td width="100%" colspan="4">Relief Sought: <b>@Model.RelieftSoughtSpecification</b></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr />
+    <div class="col-lg-12 text-center" style="padding: 0px !important; margin-top: 0px !important; ">
+        <h2 class="text-primary" style="text-align:center; padding-top: 5px !important; margin-bottom: 5px !important; margin-top: 17px !important">Respondent Intermediary Response</h2>
+    </div>
+    <div class="row">
+        To,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;Grievance Appellate Committee<br /><br />
+
+        Madam/sir,<br /><br />
+        I hereby submit my response to Appeal No. @Model.GrievanceId/@Model.RegistrationYear filed with Grievance Appellate Committee under sub-rule (3) of rule 3A of the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021. The details are as submitted by me herewith online.
+        <br /><br />
+    </div>
+    <div class="row">
+        <table class="table table-bordered" style="width:100%;">
+            @if (Model.IntermediaryResponseDownloadPDFResponse.Count > 0)
+            {
+                int counter = 1;
+                foreach (var item in Model.IntermediaryResponseDownloadPDFResponse)
+                {
+                    <tr>
+                        <td style="vertical-align:top;padding-left: 5px;" width="90%">
+                            @counter. @Html.Raw(item.ResponseText)
+                            <br />
+                            @if (item.ResponseDetails != "")
+                            {
+                                <span>Any relevant detail/ reason:</span><b> @item.ResponseDetails</b>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(item.ResponseUrls))
+                            {
+                                <div>URL(s) : <span style="color: #3f7834 "></span>@item.ResponseUrls</div>
+                            }
+                            @{ counter = counter + 1;}
+                            <table class="table table-bordered" style="width:100%;margin-left:10px">
+                                @{
+                                    var resultSubResponse = Model.IntermediaryResponseDownloadPDFsubResponse.Where(x => x.ResponseID == item.ResponseID).ToList();
+                                }
+                                @if (resultSubResponse != null && resultSubResponse.Count > 0)
+                                {
+                                    int counter1 = 1;
+                                    foreach (var item1 in resultSubResponse)
+                                    {
+                                        <tr>
+                                            <td style="padding-left: 5px;" width="100%">
+                                                @counter1 . @item1.SubResponseText<br />
+                                                <span>Any relevant detail/ reason:</span><b>  @item1.SubResponseDetails</b>
+                                            </td>
+                                        </tr>
+                                        counter1 = counter1 + 1;
+                                    }
+                                }
+                            </table>
+                        </td>
+                        <td style="vertical-align:top;" width="10%">
+                            <b style="color:@(item.ResponseValue == "Yes" ? "green" : "red")">@item.ResponseValue</b>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+    <div class="row" style="margin-top:150px">
+        <b>Note: Attachments are as following:</b>
+    </div>
+</div>
+

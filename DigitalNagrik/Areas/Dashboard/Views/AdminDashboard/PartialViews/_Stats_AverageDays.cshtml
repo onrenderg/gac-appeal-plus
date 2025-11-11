@@ -1,0 +1,40 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.Dashboard_Stats_AverageDays
+@using DigitalNagrik.Areas.GridView.Data
+@{ 
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+@{
+    string CD = "Stats_AverageDays";
+    string Title = string.Empty;
+    switch (Model.Flag)
+    {
+        case GACGridViewInbox.MenuStatus.InProcess:
+            Title = LabelDictionary["Processstartedin"];
+            break;
+        case GACGridViewInbox.MenuStatus.Disposed:
+            Title = LabelDictionary["Disposedin"];
+            break;
+        case GACGridViewInbox.MenuStatus.Rejected:
+            Title = LabelDictionary["NotAdmittedin"];
+            break;
+    }
+}
+
+@if (Model.DataList != null && Model.DataList.Count > 0)
+{
+    int counter = 0;
+    <div class="font-md">
+        <table class='table table-borderless mb-0 table-sm'>
+            <thead>
+                <tr><td class="form-label">@Title</td><td></td></tr>
+            </thead>
+            <tbody>
+                @foreach (var Period in Model.DataList)
+                {
+                    ++counter;
+                    <tr class="@(counter == 4 ? "text-danger" : "")"><td>@Period.PeriodDesc</td><th class='text-end font-lg'>@Period.NoOfAppeals</th></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

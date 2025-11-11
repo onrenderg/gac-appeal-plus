@@ -1,0 +1,87 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.AppealHistoryReport
+@{
+    ViewBag.Title = "Appeal History Report";
+    Layout = "~/Views/Shared/_LayoutDashGAC.cshtml";
+}
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/js/search-highlight.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+<link href="@Url.Content("~/assets/css/bootstrap-datepicker.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/js/bootstrap-datepicker.js")"></script>
+<style>
+    .min-vh-75 {
+        min-height: 75vh;
+    }
+</style>
+<div class="container-fluid mt-2 bg-white">
+    <div class="row min-vh-75">
+        <div class="col-12">
+            <div class="row gx-3">
+                <div class="col-lg-3 h3 mb-1 fw-bold">
+                    <h2 class="mt-3">Appeal History Report</h2>
+                </div>
+                <div class="col-lg-9">
+                    <a class="btn btn-warning float-end me-2 mt-3" href='@Url.Action("Index", "GACGridViewInbox", new {Area="GridView"})'>
+                        <i class="bx bx-arrow-back align-middle"></i> Back
+                    </a>
+                </div>
+            </div>
+
+            <hr class="mt-0" />
+            @using (Html.BeginForm("", "", FormMethod.Post, new { @class = "frmAppealHistoryReport" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="row gx-3">
+                    <div class="col-12">
+                        <label class="form-label">Appeal(s) Submitted Between</label>
+                    </div>
+                    <div class="col-xl-2 col-lg-3 mb-3">
+                        <div class="input-group">
+                            @Html.TextBoxFor(x => x.FromDt, new { id = "txtFromDt", placeholder = "From Date", @class = "form-control", @readonly = "readonly" })
+                            <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-3 mb-3">
+                        <div class="input-group">
+                            @Html.TextBoxFor(x => x.ToDt, new { id = "txtToDt", placeholder = "To Date", @class = "form-control", @readonly = "readonly" })
+                            <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-3 mb-3">
+                        <a class="btn btn-success" href="javasript:void(0);" onclick="GetReport($(this))">Get Report</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12" id="ContainerAppealHistoryReport">
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    var _ReportContainer = $("#ContainerAppealHistoryReport");
+    var _LoadHtml = '<div class="px-4 py-3 font-sm text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><br>Fetching Data</div>';
+
+    $("#txtToDt").datepicker({ format: 'dd/mm/yyyy', autoclose: 1, endDate: new Date(), orientation: 'bottom' }).on('changeDate', function () {
+        GetFilteredAppealList();
+    });
+
+    $("#txtFromDt").datepicker({ format: 'dd/mm/yyyy', autoclose: 1, endDate: new Date(), orientation: 'bottom' }).on('changeDate', function (selected) {
+        $('#txtToDt').datepicker('setStartDate', new Date(selected.date.valueOf())); $("#txtToDt").datepicker("setDate", new Date(selected.date.valueOf()));
+        $("#txtToDt").val($(this).val());
+    });
+
+    function GetReport(element) {
+        var form = element.closest("form");
+        if (form.valid()) {
+            _ReportContainer.html('').html(_LoadHtml);
+            setTimeout(function () { $.ajax({ url: '@Url.Action("AppealHistoryReportPV", "AppealHistoryReport", new { Area = "GridView" })', type: "POST", dataType: "HTML", data: form.serialize(), async: false, success: function (data) { if (data) { _ReportContainer.html(data); } } }); }, 400);
+        }
+    }
+</script>
+
+

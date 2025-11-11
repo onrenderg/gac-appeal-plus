@@ -1,0 +1,312 @@
+﻿@{
+    List<DigitalNagrik.Areas.Public.Models.IntermediaryMaster> IntermediaryMasters = ViewData["IntermediaryMaster"] as List<DigitalNagrik.Areas.Public.Models.IntermediaryMaster>;
+}
+<div class="modal modal-lg fade" id="ModalIntermediary" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Choose relevant Respondent Intermediary</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4" style="text-align:right;" id="dvAddButton">
+                    <input type="button" class="btn btn-loginpanel " value="Add New Respondent Intermediary" onclick="$('#ModalIntermediary').modal('hide');$('#ModalAddIntermediary').modal('show');$('#UnapporvedIntermediaryChooseForm').show();$('.IntermediaryAddForm').hide();" />
+                    <br />
+                    <span style="font-style:italic;">( Use this option if desired intermediary is missing in below list )</span>
+                </div>
+                <div class="mb-4" style="text-align:left;" id="dvEditButton">
+                </div>
+                <div class="mt-1" style="width:100%;overflow-x:auto;" id="ddlGrond">
+                    <table class="table table-striped" id="IntermediaryTable">
+                        @if (ViewData["IntermediaryMaster"] != null)
+                        {
+                            int count = 1;
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th>Intermediary Name (URL)</th>
+                                </tr>
+                            </thead>
+                            foreach (var item in IntermediaryMasters.Where(m => m.IsActive == "Y").ToList())
+                            {
+                                <tr>
+                                    <td>
+                                        @count
+                                    </td>
+                                    <td>
+                                        <input id="checkboxInter_@item.IntermediaryId " type="checkbox" value="@item.IntermediaryId" class="InterCheckBox" />&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span id="NameInter_@item.IntermediaryId" class="InterCheckBox fw-bold">@item.IntermediaryTitle </span>
+                                        <span id="AddressInter_@item.IntermediaryId" style="display:none ;">@item.Address</span>
+                                        <span id="GOInter_@item.IntermediaryId" style="display:none ;">@item.GOEmail</span>
+                                        <br />
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span id="URLInter_@item.IntermediaryId" class="InterCheckBox">@item.URL</span>)
+                                    </td>
+                                </tr>
+                                count += 1;
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal modal-xl fade" id="ModalAddIntermediary" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add / Edit New Respondent Intermediary</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="UnapporvedIntermediaryChooseForm">
+                    <div class="col-lg-12">
+                        Choose from unapproved respondent intermediary, if missing, ADD NEW
+                        <select id="ddlNewIntermediary" class="form-control">
+                            <option value="0">-- SELECT --</option>
+                            @foreach (var item in IntermediaryMasters.Where(m => m.IsActive == "U").ToList())
+                            {
+                                <option value="@item.IntermediaryId&&@item.IntermediaryTitle&&@item.URL&&@item.GOEmail&&@item.Address">@item.IntermediaryTitle (@item.URL)</option>
+                            }
+                            <option value="00">ADD NEW</option>
+                        </select>
+                        <hr />
+                    </div>
+
+                </div>
+                <div class="row IntermediaryAddForm" style="display:none;">
+                    <div class="col-sm-4 col-md-4">
+                        <span id="txtIntermediaryNewValidation" class="field-validation-error"></span>      
+                    </div>
+                </div>
+                <div class="row IntermediaryAddForm" style="display:none;">
+                    <div class="col-sm-4 col-md-4">
+                        <label>Name of the respondent intermediary against whom violation of the rules is alleged<span class="Mandatory">*</span></label>
+                        @Html.TextBox("txtIntermediaryNew", "", new { @Placeholder = "Enter Respondent Intermediary", @class = "form-control text-uppercase" })
+                    </div>
+                    <div class="col-sm-4 col-md-4">
+                        <label>Uniform Resource Locator (URL) / website link of the respondent intermediary <span class="Mandatory">*</span></label>
+                        @Html.TextBox("txturlofintermediaryNew", "", new { @Placeholder = "https://[Respondent Intermediary URL]", @class = "form-control" })
+                        <span id="txturlofintermediaryNewValidation" class="field-validation-error"></span>
+                    </div>
+                    <div class="col-sm-4 col-md-4">
+                        <br />
+                        <label>Email <span class="Mandatory">*</span></label>
+
+                        @Html.TextBox("GROIntermediaryEmailNew", "", new { @Placeholder = "[Grievance Officer]@[intermediary domain] ", @class = "form-control text-uppercase" })
+                        <span id="GROIntermediaryEmailValidation" class="field-validation-error"></span>
+                    </div>
+
+                </div>
+                <div class="row mt-2 IntermediaryAddForm" style="display:none;">
+                    <div class="col-sm-12">
+                        <label>Contact details of the Grievance Officer / respondent intermediary to which complaint was made(other than email)</label>
+                        @Html.TextArea("txtCorrespondenceAddressNew", new { @class = "form-control text-uppercase", @rows = "2" })
+
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12" style="text-align:center;">
+                        <input type="button" value="Save Respondent Intermediary" class="btn btn-loginpanel" onclick="AddIntermediary();" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#ddlNewIntermediary").change(function () {
+            var intermediaryID = $("#ddlNewIntermediary").val();
+            if (intermediaryID == "00") {
+                $("#UnapporvedIntermediaryChooseForm").hide();
+                $(".IntermediaryAddForm").show();
+            } else {
+                var intermediaryIDDetails = intermediaryID.split("&&");
+                $("#txtIntermediary").val(intermediaryIDDetails[1]);
+                $("#txturlofintermediary").val(intermediaryIDDetails[2]);
+                $("#GROIntermediaryEmail").val(intermediaryIDDetails[3]);
+                $("#txtCorrespondenceAddress").val(intermediaryIDDetails[4]);
+                $("#IntermediaryId").val(intermediaryIDDetails[0]);
+                $('#ModalAddIntermediary').modal('hide');
+            }
+            $("#ddlNewIntermediary").val('0');
+        });
+    })
+    function openSelectionModal() {
+        $('#dvEditButton').html("");
+        $('#dvEditButton').hide();
+        $('#dvAddButton').show();
+        $("#txtIntermediaryNew").val('');
+        $("#txturlofintermediaryNew").val('');
+        $("#GROIntermediaryEmailNew").val('');
+        $("#txtCorrespondenceAddressNew").val('');
+        if ($('#txtIntermediary').val().length > 0 && $('#IntermediaryId').val() == "0") {
+            $('#dvAddButton').hide();
+            var newIntermediaryString = "<div class='card'><div class='card-header loginpanel text-white'>Details of newly added intermediary</div>";
+            var editButtonString = " &nbsp;&nbsp;&nbsp;&nbsp;<a href='#' class='btn btn-warning' onclick='openEditForm();' >Edit</a>";
+            var rowString = "<div class='row'><div class='col-md-10'><b>" + $("#txtIntermediary").val() + "</b><br/>" + "( " + $("#txturlofintermediary").val() + " )</div>";
+            rowString += "<div class='col-md-2'>" + editButtonString + "</div></div>";
+            newIntermediaryString += "<div class='card-body'>" + rowString + "</div></div>";
+            $('#dvEditButton').html(newIntermediaryString);
+            $('#dvEditButton').show();
+        }
+        $('#ModalIntermediary').modal('show');
+    }
+    $('.InterCheckBox').click(function () {
+        var IntermediaryID = $(this).parent().find("input").val();
+        populateIntermediary(IntermediaryID);
+    });
+    function populateIntermediary(IntermediaryID) {
+        //console.log(IntermediaryID);
+        var checkboxInter = "#checkboxInter" + IntermediaryID;
+        var NameInter = "#NameInter_" + IntermediaryID;
+        var URLInter = "#URLInter_" + IntermediaryID;
+        var GOInter = "#GOInter_" + IntermediaryID;
+        var AddressInter = "#AddressInter_" + IntermediaryID;
+        //console.log(titleFieldRelief);
+        $("#txtIntermediary").val($(NameInter).html());
+        $("#txturlofintermediary").val($(URLInter).html());
+        $("#GROIntermediaryEmail").val($(GOInter).html());
+        $("#txtCorrespondenceAddress").val($(AddressInter).html());
+        $("#IntermediaryId").val(IntermediaryID);
+
+        $('.InterCheckBox').prop("checked", false);
+        $(checkboxInter).prop("checked", true);
+        $('#ModalIntermediary').modal('hide');
+
+    }
+    function AddIntermediary() {
+        var isSubmit = true;
+        $("#txtIntermediaryNewValidation").html("");
+        $("#txturlofintermediaryNewValidation").html("");
+        $("#GROIntermediaryEmailValidation").html("");
+
+
+
+        if ($("#txtIntermediaryNew").val() == "") {
+            $("#txtIntermediaryNewValidation").html("Please enter intermediary");
+            isSubmit = false;
+        }
+
+        var pattern = /^(http|https)?:\/\/[a-zA-Z0-9-\.]+\.[a-z]{2,4}/;
+        if (!pattern.test($("#txturlofintermediaryNew").val())) {
+            $("#txturlofintermediaryNewValidation").html("Please enter valid respondent intermediary URL");
+            isSubmit = false;
+        }
+
+        pattern = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+
+        if (!pattern.test($("#GROIntermediaryEmailNew").val())) {
+            $("#GROIntermediaryEmailValidation").html("Please enter valid grievance officer email ");
+            isSubmit = false;
+        }
+
+
+        //$('#IntermediaryTable').dataTable().api().page.len(-1).draw();
+
+
+        //changed entire front end check for intermediary details to backend procedure
+        ////$("#IntermediaryTable tbody tr").each(function () {
+        ////    var content = $(this).html().toUpperCase();
+        ////    //console.log(content);
+        ////    if (content.search($("#txtIntermediaryNew").val().toUpperCase()) > 0) {
+        ////        $("#txtIntermediaryNewValidation").html("Intermediary Name already exists, kinldy select from list.");
+        ////        isSubmit = false;
+        ////    }
+
+        ////    if (content.search($("#txturlofintermediaryNew").val().toUpperCase()) > 0) {
+        ////        $("#txturlofintermediaryNewValidation").html("Intermediary with this URL already exists, kindly select from list.");
+        ////        isSubmit = false;
+        ////    }
+
+        ////    //if (content.search($("#GROIntermediaryEmailNew").val().toUpperCase()) > 0) {
+        ////    //    $("#GROIntermediaryEmailValidation").html("Intermediary Details with this email already Exists select from list");
+        ////    //    isSubmit = false;
+        ////    //}
+        ////});
+
+        //$("#ddlNewIntermediary option").each(function () {
+        //    var content = $(this).val().toUpperCase();
+        //    //console.log(content);
+        //    if (content.search($("#txtIntermediaryNew").val().toUpperCase()) > 0) {
+        //        $("#txtIntermediaryNewValidation").html("Intermediary Name already exists, kinldy select from list.");
+        //        isSubmit = false;
+        //    }
+
+        //    if (content.search($("#txturlofintermediaryNew").val().toUpperCase()) > 0) {
+        //        $("#txturlofintermediaryNewValidation").html("Intermediary with this URL already exists, kindly select from list.");
+        //        isSubmit = false;
+        //    }
+
+        //    //if (content.search($("#GROIntermediaryEmailNew").val().toUpperCase()) > 0) {
+        //    //    $("#GROIntermediaryEmailValidation").html("Intermediary Details with this email already Exists select from list");
+        //    //    isSubmit = false;
+        //    //}
+        //});
+
+        //$('#IntermediaryTable').dataTable().api().page.len(10).draw();
+        if (isSubmit == true) {
+            var IntermediaryNew = $("#txtIntermediaryNew").val();
+            var urlofintermediaryNew = $("#txturlofintermediaryNew").val();
+            var GROIntermediaryEmailNew = $("#GROIntermediaryEmailNew").val();
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("CheckIntermediaryEntry", "Registration")",
+                    data: '{IntermediaryNew:"' + IntermediaryNew + '",urlofintermediaryNew:"' + urlofintermediaryNew + '",GROIntermediaryEmailNew:"' + GROIntermediaryEmailNew +'" }',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "JSON",
+                    success: function (response) {
+                        isSubmit = false;
+                        var data = $.parseJSON(response);
+                        //console.log(data);
+                        var errorcode = data[0].errorcode;
+                        console.log(errorcode);
+                        if (errorcode == 0) {
+                            isSubmit = true
+                        }
+                        else if (errorcode >= 1 && errorcode <= 9) {
+                            $("#txtIntermediaryNewValidation").html(data[0].msg);
+                        }
+                        if (errorcode > 9) {
+                            if (confirm(data[0].msg+ ". Would you still like to save the intermediary ?")) {
+                                isSubmit = true;
+                            }
+                        }
+
+                        console.log(isSubmit);
+                        if (isSubmit == true) {
+                            $("#txtIntermediary").val($("#txtIntermediaryNew").val());
+                            $("#txturlofintermediary").val($("#txturlofintermediaryNew").val());
+                            $("#GROIntermediaryEmail").val($("#GROIntermediaryEmailNew").val());
+                            $("#txtCorrespondenceAddress").val($("#txtCorrespondenceAddressNew").val());
+                            $("#IntermediaryId").val("0");
+                            $("#ModalAddIntermediary").modal('hide');
+                        }
+
+
+                    },
+                    failure: function (response) {
+                        console.log("FAil:" + response);
+                        isSubmit = false;
+                    },
+                    error: function (response) {
+                        console.log("Error:" + response);
+                        isSubmit = false;
+                    }
+                });
+        }
+    }
+
+    function openEditForm() {
+        $("#UnapporvedIntermediaryChooseForm").hide();
+        $(".IntermediaryAddForm").show();
+        $("#txtIntermediaryNew").val($("#txtIntermediary").val());
+        $("#txturlofintermediaryNew").val($("#txturlofintermediary").val());
+        $("#GROIntermediaryEmailNew").val($("#GROIntermediaryEmail").val());
+        $("#txtCorrespondenceAddressNew").val($("#txtCorrespondenceAddress").val());
+        $('#ModalIntermediary').modal('hide');
+        $("#ModalAddIntermediary").modal('show');
+    }
+</script>

@@ -1,0 +1,326 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+@{
+    ViewBag.Title = "Home";
+    var resendOTP = Url.Action("getResendOTP", "Home", new { Area = "" });
+    Layout = "~/Views/Shared/_LayoutPublicCurrent.cshtml";
+    var btntext = "Send OTP";
+
+    if (Model.OTPFunc == "B")
+    {
+        btntext = "Verify";
+    }
+    var EncKeySalt = "";
+    if (Session["EncKeySalt"] != null)
+    {
+        EncKeySalt = Session["EncKeySalt"].ToString();
+    }
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<script src="~/assets/js/Verhoeff.js"></script>
+<script src="~/assets/js/aes.js"></script>
+
+<div class="row">
+    <div class="col-xl-8 my-3 my-lg-5 py-lg-5 text-center text-xl-start">
+        @Html.Partial("~/Views/Home/_IndexImageContent.cshtml")
+    </div>
+    <div class="col-xl-4 my-3 my-lg-5">
+        <div class="card box-shadow">
+            <div class=" card-header loginpanel text-white   ">
+                <div class="row">
+                    <div class="col-md-12" style="text-align:left ">
+                        <i id="LoginIcon" class="bi bi-phone"></i>
+                        &nbsp;&nbsp;&nbsp;
+                        <span id="LoginHeaderText" class="fw-bold"> @LabelDictionary["OneTimeIdentityVerification"]</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body ">
+                @using (Html.BeginForm("AadhaarVerification", "Home", FormMethod.Post, new { id = "AadhaarVerification", autocomplete = "off" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(x => x.OTPFunc)
+                    @Html.HiddenFor(x => x.AadhaarNoEnc)
+                    @Html.HiddenFor(x => x.AadhaarOTPEnc)
+                    if (Model.OTPFunc == "A")
+                    {
+                        <div class="row mt-4">
+                            <div class="col-md-10">
+                                <label for="form2Example17">@LabelDictionary["AadhaarNumber"]<span class="text-danger">*</span></label>
+                                @Html.PasswordFor(x => x.AadhaarNo, new { @class = "form-control", @placeholder = @LabelDictionary["EnterYourAadhaarNumber"], @maxlength = "12", @OnKeyPress = "return AllowNumericOnly();" })
+
+                                @Html.ValidationMessageFor(x => x.AadhaarNo)
+                            </div>
+                            <div class="col-md-2">
+                                <br />
+                                <i class="far fa-eye" id="togglePassword" style=" cursor: pointer;"></i>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <label for="form2Example17">@LabelDictionary["NameasinAadhaar"]<span class="text-danger">*</span></label>
+                                @Html.TextBoxFor(x => x.AadhaarName, new { @class = "form-control", @placeholder = @LabelDictionary["EnterYourNameasinAadhaar"], @maxlength = "100" })
+                                @Html.ValidationMessageFor(x => x.AadhaarName)
+                            </div>
+                        </div>
+
+
+                    }
+                    else if (Model.OTPFunc == "B")
+                    {
+                        @Html.HiddenFor(x => x.otpTxnID)
+                        <div class="row mt-4">
+                            <div class="col-md-10">
+                                <label for="form2Example17">@LabelDictionary["AadhaarNumber"]</label>
+                                @Html.TextBoxFor(x => x.AadhaarNo, new { @class = "form-control", @maxlength = "12", @readonly = "readonly" })
+                            </div>
+                            <div class="col-md-2">
+                                <br />
+                                <i class="far fa-eye" id="togglePassword" style=" cursor: pointer;"></i>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <label for="form2Example17">@LabelDictionary["NameasinAadhaar"]</label>
+                                @Html.TextBoxFor(x => x.AadhaarName, new { @class = "form-control", @maxlength = "100", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <label for="form2Example17">@LabelDictionary["OTP"]<span class="text-danger">*</span></label>
+                                @Html.PasswordFor(x => x.AadhaarOTP, new { @class = "form-control", @placeholder = @LabelDictionary["Asreceivedaadhaarlinkedmobile"], @maxlength = "6", @OnKeyPress = "return AllowNumericOnly();" })
+                                @Html.ValidationMessageFor(x => x.AadhaarOTP)
+                            </div>
+                        </div>
+
+
+                    }
+
+                    <div class="mt-4 row">
+                        <div class="col-md-9">
+                            <label class="custom-input-label mb-1">@LabelDictionary["Captcha"]<span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <img id="CaptchaImage" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                                    <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                                </span>
+                                @Html.TextBoxFor(x => x.Captcha, new { @id = "txtCaptcha", @class = "form-control DisabledInputs", placeholder = @LabelDictionary["EnterCaptchaPlaceHolder"], autocomplete = "off", maxlength = "6" })
+                            </div>
+                            <div id="SpanCaptchaValidation">
+                                @Html.ValidationMessageFor(x => x.Captcha)
+                            </div>
+                        </div>
+                    </div>
+                    if (Model.OTPFunc == "A")
+                    {
+                        <div class="mt-4 row">
+                            <div class="col-md-12">
+                                <label class="form-check-label" style="text-align:justify;font-size:14px;font-style:italic;">
+                                    @Html.CheckBox("declaration", new { @class = "form-check-input" })
+                                    @LabelDictionary["AadhaarConsent"]
+                                </label>
+                            </div>
+                        </div>
+                    }
+                    <br />
+                    <div class="row">
+                        <div class="col-3">
+                        </div>
+                        <div class="col-sm-3">
+                            <a class="btn btn-loginpanel btn-block" href="@Url.Action("Index", "Home", new { Area = "" })">@LabelDictionary["Cancel"]</a>
+                        </div>
+                        <div class="col-1">
+                        </div>
+                        <div class="col-3">
+                            <input type="button" id="btnSubmit" class="btn btn-loginpanel btn-block" value="@LabelDictionary["Verify"]" onclick="return CheckValidation();" />
+                        </div><div class="col-sm-2"></div>
+                    </div>
+
+
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-lg-6" style="text-align: center;">
+                <div class="card box-shadow mt-2">
+                    <div class="card-body" style="padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px;">
+                        <b>@Model.Submitted.Trim()</b><br />@LabelDictionary["AppealsReceived"]
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12 col-lg-6" style="text-align:center;">
+                <div class="card box-shadow mt-2">
+                    <div class="card-body" style="padding-top:6px;padding-bottom:6px; padding-left:5px;padding-right:5px;">
+                        <b>@Model.Disposed.Trim()</b><br />@LabelDictionary["AppealsDisposed"]
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+</div>
+
+<!-- Modal -->
+
+<script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const AadhaarNo = document.querySelector('#AadhaarNo');
+
+    togglePassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = AadhaarNo.getAttribute('type') === 'password' ? 'text' : 'password';
+        AadhaarNo.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
+    function AllowNumericOnly(e) {
+        var ch = String.fromCharCode(event.keyCode);
+        var filter = /[0-9]/;
+        if (!filter.test(ch)) {
+            event.returnValue = false;
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    function RefreshCaptcha() {
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };
+</script>
+<script>
+    function CheckValidation() {
+        var OTPFunc = "@Model.OTPFunc";
+        if (OTPFunc == "A") {
+            var aadhaarNumber = $('#AadhaarNo').val();
+            //console.log(aadhaarNumber.length);
+            if (aadhaarNumber.length > 0) {
+                if (aadhaarNumber.length != 12 || aadhaarNumber.verhoeffCheck().toString() == 'false') {
+                    alertify.error("Invalid Aadhaar Number");
+                    return false;
+                }
+            }
+            if ($('#declaration').is(":checked")) {
+                if ($("#AadhaarVerification").valid()) {
+                    $('#AadhaarNoEnc').val(encryptData(aadhaarNumber));
+                    $('#AadhaarNo').val("XXXXXXXXXXXX");
+                    $('#AadhaarVerification').submit();
+                };
+                return true;
+            }
+            else {
+                alertify.error("Please give consent for aadhaar verification");
+                return false;
+            }
+        }
+        else
+        {
+
+            if ($("#AadhaarVerification").valid()) {
+                var aadhaarNumber = $('#AadhaarNo').val();
+            
+                $('#AadhaarOTPEnc').val(encryptData($('#AadhaarOTP').val()));
+                $('#AadhaarOTP').val("000000");
+                $('#AadhaarNoEnc').val(encryptData(aadhaarNumber));
+                $('#AadhaarNo').val("XXXXXXXXXXXX");
+                $('#AadhaarVerification').submit();
+            };
+            return true;
+        }
+    }
+
+     function encryptData(valuetoEnc) {
+        var keynew = "@EncKeySalt";
+        var key = CryptoJS.enc.Utf8.parse(keynew);
+        var iv = CryptoJS.enc.Utf8.parse(keynew);
+         var encrypted = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(valuetoEnc), key,
+            {
+                keySize: 128 / 8,
+                iv: iv,
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            });
+         encrypted = encrypted.toString();
+         return encrypted;
+    }
+
+
+</script>
+
+@*<script>
+        $(document).ready(function () {
+            $("#resendOTP").hide();
+            var timeLeft = 30;
+            var timerId = setInterval(countdown, 1000);
+            function countdown() {
+                // console.log(timeLeft);
+                if (timeLeft == -1) {
+                    clearInterval(timerId);
+                    $("#resendOTP").show();
+                    $("#WaitDiv").hide();
+                } else {
+                    $("#resendOTP").hide();
+                    $("#WaitDiv").show();
+                    WaitDiv.innerHTML ='Option to resend OTP will appear after ' + timeLeft + ' seconds';
+                    timeLeft--;
+                }
+            }
+        });
+
+        function countdown() {
+            console.log(timeLeft);
+            if (timeLeft == -1) {
+                clearTimeout();
+                $("#resendOTP").show();
+                $("#WaitDiv").hide();
+            } else {
+                $("#resendOTP").hide();
+                $("#WaitDiv").show();
+                WaitDiv.innerHTML = 'Option to resend OTP will appear after ' + timeLeft + ' seconds';
+                timeLeft--;
+            }
+        }
+
+               $("#resendOTP").click(function() {
+                   var url = "@resendOTP";
+
+                   var dataValue = { EmailorMobile:"@EmailorMobile", func:"@func"};
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    cache: false,
+                    data: dataValue,
+                    async: true,
+                    success: function (result) {
+                       // console.log(result["OTPID"]);
+                        $('#otpshow').text(result["OTPID"]);
+                        $('#OTPID').val(result["OTPID"]);
+                        var timeLeft = 30;
+                        var timerId = setInterval(countdown, 1000);
+                        function countdown() {
+                           // console.log(timeLeft);
+                            if (timeLeft == -1) {
+                                clearInterval(timerId);
+                                $("#resendOTP").show();
+                                $("#WaitDiv").hide();
+                            } else {
+                                $("#resendOTP").hide();
+                                $("#WaitDiv").show();
+                                WaitDiv.innerHTML = 'Option to resend OTP will appear after ' + timeLeft + ' seconds';
+                                timeLeft--;
+                            }
+                        }
+                    },
+                    error: function(xhr, x, e) {
+                    alert(e);
+                    },
+                    complete: function() {
+                    }
+                });
+            });
+
+    </script>*@

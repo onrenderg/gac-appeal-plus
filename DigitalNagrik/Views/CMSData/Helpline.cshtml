@@ -1,0 +1,194 @@
+﻿@using System.Data
+@using System.Linq
+@model DigitalNagrik.Models.Helpline
+@{
+    ViewBag.Title = "Helpline";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    var resultDoc = Model.DocumnetListTable.Where(x => x.ContentType == "DOCUMENT").ToList();
+    var resultVid = Model.DocumnetListTable.Where(x => x.ContentType == "VIDEO").ToList();
+    var resultLink = Model.DocumnetListTable.Where(x => x.ContentType == "LINK").ToList();
+}
+<section class="breadcrumbs">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2><b>Helpline</b></h2>
+            <ol>
+                <li><a href=@Url.Action("Index","Home")>Home</a></li>
+                <li>Documents/ FAQs</li>
+                <li>Helpline</li>
+            </ol>
+        </div>
+    </div>
+</section>
+
+<section class="inner-page">
+    <div class="container">     
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="row">
+                    <div class="col-lg-5">
+                        <label class="custom-input-label mb-1">Help/ Support Section</label><span class="text-danger"> *</span>
+                    </div>
+                    <div class="col-lg-7 mb-3">
+                        @Html.DropDownListFor(m => m.HelpSectionID, Model.HelpSectionList, "Select", new { @id = "HelpSectionID", @class = "form-select", @autocomplete = "off" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label class="custom-input-label mb-1">Content Type</label><span class="text-danger"> *</span>
+                    </div>
+                    <div class="col-lg-8">
+                        @Html.DropDownListFor(m => m.ContentTypeID, Model.ContentTypeList, "Select", new { @id = "ContentTypeID", @class = "form-select", @autocomplete = "off" })
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="col-lg-12 mt-3">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <i class="me-1 fa fa-link"></i> <b>Web Links</b>
+                    </div>
+                    <div class="card-body">
+                        <div class=" row mb-3">
+                            @if (resultLink.Count > 0)
+                            {
+                                foreach (var row in resultLink)
+                                {
+                                    <div class="col-4">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <a class="btn btn-primary ms-1 col-12" target="_blank" href="@row.URL"><i class="fa fa-link me-1"></i>@row.Name</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12 text-center opacity-25">
+                                            <i class="fa fa-database fa-2x"></i><br />
+                                            No Records(s) found
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 mt-3">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <i class="me-1 fa fa-file-video"></i> <b>Supporting Videos</b>
+                    </div>
+                    <div class="card-body">
+                        <div class=" row mb-3">
+                            @if (resultVid.Count > 0)
+                            {
+                                foreach (var row in resultVid)
+                                {
+                                    <div class="col-1 float-end">
+                                        <i class="fa fa-file-video h3 float-end text-success opacity-8"></i>
+                                    </div>
+                                    <div class="col-11">
+                                        <a href="javascript: void(0);" class="ms-1 video-btn" data-bs-toggle="modal" data-src="@row.URL" data-bs-target="#myModal">
+                                            <span class="ml-1">@row.Name</span>
+                                        </a>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12 text-center opacity-25">
+                                            <i class="fa fa-database fa-2x"></i><br />
+                                            No Records(s) found
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mt-3">
+                <div class="card">
+                    <div class="card-header bg-warning">
+                        <i class="me-1 fa fa-file-pdf text-danger"></i><b>Documents / User Manuals</b>
+                    </div>
+                    <div class="card-body">
+                        <div class=" row mb-3 d-flex">
+                            @if (resultDoc.Count > 0)
+                            {
+                                foreach (var row in resultDoc)
+                                {
+                                    <div class="col-1 float-end">
+                                        <i class="fa fa-file-pdf h4 float-end text-danger"></i>
+                                    </div>
+                                    <div class="col-11">
+                                        <a target="_blank" href="@Url.Action("ViewHelplinePDF", "CMSData", new { Area = "", qs = SecureQueryString.SecureQueryString.Encrypt("DocID=" + row.DocID) })">
+                                            <span>@row.Name</span><br>
+                                        </a>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-12 text-center opacity-25">
+                                            <i class="fa fa-database fa-2x"></i><br />
+                                            No Records(s) found
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel"><i class="fa fa-file-video me-1"></i> Watch Video</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe width="100%" height="500"  class="embed-responsive-item" src="" id="video" allowscriptaccess="always" allow="autoplay"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var $videoSrc;
+        var myString;
+        $('.video-btn').click(function () {
+            $videoSrc = $(this).data("src");
+            myString = $videoSrc.substr($videoSrc.indexOf("=") + 1)
+        });
+        $('#myModal').on('shown.bs.modal', function (e) {
+            $("#video").attr('src', $videoSrc);
+        });
+        $('#myModal').on('hide.bs.modal', function (e) {
+            $("#video").attr('src', "");
+        });
+    });
+</script>
+

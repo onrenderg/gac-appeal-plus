@@ -1,0 +1,80 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACGridViewInbox
+@using DigitalNagrik.Models
+@using DigitalNagrik.Areas.GridView.Data
+
+<style>
+    .menu-item {
+        border-right: 3px solid white;
+    }
+
+        .menu-item:hover {
+            border-right: 3px solid #ae96f0;
+        }
+
+        .menu-item.menu-active {
+            border-right: 3px solid #ae96f0;
+            background-color: rgba(67, 89, 113, 0.06) !important;
+        }
+</style>
+
+@if (Model.MenuList.Count > 0)
+{
+    <ul class="menu-inner h-auto py-0 font-xxxl">
+        @foreach (var Menu in Model.MenuList)
+        {
+            if (Menu.MenuStatusCd == GACGridViewInbox.MenuStatus.Inbox)
+            {
+                <li class="menu-item w-100 cursor-pointer">
+                    <div class="menu-link mx-0 gv_menuview-@(Menu.MenuStatusCd)">
+                        <i class="me-1 @Menu.Icon text-@(Menu.CssClass)"></i>
+                        <div class="d-flex flex-fill">
+                            <div class="w-25">@Menu.MenuNm</div>
+                            <div class="w-75 text-end">
+                                <span class="layout-menu-toggle btn btn-light btn-xs rounded-1 px-1 font-lg" data-qs="@SecureQueryString.SecureQueryString.Encrypt("MenuStatusCd=" + GACGridViewInbox.MenuStatus.All + "&IsDateGroup=Y")" onclick="RenderGVAppealListData($(this))">@(FormLabels.GetSingleLabels(FormLabels.Module.GACGridView,"1", UserSession.LangCulture, "All"))</span>
+                                <span class="layout-menu-toggle btn btn-primary btn-xs rounded-1 px-1 font-lg" data-qs="@SecureQueryString.SecureQueryString.Encrypt("MenuStatusCd=" + Menu.MenuStatusCd + "&IsDateGroup=Y")" onclick="RenderGVAppealListData($(this))">@(FormLabels.GetSingleLabels(FormLabels.Module.GACGridView,"1", UserSession.LangCulture, "New"))</span>
+                                <span class="badge bg-primary rounded-pill font-xs ms-1 gv_labelcount_inbox">@Menu.AppealCount</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
+            else
+            {
+                string BadgeClass = "font-sm text-muted mt-1";
+                if (Menu.MenuStatusCd == GACGridViewInbox.MenuStatus.DraftMatterSummary)
+                {
+                    BadgeClass = "badge bg-warning rounded-pill font-xs";
+                }
+                else if (Menu.MenuStatusCd == GACGridViewInbox.MenuStatus.InProcess)
+                {
+                    BadgeClass = "badge bg-warning rounded-pill font-xs";
+                }
+                else if (Menu.MenuStatusCd == GACGridViewInbox.MenuStatus.Disposed || Menu.MenuStatusCd == GACGridViewInbox.MenuStatus.ComplianceReceived)
+                {
+                    BadgeClass = "badge bg-success rounded-pill font-xs";
+                }
+                else if (Menu.MenuStatusCd == GACGridViewInbox.MenuStatus.Rejected)
+                {
+                    BadgeClass = "badge bg-danger rounded-pill font-xs";
+                }
+                <li class="menu-item w-100 cursor-pointer">
+                    <a href="javascript:void(0)" class="layout-menu-toggle menu-link mx-0 gv_menuview-@(Menu.MenuStatusCd)" onclick="RenderGVAppealListData($(this))" data-qs="@SecureQueryString.SecureQueryString.Encrypt("MenuStatusCd=" + Menu.MenuStatusCd + "&IsDateGroup=Y")">
+                        <i class="me-1 @Menu.Icon text-@(Menu.CssClass)"></i>
+                        <div class="d-flex flex-fill">
+                            <div class="w-75">@Menu.MenuNm</div>
+                            @{
+
+                            }
+
+                            <div class="w-25 text-end font-xs"><span class="ms-1 @BadgeClass float-end">@(Menu.MenuStatusCd == GACGridViewInbox.MenuStatus.Inbox ? (Menu.AppealCount != "0" ? Menu.AppealCount : "Empty" ) : @Menu.AppealCount)</span></div>
+                        </div>
+                    </a>
+                </li>
+            }
+        }
+    </ul>
+}
+
+<script>
+    $(".gv_menuview-@(Session["GVMenuStatusCd"])").closest('.menu-item').addClass('menu-active');
+</script>

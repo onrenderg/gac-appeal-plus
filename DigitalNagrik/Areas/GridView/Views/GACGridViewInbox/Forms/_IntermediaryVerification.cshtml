@@ -1,0 +1,124 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACIntermediaryVerification
+@using DigitalNagrik.Areas.GridView.Data
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<div class="modal-header pt-3">
+    <h4 class="modal-title">@LabelDictionary["RespondentIntermediaryVerification"] (<span class="h5">@LabelDictionary["AppealNumber"]: </span><span>@Model.GrievanceId/@Model.RegistrationYear</span>)</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<hr class="mb-0 mt-2" />
+@using (Html.BeginForm("GACIntermedVerification", "GACGridViewInbox", FormMethod.Post, new { @class = "frmGACIntermedVerification" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(x => x.GrievanceId)
+    @Html.HiddenFor(x => x.RegistrationYear)
+
+    <div class="modal-body pb-0 pt-3 px-3 overflow-auto">
+        <div class="row gx-3">
+            <div class="col-xl-6">
+                <div class="mb-3">
+                    <div>
+                        <div class="form-check form-check-inline">
+                            @Html.RadioButtonFor(x => x.IntermediaryActionId, GACGridViewInbox.IntermediaryAction.NewIntermediary, new { @class = "form-check-input", @checked = "checked", id = "rb_IntermediaryActionId_" + GACGridViewInbox.IntermediaryAction.NewIntermediary })
+                            <label class="form-check-label" for="rb_IntermediaryActionId_@(GACGridViewInbox.IntermediaryAction.NewIntermediary)">@LabelDictionary["CreateNewRespondentIntermediary"]</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            @Html.RadioButtonFor(x => x.IntermediaryActionId, GACGridViewInbox.IntermediaryAction.MapWithExisting, new { @class = "form-check-input", id = "rb_IntermediaryActionId_" + GACGridViewInbox.IntermediaryAction.MapWithExisting })
+                            <label class="form-check-label" for="rb_IntermediaryActionId_@(GACGridViewInbox.IntermediaryAction.MapWithExisting)">@LabelDictionary["MapwithExistingRespondentIntermediary"]</label>
+                        </div>
+                        @Html.ValidationMessageFor(x => x.IntermediaryActionId)
+                    </div>
+                </div>
+                <div id="gvformcontainer-iv-newinterim">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">@LabelDictionary["RespondentIntermediaryTitle"]</label><span class="text-danger ms-1">*</span>
+                            @Html.TextBoxFor(x => x.IntermediaryDetails.IntermediaryTitle, new { @class = "form-control text-uppercase", maxlength = "100", placeholder = "Respondent Intermediary Title" })
+                            @Html.ValidationMessageFor(x => x.IntermediaryDetails.IntermediaryTitle)
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">@LabelDictionary["RespondentIntermediaryURL"]</label><span class="text-danger ms-1">*</span>
+                            @Html.TextBoxFor(x => x.IntermediaryDetails.IntermediaryUrl, new { @class = "form-control", maxlength = "200", placeholder = "Respondent Intermediary Url" })
+                            @Html.ValidationMessageFor(x => x.IntermediaryDetails.IntermediaryUrl)
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">@LabelDictionary["GrievanceOfficerName"]</label><span class="text-danger ms-1">*</span>
+                            @Html.TextBoxFor(x => x.IntermediaryDetails.GOName, new { @class = "form-control text-uppercase", maxlength = "100", placeholder = "GO Name" })
+                            @Html.ValidationMessageFor(x => x.IntermediaryDetails.GOName)
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">@LabelDictionary["GrievanceOfficerEmail"]</label><span class="text-danger ms-1">*</span>
+                            @Html.TextBoxFor(x => x.IntermediaryDetails.GOEmail, new { @class = "form-control", maxlength = "100", placeholder = "GO Email" })
+                            @Html.ValidationMessageFor(x => x.IntermediaryDetails.GOEmail)
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">@LabelDictionary["RespondentIntermediaryAddress"]</label>
+                            @Html.TextAreaFor(x => x.IntermediaryDetails.IntermediaryAddress, new { @class = "form-control", maxlength = "300", placeholder = "Respondent Intermediary Address" })
+                            @Html.ValidationMessageFor(x => x.IntermediaryDetails.IntermediaryAddress)
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label class="form-label">@LabelDictionary["HelplineLink"]</label>
+                            @Html.TextBoxFor(x => x.IntermediaryDetails.Helplink, new { @class = "form-control", maxlength = "200", placeholder = "Helpline Link" })
+                            @Html.ValidationMessageFor(x => x.IntermediaryDetails.Helplink)
+                        </div>
+                    </div>
+                </div>
+                <div style="display:none" id="gvformcontainer-iv-mapexisting">
+                    @Html.ValidationMessageFor(x => x.IntermediaryDetails.IntermediaryId)
+                    <div style="height:500px" class="overflow-auto">
+                        @if (Model.IntermediaryList != null && Model.IntermediaryList.Count() > 0)
+                        {
+                            foreach (var Item in Model.IntermediaryList)
+                            {
+                                <div class="form-check mb-2">
+                                    @Html.RadioButtonFor(x => x.IntermediaryId, Item.IntermediaryId, new { @class = "form-check-input", id = "rb_IntermediaryId_" + Item.IntermediaryId })
+                                    <label class="form-check-label" for="rb_IntermediaryId_@(Item.IntermediaryId)">
+                                        @Item.IntermediaryTitle<span class="d-block font-md mt-n1">@Item.IntermediaryUrl</span>
+                                    </label>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-6">
+                <div class="bg-white gv-container-comparison-doc"></div>
+                <div class="mb-2 ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["AppealDetails"]</div>
+                    <div style="height:550px" class="overflow-auto">
+                        @{ Html.RenderAction("GetAppealDetailsGrid_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="mt-0" />
+    <div class="modal-footer justify-content-start">
+        <button type="button" class="btn btn-success" onclick="Submit($(this))">@LabelDictionary["Submit"]</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+    </div>
+}
+
+<script>
+    $.validator.unobtrusive.parse($(".frmGACIntermedVerification"));
+
+    function IntermediaryActionIdChange(IntermediaryActionId) {
+        if (IntermediaryActionId == "@GACGridViewInbox.IntermediaryAction.NewIntermediary") {
+            $("#gvformcontainer-iv-newinterim").show('fast');
+            $("#gvformcontainer-iv-mapexisting").hide('fast');
+        }
+        else {
+            $("#gvformcontainer-iv-newinterim").hide('fast');
+            $("#gvformcontainer-iv-mapexisting").show('fast');
+        }
+    }
+
+    $("input[name=IntermediaryActionId][type=radio]").change(function () {
+        var IntermediaryActionId = $(this).val();
+        IntermediaryActionIdChange(IntermediaryActionId);
+    });
+</script>

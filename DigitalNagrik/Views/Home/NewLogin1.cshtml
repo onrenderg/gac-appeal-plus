@@ -1,0 +1,185 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_LayoutPublicCurrent1.cshtml";
+}
+<script src=@Url.Content("~/assets/js/sha256.js")></script>
+
+
+<div class="row">
+
+    <div class="col-lg-8 logo-m">
+        @Html.Partial("~/Views/Home/_IndexImageContent.cshtml")
+    </div>
+
+
+    <div class="col-lg-4">
+        <div class="card box-shadow">
+            <div class=" card-header loginpanel text-white   ">
+                <div class="row">
+                    <div class="col-md-12" style="text-align:left ">
+                        <i id="LoginIcon" class="bi bi-dash-square-dotted"></i>
+                        &nbsp;&nbsp;&nbsp;
+                        <span id="LoginHeaderText" class="fw-bold"> Appellant Login (File appeal / View status)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body " id="LoginDiv" style="min-height:250px;">
+                @Html.Partial("~/Views/Home/_AppellantLogin.cshtml")
+            </div>
+        </div>
+        <div class="card box-shadow">
+            <div class=" card-header IntermediaryLoginPanel text-white   " style="background-color: #28a736">
+                <div class="row">
+                    <div class="col-md-12" style="text-align:left ">
+                        <i id="IntermediaryIcon" class="bi bi-plus-square-dotted"></i>
+                        &nbsp;&nbsp;&nbsp;
+                        <span class="fw-bold"> Intermediary Login</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body " id="IntermediaryLoginDiv" style="min-height:250px;display:none;">
+
+                @Html.Partial("~/Views/Home/_IntermediaryLogin.cshtml")
+            </div>
+        </div>
+        <div class="card box-shadow">
+            <div class=" card-header GACLoginPanel text-white" style="background-color: #1a6c94">
+                <div class="row">
+                    <div class="col-md-12" style="text-align:left ">
+                        <i id="GACIcon" class="bi bi-plus-square-dotted"></i>
+                        &nbsp;&nbsp;&nbsp;
+                        <span class="fw-bold"> GAC Login</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body " id="GACLoginDiv" style="min-height:250px;display:none;">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">Grievance Appellate Committee Officials having  Government email</div>
+                            <div class="col-md-12" style="text-align:right;"><a id="btnAdminLogin" class="btn btn-primary text-white"><i class="fa fa-lock me-1"></i>Sign in with Parichay (SSO)</a></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mt-2 mb-2">In case you do not have Government email,<br />  Sign In with registered Email ID</div>
+                            <div class="col-md-12" style="text-align:right;"><a href="#" class="btn btn-primary" id="GACLoginFormLink"><i class="fa fa-user me-1"></i>Sign in with Email ID</a></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12"><hr /></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-2">Expert members may login using registered Mobile Number / OTP</div>
+                            <div class="col-md-12" style="text-align:right;"><a href="#" class="btn btn-primary" id="GACExpertLoginFormLink"><i class="fa fa-user me-1"></i>Sign in with Mobile Number</a></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-body " id="GACLoginFormDiv" style="min-height:250px;display:none;">
+                @Html.Partial("~/Views/Home/_GACLoginForm.cshtml")
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-6" style="text-align: center;">
+                <div class="card box-shadow mt-2">
+                    <div class="card-body" style="padding-top:6px;padding-bottom:6px;">
+                        Appeals Received <b>@Model.Submitted.Trim()</b>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6" style="text-align:center;">
+                <div class="card box-shadow mt-2">
+                    <div class="card-body" style="padding-top:6px;padding-bottom:6px;">
+                        Disposed of <b>@Model.Disposed.Trim()</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+</div>
+
+
+<script>
+     function RefreshCaptcha() {
+        @*$.ajax({
+            url: '@Url.Action("CaptchaImageNew", "Home", new { area = "" })',
+            data: {},
+            success: function (data) {
+                console.log(data);
+                $("#CaptchaImage").html(data);
+                $("#CaptchaImageInter").html(data);
+            }
+        });*@
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+         $("#CaptchaImageInter").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };
+    $(document).ready(function () {
+    if ("@Session["ActionFromIndex"].ToString()" == "A") {
+        $(".loginpanel").click();
+    } else if ("@Session["ActionFromIndex"].ToString()" == "I")
+    {
+        $(".IntermediaryLoginPanel").click();
+    } else {
+        $("#GACLoginFormLink").click();
+    }
+    })
+
+    $(".loginpanel").click(function () {
+        $("#LoginDiv").show();
+        $("#LoginIcon").addClass("bi-dash-square-dotted");
+        $("#LoginIcon").removeClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").removeClass("bi-dash-square-dotted");
+        $("#GACIcon").addClass("bi-plus-square-dotted");
+        $("#GACIcon").removeClass("bi-dash-square-dotted");
+        $("#GACLoginDiv").hide();
+        $("#IntermediaryLoginDiv").hide();
+        $("#GACLoginFormDiv").hide();
+    })
+    $(".IntermediaryLoginPanel").click(function () {
+        $("#LoginDiv").hide();
+        $("#GACLoginDiv").hide();
+        $("#GACLoginFormDiv").hide();
+        $("#IntermediaryLoginDiv").show();
+        $("#LoginIcon").removeClass("bi-dash-square-dotted");
+        $("#LoginIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").removeClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").addClass("bi-dash-square-dotted");
+        $("#GACIcon").addClass("bi-plus-square-dotted");
+        $("#GACIcon").removeClass("bi-dash-square-dotted");
+    })
+    $(".GACLoginPanel").click(function () {
+        $("#LoginDiv").hide();
+        $("#GACLoginDiv").show();
+        $("#IntermediaryLoginDiv").hide();
+        $("#GACLoginFormDiv").hide();
+        $("#LoginIcon").removeClass("bi-dash-square-dotted");
+        $("#LoginIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").removeClass("bi-dash-square-dotted");
+        $("#GACIcon").removeClass("bi-plus-square-dotted");
+        $("#GACIcon").addClass("bi-dash-square-dotted");
+    })
+
+    $("#GACLoginFormLink").click(function () {
+        $("#LoginDiv").hide();
+        $("#GACLoginDiv").hide();
+        $("#IntermediaryLoginDiv").hide();
+        $("#GACLoginFormDiv").show();
+        $("#LoginIcon").removeClass("bi-dash-square-dotted");
+        $("#LoginIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").addClass("bi-plus-square-dotted");
+        $("#IntermediaryIcon").removeClass("bi-dash-square-dotted");
+        $("#GACIcon").removeClass("bi-plus-square-dotted");
+        $("#GACIcon").addClass("bi-dash-square-dotted");
+    })
+</script>
+
+
+

@@ -1,0 +1,176 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.IntermediaryList 
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="bx bx-user text-primary me-1"></i>@Model.HeaderText</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <hr class="mt-0" />
+    <div class="modal-body">
+        @using (Html.BeginForm("SaveIntermediary", "IntermediaryDashboard", FormMethod.Post, new { id = "frm_SaveIntermediary", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Raw(DigitalNagrik.Models.CommonRepository.GenerateCSRFToken())
+            if (!string.IsNullOrWhiteSpace(Model.IntermediaryId))
+            {
+                if (Model.MultipleIntemediaries == null || Model.MultipleIntemediaries == "")
+                {
+                    @Html.HiddenFor(x => x.IntermediaryId)
+                }
+            }
+            @Html.HiddenFor(x => x.Type)
+            @*@Html.HiddenFor(x => x.IsActive)*@
+            if (Model.IntermediariesList.Count() > 1)
+            {
+                <div class="row mb-3">
+                    <div class="col-lg-12 text-center">
+                        @foreach (var item in Model.IntermediariesList)
+                        {
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="IntermediaryId" id="IntermediaryId" value="@item.Value">
+                                <label class="form-check-label">@item.Text</label>
+                            </div>
+                            <script>
+                                $("input:radio[name=IntermediaryId]:first").attr('checked', true);
+                            </script>
+                        }
+                    </div>
+                </div>
+            }
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["RespondentIntermediaryTitle"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.IntermediaryTitle, new { @id = "IntermediaryTitle", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["RespondentIntermediaryTitle"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.IntermediaryTitle)
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["LoginEmail"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.LoginEmail, new { @id = "LoginEmail", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["LoginEmail"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.LoginEmail)
+                </div>
+
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["Name"]</label><span class="text-danger"> </span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.GOName, new { @id = "GoName", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["Name"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.GOName)
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["EmailID"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.GOEmail, new { @id = "GOEmail", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["EmailID"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.GOEmail)
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["Address"]</label><span class="text-danger"> </span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextAreaFor(x => x.Address, new { @id = "Address", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["Address"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.Address)
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["HelpLink"]</label><span class="text-danger"> </span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextAreaFor(x => x.HelpLink, new { @id = "Hyperlink", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["HelpLink"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.HelpLink)
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <label class="custom-input-label">@LabelDictionary["URL"]</label><span class="text-danger"> *</span>
+                        </div>
+                        <div class="col-lg-8">
+                            @Html.TextBoxFor(x => x.URL, new { @id = "URL", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["URL"], @autocomplete = "off" })
+                            @Html.ValidationMessageFor(x => x.URL)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6" id="divIsActive">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            @LabelDictionary["IsActive"]
+                        </div>
+                        <div class="col-2">
+                            <div class="form-check form-switch">
+                                @if (Model.IsActive == "Y")
+                                {
+                                    <input class="form-check-input" type="checkbox" role="switch" id="IsActive" name="IsActive" checked>
+                                }
+                                else
+                                {
+                                    <input class="form-check-input" type="checkbox" role="switch" id="IsActive" name="IsActive">
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="btnSubmit"><i class="bx-check-circle bx align-middle me-1"></i>@LabelDictionary["Submit"]</button>
+        <button type="button" class="btn btn-secondary" id="btnClose" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1 align-middle me-1"></i>@LabelDictionary["Close"]</button>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        if (('@Model.Type' == "E" || '@Model.Type' == "V")) {
+            $('#LoginEmail').attr('readonly', true);
+            $('#divIsActive').hide();
+            if ('@Model.Type' == "V")
+                {
+                $('#btnSubmit').html('<i class="bx-check-circle bx align-middle me-1"></i>@LabelDictionary["Verify"]');
+                $('#btnClose').html('<i class="bx bx-x-circle me-1 align-middle me-1"></i>@LabelDictionary["Later"]');
+                }
+        }
+    });
+</script>
+
+<script>
+    $('#frm_SaveIntermediary').removeData("validator").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse($('#frm_SaveIntermediary'));
+    $("#btnSubmit").click(function () {
+        if ($("#frm_SaveIntermediary").valid()) {
+            $('#frm_SaveIntermediary').submit();
+        }
+    });
+
+    $('input[type=radio][name=IntermediaryId]').change(function () {
+         $.ajax({
+            url: '@Url.Action("AddUpdateIntermediaryShowPopUpDataJson", "IntermediaryDashboard", new { area = "Intermediary" })',
+            type: "GET",
+            dataType: "JSON",
+            data: { IntermediaryID: $(this).val() },
+             success: function (data) {
+                 if (data) {
+                     $("#IntermediaryTitle").val(data["Data"].IntermediaryTitle);
+                     $("#LoginEmail").val(data["Data"].LoginEmail);
+                     $("#GOEmail").val(data["Data"].GOEmail);
+                     $("#Address").val(data["Data"].Address);
+                     $("#Hyperlink").val(data["Data"].Hyperlink);
+                     $("#URL").val(data["Data"].URL);
+                     $("#GoName").val(data["Data"].GOName);
+
+                 }
+             },
+             error: function () {
+                 IntermediaryTitle
+             }
+         });
+    });
+</script>

@@ -1,0 +1,176 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.GroundforAppeals
+@{
+    ViewBag.Title = "AddNewIntermediary";
+    Layout = "~/Views/Shared/_LayoutDashGAC.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+<div class="col-lg-12">
+    <div class="row p-3">
+        <div class="col-6">
+            <h3> <i class="bx bx-user text-primary align-middle me-1"></i> @LabelDictionary["Add/UpdateGround(s)forAppeal"]</h3>
+        </div>
+        <div class="col-6">
+            <a class="btn btn-warning float-end me-2" href='@Url.Action("Index", "GACGridViewInbox", new {Area="GridView"})'>
+                <i class="bx bx-arrow-back align-middle"></i> @LabelDictionary["Back"]
+            </a>
+            <a class="btn btn-success float-end me-2" href="javascript:void(0);" title="Add New Ground(s) for Appeal" data-url="@Url.Action("AddUpdateGroundforAppealShowPopUp", "IntermediaryDashboard", new { Area = "Intermediary", qs=SecureQueryString.SecureQueryString.Encrypt("GroundId=0") })" onclick="NewAction($(this))">
+                <i class="bx bx-plus-circle me-1 align-middle"></i>@LabelDictionary["AddNewGroundforAppeal"]
+            </a>
+        </div>
+    </div>
+    <div class="row mt-0 mb-2 me-2">
+        <div class="col-12">
+            <a class="btn btn-success btn-sm  float-end me-2" target="_blank" href='@Url.Action("GroundsDownloadExcel", "IntermediaryDashboard", new {Area="Intermediary"})'>
+                <i class="fa fa-file-excel me-1"></i> @LabelDictionary["DownloadExcel"]
+            </a>
+            <a class="btn btn-danger float-end btn-sm me-2" target="_blank" href='@Url.Action("GroundsDownloadPDF", "IntermediaryDashboard", new {Area="Intermediary"})'>
+                <i class="bx me-1 bxs-file-pdf align-middle"></i>@LabelDictionary["DownloadPDF"]
+            </a>
+        </div>
+    </div>
+    <hr class="m-0" />
+    <div class="row">
+        <div class="col-12 overflow-auto">
+            <table id="tableAppList" class="table table-bordered align-top table-responsive">
+                <thead style="font-size:18px">
+                    <tr class="table-primary">
+                        <th scope="col" width="1%"> @LabelDictionary["Sl.No"]</th>
+                        <th scope="col" width="15%">@LabelDictionary["GroundTitle/CorrespondingITRule"]</th>
+                        <th scope="col" width="10%">@LabelDictionary["GACName"]</th>
+                        <th scope="col" width="30%">@LabelDictionary["ITExtractRule"]</th>
+                        <th scope="col" width="25%">@LabelDictionary["Subject/Keyword/Specificprovisioninthelaw"]</th>
+                        <th scope="col" width="5%">@LabelDictionary["IntermediaryResponseNeeded"]</th>
+                        <th scope="col" width="5%">@LabelDictionary["EntryRequired/EntryFieldLabel"]</th>
+                        <th scope="col" width="5%">@LabelDictionary["ListOrder"]</th>
+                        <th scope="col" width="4%">@LabelDictionary["IsActive"]</th>
+                        <th class="text-center" width="5%" scope="col">@LabelDictionary["Action"]</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-light" style="font-size:18px;">
+                    @{
+                        int counter = 1;
+                    }
+                    @foreach (var row in Model.List)
+                    {
+                        <tr>
+                            <td class="text-center">@counter</td>
+                            <td>
+                                Title: @row.GroundTitle<br />
+                                Corresponding IT Rule: @row.CorrespondingITRule
+                            </td>
+                            <td>
+                                @row.GACName
+                            </td>
+                            <td>
+                                @Html.Raw(row.ITRuleExtract)
+                            </td>
+                            <td>
+                                @Html.Raw(row.Grounds)
+                            </td>
+                            <td class="text-center">
+                                @if (@row.IntermediaryResponseNeeded == "Y")
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeisActive('IntermediaryResponseNeeded','@row.GroundId', 'N')" role="switch" id="flexisActive" checked>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeisActive('IntermediaryResponseNeeded','@row.GroundId', 'Y')" role="switch" id="flexisActive">
+                                    </div>
+                                }
+
+                            </td>
+                            <td class="text-center">
+                                @if (@row.EntryRequired == "Y")
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeisActive('EntryRequired','@row.GroundId', 'N')" role="switch" id="flexisActive" checked>
+                                    </div>
+                                    <div class="float-left" style="text-align:left!important">
+                                        @LabelDictionary["EntryFieldLabel"]: @row.EntryFieldLabel
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeisActive('EntryRequired','@row.GroundId', 'Y')" role="switch" id="flexisActive">
+                                    </div>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @row.ListOrder
+                            </td>
+                            <td class="text-center">
+                                @if (@row.IsActive == "Y")
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeisActive('IsActive','@row.GroundId', 'N')" role="switch" id="flexisActive" checked>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeisActive('IsActive','@row.GroundId', 'Y')" role="switch" id="flexisActive">
+                                    </div>
+                                }
+
+                            </td>
+                            <td class="text-center">
+                                <a class="text-success" href="javascript:void(0);" title="Edit Ground" data-url="@Url.Action("AddUpdateGroundforAppealShowPopUp", "IntermediaryDashboard", new { Area = "Intermediary", qs=SecureQueryString.SecureQueryString.Encrypt("GroundId=" +row.GroundId) })" onclick="NewAction($(this))"><i class="bx bx-edit h3 align-middle"></i></a>
+                            </td>
+
+                        </tr>
+                        counter = counter + 1;
+                    }
+                    <script>
+                        $(document).ready(function () {
+                            $("#tableAppList").DataTable()
+                        });
+                    </script>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="gv-action-modal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="gv-action-modal-content"></div>
+    </div>
+</div>
+<script>
+    function changeisActive(ColumnName,GroundID, Command) {
+        $.ajax({
+            url: '@Url.Action("ChangeStatusisActiveGA", "IntermediaryDashboard", new { Area = "Intermediary" })',
+            type: "get",
+            data: { ColumnName: ColumnName ,GroundID: GroundID, Command: Command},
+            datatype: "json",
+            success: function (data) {
+                if (data.Status == "S") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-check-circle me-1'></i> Successfully Saved </div>", "success", 5, function () { });
+                }
+                else if (data.Status=="F") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-window-close me-1'></i> Error while saving the record </div>", "error", 5, function () { });
+                }
+            }
+        });
+    }
+    var _FormLoadHtml_Modal = '<div class="px-4 py-4 my-4 h-100 font-lg text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">@LabelDictionary["FetchingData"]</span></div><br>@LabelDictionary["FetchingData"]</div>';
+    function NewAction(element) {
+        var URL = element.data("url");
+            $.ajax({
+            url: URL,
+                type: "GET",
+                dataType: "HTML", //, ExamStageID: ExamStageID, ApplicationNo: ApplicationNo
+                success: function (data) {
+                if (data) { $("#gv-action-modal-content").html('').html(_FormLoadHtml_Modal).html(data); }
+            }
+          }).done(function () { $("#gv-action-modal").modal('toggle'); });
+    }
+
+</script>
+

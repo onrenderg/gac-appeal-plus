@@ -1,0 +1,48 @@
+﻿@model List<DigitalNagrik.Models.SSMIOfficer>
+
+<style>
+    ::-webkit-scrollbar{
+        display:none;
+    }
+</style>
+
+<div class=" row mt-1" style="max-height:500px;overflow-x:auto;">
+    <div class=" col-md-12 table table-responsive ">
+
+        <table class="table table-bordered table-striped ">
+            <tr>
+                <th>S.No.</th>
+                <th>SSMI</th>
+                <th>Details of Grievance Officer</th>
+            </tr>
+            @if (Model != null)
+            {
+                int i = 1;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>     @i.ToString()  </td>
+                        <td>     @Html.DisplayFor(modelItem => item.SSMIDesc)</td>
+                        <td>     @Html.DisplayFor(modelItem => item.SSMIEmail)</td>
+                    </tr>
+                    i += 1;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3">
+                        <div class="text-center">
+                            <span>
+                                No records found
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>
+</div>
+
+

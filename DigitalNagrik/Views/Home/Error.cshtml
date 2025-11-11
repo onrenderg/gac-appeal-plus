@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+
+<div class="container">
+    <div class="row pt-3" style="background: white; min-height: 550px; box-shadow: 0px 0px 17px 0px #d6d4d4;display:block;">
+        <div class="col-sm-12">
+            <div class="hero-unit center">
+                <h1 style="color: red;">Sorry! An error occured, please try again.</h1>
+                <br />
+                <p>Please contact your administrator or try again.</p>
+                <p><b>Or you could just press this neat little button to go to home page:</b></p>
+                <a href="@Url.Action("Index", "Home", new { Area = "" })" class="btn btn-large btn-success"><span class="fa fa-backward-step" aria-hidden="true"></span>&nbsp;Go To Home Page</a>
+            </div>
+        </div>
+    </div>
+</div>

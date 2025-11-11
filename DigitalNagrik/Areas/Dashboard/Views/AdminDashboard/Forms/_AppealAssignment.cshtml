@@ -1,0 +1,83 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.Dashboard_AssignAppeal
+@{
+    string GroundDesc = string.IsNullOrWhiteSpace(Model.AppealGround) ? "Select Ground" : Model.AppealGroundList.Where(x => x.GroundId == Model.AppealGround).FirstOrDefault().GroundDesc;
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+<style>
+    .gv-container-comparison-doc {
+        width: 57% !important;
+    }
+
+    @@media (max-width:991px) {
+        .gv-container-comparison-doc {
+            width: 95% !important;
+        }
+    }
+</style>
+<div class="modal-header pt-3">
+    <h4 class="modal-title">@LabelDictionary["AssignAppealtoGAC"] (<span class="h5">@LabelDictionary["AppealNumber"]: </span><span>@Model.GrievanceId/@Model.RegistrationYear</span>)</h4>
+    <button type="button" class="btn btn-warning btn-sm float-end" data-bs-target="#dash-appeallist-modal" data-bs-toggle="modal">@LabelDictionary["Back"]</button>
+</div>
+<hr class="mb-0 mt-2" />
+@using (Html.BeginForm("MeityAssignAppeal", "AdminDashboard", FormMethod.Post, new { @class = "frmAppealAssignment" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(x => x.GrievanceId)
+    @Html.HiddenFor(x => x.RegistrationYear)
+    @Html.HiddenFor(x => x.AppealGround)
+
+    <div class="modal-body pb-4 pt-3 px-4">
+        <div class="row gx-3">
+            <div class="col-xl-5">
+                <div class="mb-3">
+                    <label class="form-label">@LabelDictionary["GroundforAppeal"]<span class="text-danger ms-1">*</span></label>
+                    <a href="javascript:void(0);" data-tcid="dash-ground-hidden" onclick="ShowComparsionHtml($(this));" id="lblDashSelectedGround" class="form-control" title="Click to select Ground">@(GroundDesc)</a>
+                    <div id="dash-ground-hidden" class="d-none">
+                        @{ Html.RenderPartial("Forms/_SelectGround", Model, new ViewDataDictionary { { "LabelDictionary", LabelDictionary } }); }
+                    </div>
+                    @Html.ValidationMessageFor(x => x.AppealGround)
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">@LabelDictionary["AssigntoGAC"]<span class="text-danger ms-1">*</span></label>
+                    @Html.DropDownListFor(m => m.GACId, Model.GACList, "--Select--", new { @class = "form-select", id = "ddlGACList" })
+                    @Html.ValidationMessageFor(x => x.GACId)
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">@LabelDictionary["Remarks"]</label><span class="font-sm ms-1">(@LabelDictionary["Max.characters"]: 1000)</span>
+                    @Html.TextAreaFor(x => x.Remarks, new { @id = "Remarks", @class = "form-control", maxlength = "1000", placeholder = "Enter Remarks here ...", rows = 4 })
+                    @Html.ValidationMessageFor(x => x.Remarks)
+                </div>
+                <hr class="mt-0" />
+                <div class="mb-3">
+                    <button type="button" class="btn btn-success" onclick="Submit($(this))">@LabelDictionary["Submit"]</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-target="#dash-appeallist-modal" data-bs-toggle="modal">@LabelDictionary["Back"]</button>
+                </div>
+            </div>
+            <div class="col-xl-7">
+                <div class="bg-white gv-container-comparison-doc"></div>
+
+                <div class="ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["AppealDetails"]</div>
+                    <div style="height:400px" class="overflow-auto">
+                        @{ Html.RenderAction("GetAppealDetailsGrid_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+                <hr />
+                <div class="ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["RespondentIntermediaryResponse"]</div>
+                    <div style="height:300px" class="overflow-auto">
+                        @{ Html.RenderAction("IntermediaryResponseView", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<script>
+    $.validator.unobtrusive.parse($(".frmAppealAssignment"));
+    $(".frmAppealAssignment").validate().settings.ignore = "";
+</script>

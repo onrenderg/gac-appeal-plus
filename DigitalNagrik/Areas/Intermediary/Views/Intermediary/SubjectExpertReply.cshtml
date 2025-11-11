@@ -1,0 +1,72 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.IntermediaryReply
+@{
+    ViewBag.Title = "SubjectExpertReply";
+    Layout = "~/Views/Shared/_LayoutPublicNew.cshtml";
+}
+<div class="container no-padding p-3">
+    <div class="card p-3 min-vh-30">
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(x => x.GrievanceId)
+        @Html.HiddenFor(x => x.RegistrationYear)
+        @Html.HiddenFor(x => x.InputID)
+        @Html.HiddenFor(x => x.UserID)
+        <div class="row" id="divOTP">
+            <div class="col-lg-12">
+                <h5><i class="text-primary bx bx-user-check align-middle me-1"></i> OTP Verification for Subject Matter Expert Reply (Appeal No : @Model.GrievanceId/@Model.RegistrationYear) :</h5>
+            </div>
+            <hr />
+            <div class="col-lg-3 mt-3 float-end">
+            </div>
+            <div class="col-lg-1  mt-3">
+                <label class="custom-input-label">Enter OTP</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-2  mt-3">
+                <input type="password" maxlength="6" class="form-control" id="txtOTP">
+            </div>
+            <div class="col-lg-3 mt-3">
+                <button type="button" class="btn btn-info" id="btnVerify"><i class="bx bx-check-circle align-middle"></i>&nbsp;Verify OTP</button>
+            </div>
+        </div>
+        <div id="divDetails" style="display:none;">
+        </div>
+    </div>
+</div>
+<script>
+    var _FormLoadHtml_Grid = '<div class="px-4 py-3 font-sm text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><br>Loading</div>';
+       $("#btnVerify").click(function () {
+        var UserID = $('#UserID').val();
+        var OTPData = $('#txtOTP').val();
+        if (OTPData != null && OTPData != "" && UserID != null && UserID!="") {
+            $.ajax({
+                url: '@Url.Action("IntermediaryVerifyOTP", "Intermediary", new { area = "Intermediary" })', //VerifyOTPForApplicationRegistration
+                type: "GET",
+                dataType: "JSON",
+                data: { OTPData: OTPData, UserID: UserID },
+                success: function (data) {
+                    if (data.Result != "") {
+                        if (data.Result == "Y") {
+                            $("#divOTP").hide();
+                            $("#divDetails").show();
+                            $("#divDetails").html(_FormLoadHtml_Grid);
+                             $.ajax({
+                                url: '@Url.Action("SubjectExpertReplyDetails", "Intermediary", new { area = "Intermediary" })',
+                                type: "GET",
+                                dataType: "html",
+                                 data: { GrievanceId: $('#GrievanceId').val(), RegistrationYear: $('#RegistrationYear').val(), InputID: $('#InputID').val() },
+                                 success: function (data) { if (data) { $("#divDetails").html(_FormLoadHtml_Grid).html(data); } }
+                            });
+                        }
+                        else {
+                            $('#txtOTP').val('');
+                            alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa fa-times-circle me-1'></i> OTP Mismatched. Please try using valid OTP </div>", "error", 5, function () { });
+                        }
+                    }
+                }
+            });
+        }
+        else {
+            alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa fa-times-circle me-1'></i> Enter OTP</div>", "error", 5, function () { });
+        }
+    });
+</script>
+

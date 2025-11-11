@@ -1,0 +1,86 @@
+﻿@{
+    List<DigitalNagrik.Areas.Public.Models.mIntermediaryDetailPart> listIntermediaryDetail = (List<DigitalNagrik.Areas.Public.Models.mIntermediaryDetailPart>)ViewData["listIntermediaryDetails"];
+}
+@if (listIntermediaryDetail != null)
+{
+    if (listIntermediaryDetail.Count > 0)
+    {
+        <div class="modal modal-xl   mt-5" id="ModalList" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>List of Appeals saved as draft</h3>
+                        @*<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>*@
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            @{
+                                var recs = listIntermediaryDetail.Count;
+                                var message = " are " + recs.ToString() + " appeals ";
+                                if (recs <= 1)
+                                {
+                                    message = " is " + recs.ToString() + " appeal ";
+                                }
+                            }
+                            <h5>There @message  saved as draft, click  on <b>Proceed</b> button in case you want to complete any draft appeal. Click on <b>Continue With New Appeal</b> for entering fresh appeal. </h5>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-8"></div>
+                            <div class="col-sm-4" style="text-align:right  ;">
+                                @*<button class="btn btn-loginpanel" type="button" data-bs-dismiss="modal" aria-label="Close">Continue With New Appeal</button>*@
+                                <a class="btn btn-danger   " href="@Url.Action("NewIntermediaryDetail", "Registration", new { from = "NewAppeal" })" title="New Appeal">Continue With New Appeal</a>
+                            </div>
+                        </div>
+                        <br />
+                        <div class=" table table-responsive">
+                            <table style="width:100%;" class="table  table-striped">
+                                <tr>
+                                    <th>Sr.No</th>
+                                    <th>Appeal ID</th>
+                                    <th>Appeal Date</th>
+                                    <th>Intermediary</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                @{int count = 1; }
+                                @foreach (var objIntermediaryDetail in listIntermediaryDetail)
+                                {
+                                    <tr>
+                                        <td>@count.ToString()</td>
+                                        <td>@objIntermediaryDetail.RegistrationYear.ToString()/@objIntermediaryDetail.GrievanceID.ToString()</td>
+                                        <td>@objIntermediaryDetail.ReceiptDate</td>
+                                        <td>@objIntermediaryDetail.txtIntermediary.ToString() </td>
+                                        <td>@objIntermediaryDetail.StatusTitle.ToString() </td>
+                                        <td>
+                                            @if (@objIntermediaryDetail.GrievnaceStatus == "1")
+                                            {
+                                                <a class="btn btn-warning " href="@Url.Action("NewIntermediaryDetail", "Registration", new { actiontype = "View", from = "Existing", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + @objIntermediaryDetail.RegistrationYear + "&GrievanceId=" + @objIntermediaryDetail.GrievanceID) })" title="Edit Appeal">Proceed</a>
+                                            }
+
+                                        </td>
+                                    </tr>
+                                    count = count + 1;
+                                }
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+}
+<script>
+    $(document).ready(function () {
+      @if (listIntermediaryDetail != null)
+        {
+            if (listIntermediaryDetail.Count > 0)
+            {
+                <text>
+        $("#ModalList").modal('show');
+                </text>
+                }
+        }
+    });
+</script>

@@ -1,0 +1,79 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.ExtendResponseTimeforAppeal_List
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+@using (Html.BeginForm("ApproveRejectTimeExtensionRequest", "IntermediaryDashboard", FormMethod.Post, new { id = "frm_ApproveRejectTimeExtensionRequest", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.GrievanceId)
+    @Html.HiddenFor(x => x.RegistrationYear)
+    @Html.HiddenFor(x => x.OpenFrom)
+    <div class="modal-header pt-3" id="gv-action-modal-content">
+        <h4 class="modal-title" id="gv-action-modal-title">@LabelDictionary["Approve"]/ @LabelDictionary["Reject"] (@LabelDictionary["AppealNumber"] : @Model.GrievanceId/ @Model.RegistrationYear)</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <hr class="mb-0 mt-2" />
+    <div class="modal-body pb-0 pt-3 px-3">
+        <div class="row mt-2 ms-3" style="font-size:17px">
+            <div class="col-lg-2">
+                <label class="custom-input-label">@LabelDictionary["Action"]</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-9">
+                @Html.RadioButtonFor(x => Model.ApproveReject, "Y", new { @class = "form-check-input" })
+                <label class="form-check-label text-success me-3">
+                    @LabelDictionary["Approve"]
+                </label>
+                @Html.RadioButtonFor(x => Model.ApproveReject, "N", new { @class = "form-check-input" })
+                <label class="form-check-label text-danger">
+                    @LabelDictionary["Reject"]
+                </label>
+                <br />
+                @Html.ValidationMessageFor(x => Model.ApproveReject)
+            </div>
+        </div>
+        <div class="row mt-2 ms-3" id="divExtension" style="font-size:17px;display:none;">
+            <div class="col-lg-2">
+                <label class="custom-input-label">@LabelDictionary["ExtensionTime"]</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-4">
+                @Html.DropDownListFor(m => m.ResponseTimeID, Model.ResponseTimeList, @LabelDictionary["Select"], new { @class = "form-select" })
+                @Html.ValidationMessageFor(x => x.ResponseTimeID)
+            </div>
+        </div>
+        <div class="row mt-2 ms-3" style="font-size:17px">
+            <div class="col-lg-2">
+                <label class="custom-input-label">@LabelDictionary["Remarks"]</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-10">
+                @Html.TextAreaFor(x => x.Remarks, new { @id = "Remarks", @class = "form-control DisabledInputs", maxlength = "500", placeholder = @LabelDictionary["Remarks"], @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.Remarks)
+            </div>
+        </div>
+        <hr />
+        <div class="row mt-3 mb-3">
+            <div class="col-lg-12 text-center">
+                <button type="button" class="btn btn-info" id="btnSubmit"><i class="bx bx-check-circle align-middle"></i>&nbsp;@LabelDictionary["Submit"]</button>
+            </div>
+        </div>
+    </div>
+
+}
+<script>
+    $('input[type=radio][name=ApproveReject]').change(function () {
+        if (this.value == 'Y') {
+            $('#divExtension').show('fast');
+        }
+        else if (this.value == 'N') {
+            $('#divExtension').hide('fast');
+        }
+    });
+
+    $('#frm_ApproveRejectTimeExtensionRequest').removeData("validator").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse($('#frm_ApproveRejectTimeExtensionRequest'));
+    $("#btnSubmit").click(function () {
+        if ($("#frm_ApproveRejectTimeExtensionRequest").valid()) {
+            $('#frm_ApproveRejectTimeExtensionRequest').submit();
+        }
+    });
+</script>
+

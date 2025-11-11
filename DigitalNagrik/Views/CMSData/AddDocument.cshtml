@@ -1,0 +1,231 @@
+﻿@using System.Data
+@model DigitalNagrik.Models.CMSDataAddDocument
+@{
+    ViewBag.Title = "AddDocument";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+<div class="container no-padding" style="font-size:18px">
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-11">
+                        <h4 style="color: black;margin-left:10px; margin-top: 10px;"><i class="bx bx-plus-circle"></i>&nbsp;Add Document</h4>
+                    </div>
+                    <div class="col-lg-1 float-end">
+                        <a class="btn btn-warning btn-sm" href='@Url.Action("Index", "AdminDashboard", new {Area="Dashboard"})'>
+                            <i class="bx bx-arrow-back align-middle"></i> Back
+                        </a>
+                    </div>
+                </div>
+                <hr />
+                @using (Html.BeginForm("InsertUpdDocument", "CMSData", FormMethod.Post, new { id = "frm_AddNewDoc", enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <label class="custom-input-label mb-1">Document Selection</label><span class="text-danger"> *</span>
+                                </div>
+                                <div class="col-lg-8 mb-3">
+                                    @Html.DropDownListFor(m => m.DocumentSelectionID, Model.DocumentSelectionList, new { @id = "DocumentSelectionID", @class = "form-select", @autocomplete = "off" })
+                                    @Html.ValidationMessageFor(x => x.DocumentSelectionID)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    @Html.DropDownListFor(m => m.DocumentSortByListID, Model.DocumentSortByList, new { @id = "DocumentSortByListID", @class = "form-select", @autocomplete = "off" })
+                                    @Html.ValidationMessageFor(x => x.DocumentSortByListID)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="row">
+                                <a id="aAddNewDoc" class="btn btn-success align-middle"><i class="bx bx-plus-circle me-1"></i>Add New Document</a>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div id="divAddNewDocument" style="display:none;">
+                        <div class="row mb-2">
+                            <div class="col-lg-2">
+                                <label class="custom-input-label mb-1">Content Type</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-10">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="ContentType" id="ContentTypeD" value="DOCUMENT" checked>
+                                    <label class="form-check-label" for="ContentTypeD">Document (PDF)</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="ContentType" id="ContentTypeL" value="LINK">
+                                    <label class="form-check-label" for="ContentTypeL">Link (URL)</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-lg-2">
+                                <label class="custom-input-label" id="lblDocName">Document Name</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-4">
+                                @Html.TextBoxFor(x => x.DocumentName, new { @id = "DocumentName", @class = "form-control DisabledInputs", maxlength = "100", placeholder = "Document Name", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(x => x.DocumentName)
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="custom-input-label" id="lblUploadPDF">Upload Document (PDF)</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-4" id="divUploadPDF">
+                                @Html.TextBoxFor(m => m.DocumenttoUpload, new { type = "file", @accept = ".pdf", @class = "form-control fileinput-button", @id = "DocumenttoUpload" })
+                                @Html.ValidationMessageFor(m => m.DocumenttoUpload)
+                            </div>
+                            <div class="col-lg-4" id="divLinkAddress" style="display:none;">
+                                @Html.TextBoxFor(x => x.LinkAddress, new { @id = "LinkAddress", @class = "form-control DisabledInputs", maxlength = "100", placeholder = "Link Address", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(x => x.LinkAddress)
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-lg-2">
+                                <label class="custom-input-label" id="lblLinkValidity">Document Validity</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-4">
+                                @Html.TextBoxFor(x => x.DocumentValidity, new { @id = "DocumentValidity", @class = "form-control DisabledInputs", maxlength = "100", placeholder = "Document Validity", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(x => x.DocumentValidity)
+                            </div>
+                            <div class="col-lg-2">
+                                <label class="custom-input-label" id="lblDocumentDate">Document Date</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-4" id="divDocumentDate">
+                                @Html.TextBoxFor(x => x.DocumentDate, new { @id = "DocumentDate", @class = "form-control DisabledInputs", maxlength = "500", placeholder = "Document Date", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(x => x.DocumentDate)
+                            </div>
+                            <div class="col-lg-4" id="divOpenLinkNewTab" style="display:none;">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="OpeninNewTab" id="openLinkinNewTab1" value="Y" checked>
+                                    <label class="form-check-label" for="openLinkinNewTab1">Yes</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="OpeninNewTab" id="openLinkinNewTab2" value="N">
+                                    <label class="form-check-label" for="openLinkinNewTab2">No</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-lg-2">
+                                <label class="custom-input-label mb-1">Show with NEW Infographics</label><span class="text-danger"> *</span>
+                            </div>
+                            <div class="col-lg-4 mb-3">
+                                <div class="col-lg-10">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="showNewInfographics" id="showNewInfographics1" value="Y" checked>
+                                        <label class="form-check-label" for="showNewInfographics1">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="showNewInfographics" id="showNewInfographics2" value="N">
+                                        <label class="form-check-label" for="showNewInfographics2">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <button type="button" class="btn btn-success" id="btnSubmit"><i class="bx bx-check-circle align-middle"></i>&nbsp;Submit</button>
+                                <button type="button" class="btn btn-danger" id="btnCancel"><i class=" bx bx-window-close align-middle"></i>&nbsp;Cancel </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div id="divDocumentList">
+                    @{ Html.RenderPartial("_DocumentLinkList"); }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    //$(document).ready(function () {
+    //    $("#tableAppList").DataTable()
+    //});
+
+    $('input[type=radio][name=ContentType]').change(function () {
+        if (this.value == 'DOCUMENT') {
+            $('#divUploadPDF').show();
+            $('#divLinkAddress').hide();
+            $('#lblUploadPDF').text('Upload Document (PDF)');
+            $('#divDocumentDate').show();
+            $('#divOpenLinkNewTab').hide();
+            $('#lblDocumentDate').text('Document Date');
+            $('#lblDocName').text('Document Name');
+        }
+        else if (this.value == 'LINK') {
+            $('#divUploadPDF').hide();
+            $('#divLinkAddress').show();
+            $('#lblUploadPDF').text('Link Address (URL)');
+            $('#lblLinkValidity').text('Link Validity (upto)');
+            $('#divOpenLinkNewTab').show();
+            $('#divDocumentDate').hide();
+            $('#lblDocumentDate').text('Open Link in New Tab');
+            $('#lblDocName').text('Link Name');
+        }
+    });
+    $('#aAddNewDoc').click(function () {
+        $('#divAddNewDocument').show();
+    })
+    $('#btnCancel').click(function () {
+        $('#divAddNewDocument').hide();
+    })
+    $("#btnSubmit").click(function () {
+        if ($("#frm_AddNewDoc").valid()) {
+            $('#frm_AddNewDoc').submit();
+        }
+    });
+    $('#DocumentDate').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        format: 'dd/mm/yyyy',
+        orientation: 'bottom',
+        //maxDate: 0,
+        startDate: new Date(), // Set min Date
+        endDate: Infinity, // Set max Date
+        //minDate: new Date('<%=hdnCAMCTo.Value%>'),
+        container: "#Popup1 .modal-body",
+        autoclose: true
+    }).attr('readonly', 'readonly');
+    $('#DocumentValidity').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        format: 'dd/mm/yyyy',
+        orientation: 'bottom',
+        //maxDate: 0,
+        startDate: new Date(), // Set min Date
+        endDate: Infinity, // Set max Date
+        //minDate: new Date('<%=hdnCAMCTo.Value%>'),
+        container: "#Popup1 .modal-body",
+        autoclose: true
+    }).attr('readonly', 'readonly');
+
+    $("#DocumentSelectionID").change(function () {
+        var DocSectionID = $(this).val();
+        $.ajax({
+            url: '@Url.Action("ChangeDocumentListData", "CMSData", new { area = "" })',
+            type: "GET",
+            dataType: "html",
+            data: { DocSectionID: DocSectionID },
+            success: function (data) {
+                if (data) {
+                    $("#divDocumentList").html('').html(data);
+                }
+            },
+            error: function () {
+                    }
+                });
+    });
+
+
+
+</script>
+
+

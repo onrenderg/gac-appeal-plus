@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="GACAppeal.AadhaarPage"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    ios:Page.UseSafeArea="true">
+    <NavigationPage.TitleView >
+    <!-- <StackLayout    x:Name="Custom_Navigation"
+                    Orientation="Horizontal"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="CenterAndExpand"
+                    BackgroundColor="Transparent" >
+            <Image  Source="goi_icon.png"
+                    HeightRequest="40"
+                    VerticalOptions="CenterAndExpand"/>
+            <Label  x:Name="Lbl_Nav_title"
+                    Style="{StaticResource NavBar_LabelStyle}" />
+            <Image  Source="app_nic_header.png"
+                    x:Name="Image_Nav_nic"
+                    HeightRequest="30"
+                    VerticalOptions="CenterAndExpand"/>
+        </StackLayout> -->
+        <Grid   x:Name="Custom_Navigation"
+                HorizontalOptions="Fill"
+                VerticalOptions="Center">
+            <Label  x:Name="Lbl_Nav_title"
+                    Style="{StaticResource NavBar_LabelStyle}"
+                    HorizontalTextAlignment="Center"
+                    VerticalTextAlignment="Center"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"/>
+            <Image  Source="app_nic_header.png"
+                    x:Name="Image_Nav_nic"
+                    HeightRequest="30"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    Margin="11,0,0,0"/>
+        </Grid>             
+    </NavigationPage.TitleView>
+    <Grid Margin="6">
+        <StackLayout>
+            <ScrollView VerticalOptions="FillAndExpand">
+                <StackLayout VerticalOptions="FillAndExpand">
+                    <StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+                        <Image Source="Aadhaar_logo.png" Margin="100,0,100,0" WidthRequest="150" HorizontalOptions="CenterAndExpand" Opacity="0.7"/>
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_OneTime" Text="One Time Appellant Aadhaar Verification" HorizontalTextAlignment="Center" FontAttributes="Bold" IsVisible="false"/>
+                        <BoxView Style="{StaticResource BoxView_Line}"/>
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_AadhaarNo" Text="Aadhaar Number*"/>
+                        <Entry Placeholder="Enter Your Aadhaar Number" Keyboard="Numeric" x:Name="Entry_AadhaarNumber" MaxLength="12" ClearButtonVisibility="WhileEditing" FontAttributes="Bold"/>
+
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_NameInAadhaar" Text="Name as in Aadhaar*"/>
+                        <Entry Placeholder="Enter Your Name as in Aadhaar" Keyboard="Default" x:Name="Entry_AadhaarNumberName" MaxLength="153" ClearButtonVisibility="WhileEditing" FontAttributes="Bold"/>
+
+                        <StackLayout x:Name="Stack_OTP" IsVisible="false">
+                            <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_OTP" Text="OTP*"/>
+                            <Entry Placeholder="As received on your aadhaar linked mobile" Keyboard="Default" x:Name="Entry_AadhaarOTP" MaxLength="6" ClearButtonVisibility="WhileEditing" FontAttributes="Bold"/>
+                        </StackLayout>
+                        
+                        <StackLayout Orientation="Horizontal" x:Name="Stack_EULA">
+                            <CheckBox x:Name="Chk_EULA"/>
+                            <Label x:Name="Lbl_EULAadhaar" Text="I hereby consent to provide my Aadhaar Number, One Time Pin (OTP) data for Aadhaar based verification for the purpose of establishing my identity in the Grievance Appellate Committee." Style="{StaticResource LabelStyle}"/>
+                        </StackLayout>
+
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                            <Button Style="{StaticResource Danger_ButtonStyle}" Text="Cancel" x:Name="Btn_Cancel" Clicked="Btn_Cancel_Clicked" HorizontalOptions="FillAndExpand" Margin="2"/>
+                            <Button Style="{StaticResource ButtonStyle}" Text="Verify" x:Name="Btn_Verify" Clicked="Btn_Verify_Clicked" HorizontalOptions="FillAndExpand" Margin="2"/>
+                        </StackLayout>
+                    </StackLayout>
+                </StackLayout>
+            </ScrollView>
+            <Grid HorizontalOptions="FillAndExpand">
+                <Frame Style="{StaticResource FrameStyle}" HorizontalOptions="FillAndExpand" Grid.Column="0">
+                    <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand">
+                        <Label x:Name="Lbl_Appeals_Received_Count" Style="{StaticResource LabelStyle}" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
+                        <Label x:Name="Lbl_Appeals_Received" Text="Appeals Received " Style="{StaticResource LabelStyle}" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Style="{StaticResource FrameStyle}" HorizontalOptions="FillAndExpand" Grid.Column="1">
+                    <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand">
+                        <Label x:Name="Lbl_Disposed_Of_Count" Style="{StaticResource LabelStyle}" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
+                        <Label x:Name="Lbl_Disposed_Of" Text="Disposed of " Style="{StaticResource LabelStyle}"  HorizontalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                </Frame>
+            </Grid>
+        </StackLayout>
+        <ContentView x:Name="Loading_activity" BackgroundColor="#C0808080" Padding="20, 20" IsVisible="false">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <Frame Style="{StaticResource FrameLoadingStyle}">
+                    <StackLayout Orientation="Horizontal" Padding="6">
+                    <ActivityIndicator IsVisible="true" IsRunning="true" Margin="5"/>
+                    <Label x:Name="Lbl_PleaseWait" Text="Please Wait ..." Style="{StaticResource LabelStyle}" HorizontalOptions="FillAndExpand" WidthRequest="600"/>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </ContentView>
+    </Grid>
+</ContentPage>
+

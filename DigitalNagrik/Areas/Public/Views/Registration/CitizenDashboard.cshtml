@@ -1,0 +1,398 @@
+﻿@model DigitalNagrik.Areas.Public.Models.CitizenDashboard
+@{
+    ViewBag.Title = "CitizenDashboard";
+    Layout = "~/Views/Shared/_LayoutCitizen.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+@Html.AntiForgeryToken()
+<section>
+    <div class="container  h-100">
+
+        <div class="card" style="border-radius: 1rem;">
+            <div class="row g-0">
+
+                <div class="col-md-12 col-lg-12 align-items-center">
+                    <div class="card-body p-4 p-lg-5 text-black" style="min-height:500px;">
+                        @Html.HiddenFor(m => m.MobileNo)
+
+                        <div style="text-align:right  ;padding-bottom :10px;">
+                            <a class="btn btn-loginpanel   " href="@Url.Action("NewIntermediaryDetail", "Registration", new { from = "NewAppeal" })" title="File New Appeal">@LabelDictionary["FileNewAppeal"]</a>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header ">
+                                @LabelDictionary["Appellant"] 
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+
+                                    <div class="col-sm-8">
+                                        <label class="form-label" for="form2Example17">@LabelDictionary["Name"] : </label>
+                                        <span class="fw-bold ">@Model.citizenProfile.txtFirstName.ToString().ToUpper()   @Model.citizenProfile.txtMiddleName.ToString().ToUpper() @Model.citizenProfile.txtLastName.ToString().ToUpper()   </span>
+                                        @if (Model.citizenProfile.AadhaarVerificationStatus == "Y")
+                                        {
+                                            <i class="fa fa-check " style=" color: blue; font-size: 1.2em;" title="Aadhaar Verified"></i>
+                                        }
+                                    </div>
+
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <label class="form-label">@LabelDictionary["Email"] : </label>
+                                        <span class="fw-bold ">@Model.citizenProfile.UserEmail.ToString().Replace("@","[at]").Replace(".","[dot]")  </span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label class="form-label" for="form2Example17">@LabelDictionary["Mobile"] : </label>
+                                        <span class="fw-bold ">@Model.citizenProfile.MobileNo  </span>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                        <br />
+                        <div class="row g-6 mb-6">
+                            <div class="col-lg-2 col-md-4 col-12 col-sm-4  col-xs-12">
+                                <div class="card " style="border-radius:10px;">
+                                    <div class="card-body">
+                                        <a href="@Url.Action("CitizenDashboard", "Registration",new { GrievanceStatus= "-1" })">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <span class="h5 font-semibold text-muted text-sm d-block mb-2">@LabelDictionary["Total"] </span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6"  style="padding-left: 0px;">
+                                                    <span class="h1 font-bold mb-0">@Model.citizenDashboardCount.Total </span>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="fa-3x text-center ">
+                                                        <i class="fa fa-list  text-info"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 mb-0 text-sm">
+
+                                                @LabelDictionary["ViewMore"] <i class="fas fa-arrow-alt-circle-right"></i>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-12 col-sm-4  col-xs-12">
+                                <div class="card " style="border-radius:10px;">
+                                    <div class="card-body">
+                                        <a href="@Url.Action("CitizenDashboard", "Registration",new { GrievanceStatus= "1"})">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <span class="h5 font-semibold text-muted text-sm d-block mb-2">@LabelDictionary["Draft"] </span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6"  style="padding-left: 0px;">
+                                                    <span class="h1 font-bold mb-0">@Model.citizenDashboardCount.Draft </span>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="fa-3x text-center ">
+                                                        <i class="fa fa-file-edit  text-info"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 mb-0 text-sm">
+                                                @LabelDictionary["ViewMore"] <i class="fas fa-arrow-alt-circle-right"></i>
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-12 col-sm-4  col-xs-12">
+                                <div class="card " style="border-radius:10px;">
+                                    <div class="card-body">
+                                        <a href="@Url.Action("CitizenDashboard", "Registration",new { GrievanceStatus= "2"})">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <span class="h5 font-semibold text-muted text-sm d-block mb-2">@LabelDictionary["UnderProcess"]</span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6"  style="padding-left: 0px;">
+                                                    <span class="h1 font-bold mb-0">@Model.citizenDashboardCount.Submitted </span>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="fa-3x text-center icon-warning">
+                                                        <i class="fa fa-save  text-info"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 mb-0 text-sm">
+                                                @LabelDictionary["ViewMore"]  <i class="fas fa-arrow-alt-circle-right"></i>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-4 col-12 col-sm-4  col-xs-12" style="padding-right: 5px;">
+                                <div class="card " style="border-radius:10px;">
+                                    <div class="card-body">
+                                        <a href="@Url.Action("CitizenDashboard", "Registration",new { GrievanceStatus= "5"})">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <span class="h5 font-semibold text-muted text-sm d-block mb-2">@LabelDictionary["NotAdmitted"]  </span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6" style="padding-left: 0px;">
+                                                    <span class="h1 font-bold mb-0">@Model.citizenDashboardCount.Rejected </span>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="fa-3x text-center icon-warning">
+                                                        <i class="fa fa-ban  text-info"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 mb-0 text-sm">
+                                                @LabelDictionary["ViewMore"]  <i class="fas fa-arrow-alt-circle-right"></i>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-4 col-12 col-sm-4 col-xs-12">
+                                <div class="card " style="border-radius:10px;">
+                                    <div class="card-body">
+                                        <a href="@Url.Action("CitizenDashboard", "Registration",new { GrievanceStatus= "6" })">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <span class="h5 font-semibold text-muted text-sm d-block mb-2">@LabelDictionary["Disposedof"] </span>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6" style="padding-left: 0px;">
+                                                    <span class="h1 font-bold mb-0">@Model.citizenDashboardCount.Disposed    </span>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="fa-3x text-center icon-warning">
+                                                        <i class="fa fa-repeat  text-info"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 mb-0 text-sm">
+                                                @LabelDictionary["ViewMore"] <i class="fas fa-arrow-alt-circle-right"></i>
+
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-3">
+                            <div class="card-header" id="listheader">
+                                @if (Model.GrievanceStatus == "-1")
+                                {
+                                <span>
+                                    @LabelDictionary["Appeals"] - @LabelDictionary["Total"]
+                                </span>
+                                }
+                                else if (Model.GrievanceStatus == "1")
+                                {
+                            <span>
+                                @LabelDictionary["Appeals"] - @LabelDictionary["Draft"]
+                            </span>
+                                }
+                                else if (Model.GrievanceStatus == "2")
+                                {
+                            <span>
+                                @LabelDictionary["Appeals"] - @LabelDictionary["UnderProcess"]
+                            </span>
+                                }
+                                else if (Model.GrievanceStatus == "5")
+                                {
+                            <span>
+                                @LabelDictionary["Appeals"] - @LabelDictionary["NotAdmitted"]
+                            </span>
+                                }
+                                else if (Model.GrievanceStatus == "6")
+                                {
+                            <span>
+                                @LabelDictionary["Appeals"] - @LabelDictionary["Disposedof"]
+                            </span>
+                                }
+
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+
+                                    <div class="col-sm-12">
+                                        <div class=" table table-responsive">
+                                            <table style="width:100%;" class="table  table-striped">
+                                                <tr>
+                                                    <th>@LabelDictionary["Sr.No"]</th>
+                                                    <th>@LabelDictionary["AppealNumber"]</th>
+                                                    <th>@LabelDictionary["AppealDate"]</th>
+                                                    <th>@LabelDictionary["RespondentIntermediary"]</th>
+                                                    <th>@LabelDictionary["Status"]</th>
+                                                    <th>@LabelDictionary["Action"]</th>
+                                                </tr>
+                                                @{int count = 1;
+                                                    var mindate = DateTime.Now.AddDays(-29).ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);}
+                                                @foreach (var objIntermediaryDetail in Model.listIntermediaryDetail)
+                                                {
+                                                    <tr>
+                                                        <td>@count.ToString()</td>
+                                                        <td>@objIntermediaryDetail.GrievanceID.ToString()/@objIntermediaryDetail.RegistrationYear.ToString()</td>
+                                                        <td>@objIntermediaryDetail.ReceiptDate</td>
+                                                        <td>@objIntermediaryDetail.txtIntermediary.ToString() </td>
+                                                        <td>
+                                                            @if (objIntermediaryDetail.StatusTitle.ToString() == "Expired")
+                                                            {
+                                                                <span class="text-danger ">@objIntermediaryDetail.StatusTitle.ToString() </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                @objIntermediaryDetail.StatusTitle.ToString()
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <a href="@Url.Action("IntermediaryDetailPreview", "Registration",new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" +@objIntermediaryDetail.RegistrationYear + "&GrievanceId=" + @objIntermediaryDetail .GrievanceID)})" title="Preview"><i class="fa fa-1x  fa-eye text-info"></i></a>
+                                                            @if (@objIntermediaryDetail.GrievnaceStatus == "1")
+                                                            {
+                                                                <a href="@Url.Action("NewIntermediaryDetail", "Registration", new { actiontype = "view", from = "dashboard", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + @objIntermediaryDetail.RegistrationYear + "&GrievanceId=" + @objIntermediaryDetail.GrievanceID) })" title="Edit Appeal"><i class="fa fa-1x  fa-edit text-info"></i></a>
+                                                                @*<a href="javascript:void(0);" data-qs="@Url.Action("DeleteIntermediaryDetail", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + @objIntermediaryDetail.RegistrationYear + "&GrievanceId=" + @objIntermediaryDetail.GrievanceID) })" title="Delete Appeal" onclick="return confirmforDelete($(this),'@LabelDictionary["DeleteAppeal"] <b> '+@objIntermediaryDetail.GrievanceID+'/'+@objIntermediaryDetail.RegistrationYear+'</b>?');"><i class="fa fa-1x  fa-trash text-info"></i></a>*@
+                                                                <a href="javascript:void(0);" data-qs="@Url.Action("DeleteIntermediaryDetail", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + @objIntermediaryDetail.RegistrationYear + "&GrievanceId=" + @objIntermediaryDetail.GrievanceID) })" title="Delete Appeal" onclick="return confirmforDeleteNew('@objIntermediaryDetail.RegistrationYear','@objIntermediaryDetail.GrievanceID','@LabelDictionary["DeleteAppeal"] <b> '+@objIntermediaryDetail.GrievanceID+'/'+@objIntermediaryDetail.RegistrationYear+'</b>?');"><i class="fa fa-1x  fa-trash text-info"></i></a>
+                                                            }
+                                                            else if (@objIntermediaryDetail.GrievnaceStatus == "4")
+                                                            {
+                                                                <a href="@Url.Action("IntermediaryDetail", "Registration", new { actiontype = "view", from = "dashboard", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + @objIntermediaryDetail.RegistrationYear + "&GrievanceId=" + @objIntermediaryDetail.GrievanceID) })" title="Edit Appeal"><i class="fa fa-1x  fa-edit text-info"></i></a>
+                                                            }
+                                                            @if (@objIntermediaryDetail.GrievnaceStatus == "6")
+                                                            {
+                                                                if (!string.IsNullOrEmpty(objIntermediaryDetail.DecisionFilePath))
+                                                                {
+
+                                                                    @*<a target="_blank" href="@Url.Action("DownloadDocument", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + @objIntermediaryDetail.DecisionFilePath + "&FileType=pdf") })" title="GAC Decision">*@
+                                                                    <a target="_blank" href="@Url.Action("DownloadDocument", "Registration", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + @objIntermediaryDetail.RegistrationYear + "&GrievanceId=" + @objIntermediaryDetail.GrievanceID+"&FilePath=" + @objIntermediaryDetail.DecisionFilePath + "&FileType=pdf&FileID=") })"  title="GAC Decision">
+
+                                                                        <i class="fa fa-solid fa-gavel text-info"></i>
+                                                                    </a>
+                                                                }
+                                                                if (!string.IsNullOrEmpty(objIntermediaryDetail.ComplianceURL))
+                                                                {
+                                                                    <a href="@objIntermediaryDetail.ComplianceURL " target="_blank" title="Intermediary Compliance">
+                                                                        <i class="fa-solid fa-link text-info"></i>
+                                                                    </a>
+                                                                }
+
+                                                            }
+
+                                                        </td>
+                                                    </tr>
+                                                    count = count + 1;
+                                                }
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="confirmModalDeleteAppealNew" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">@LabelDictionary["Confirm"]</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="confirmMessageTextNew"></div>
+            </div>
+            <div class="modal-footer">
+                @using (Html.BeginForm("DeleteIntermediaryDetail", "Registration", FormMethod.Post, new { id = "DeleteIntermediaryDetail" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <button type="button" class="btn btn-sm btn-secondary btn-block" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+                    @Html.Hidden("GrievanceID")
+                    @Html.Hidden("RegistrationYear")
+                    <button type="submit" class="btn btn-sm btn-danger btn-block" onclick="DeleteAppeal()">Delete</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (ViewData["SuccessMessage"] != null)
+                    {
+    <script type="text/javascript">
+                window.onload = function () {
+                            alertify.success('@ViewData["SuccessMessage"]');
+                        };
+    </script>
+}
+                    @if (ViewData["ErrorMessage"] != null)
+                    {
+    <script type="text/javascript">
+                window.onload = function () {
+                            alertify.error('@ViewData["ErrorMessage"]');
+                        };
+    </script>
+                    }
+<script>
+    function AllowNumericOnly(e) {
+                        var ch = String.fromCharCode(event.keyCode);
+                        var filter = /[0-9]/;
+                        if (!filter.test(ch)) {
+            event.returnValue = false;
+                            return false;
+                        }
+                        else {
+                            return true;
+                        }
+                    }
+    @*$(document).ready(function () {
+
+        $("#ModelAadhaarVerified").modal({
+            show: false,
+            backdrop: 'static'
+        });
+
+        var AadhaarVerificationStatus = "@Model.citizenProfile.AadhaarVerificationStatus";
+        console.log(AadhaarVerificationStatus);
+        if (AadhaarVerificationStatus == "N") {
+            $("#ModelAadhaarVerified").modal('show');
+        }
+    });*@
+   
+    function confirmforDeleteNew(GriYear, GriNo, msg) {
+        
+        $("#confirmMessageTextNew").html(msg);
+        $("#RegistrationYear").val(GriYear);
+        $("#GrievanceID").val(GriNo);
+        $("#confirmModalDeleteAppealNew").modal('show');
+    }
+    function DeleteAppeal() {
+        if ($("#DeleteIntermediaryDetail").valid()) {            
+            $("#DeleteIntermediaryDetail").submit();
+        }
+    }
+</script>

@@ -1,0 +1,189 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.AdminDashboard_AppealList
+@using DigitalNagrik.Models
+@using DigitalNagrik.Areas.GridView.Data
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+<style>
+    table, td, th {
+        border: 1px solid #000000;
+        text-align: left;
+        color: black;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        font-family: Calibri !important;
+        color: black;
+        vertical-align: top;
+    }
+
+    th, td {
+        padding: 10px;
+        font-family: Calibri !important;
+        color: black;
+        vertical-align: top;
+    }
+
+    div, span {
+        font-family: Calibri !important;
+        font-size: 15px !important;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+</style>
+<div class="container-lg" style="font-family: Calibri !important; width: 100% !important">
+    <div class="row">
+        <div class="col-12 text-center" style="text-align:center;padding:0px;">
+            <img id="Header" src="@Server.MapPath("~/assets/img/logo.png")" style="height:100px;" alt="DigitalNagrikHeader" />
+        </div>
+    </div>
+    <div class="col-12 text-center" style="padding: 0px !important; margin-top: 0px !important; ">
+        <h2 class="text-primary" style="text-align:center; padding-top: 5px !important; margin-bottom: 5px !important; margin-top: 17px !important">Appeal(s) List</h2>
+    </div>
+    <div class="col-12 text-center" style="padding: 0px !important; margin-top: 0px !important; ">
+        <table class="table table-bordered">
+            <thead>
+                <tr class="table-primary">
+                    <th width="1%">#</th>
+                    <th>@LabelDictionary["Appeal"]</th>
+                    <th>@LabelDictionary["Appellant"]</th>
+                    <th>@LabelDictionary["RespondentIntermediary"]</th>
+                    <th>@LabelDictionary["Justification/GroundforAppeal"]</th>
+                    <th>@LabelDictionary["Status/Action"]</th>
+                </tr>
+            </thead>
+            <tbody class="bg-light">
+                @if (Model.AppealList.Count > 0)
+                {
+                    int counter = 1;
+                    foreach (var Appeal in Model.AppealList)
+                    {
+                        <tr class="font-xxl" style="line-height:1.3rem;">
+                            <td>@counter</td>
+                            <td>
+                                <div>
+                                    @LabelDictionary["AppealNumber"]:
+                                      @Appeal.GrievanceNo
+                                      (@Appeal.ReceiptDate)
+                                </div>
+                            </td>
+                            <td>
+                                <div>@Appeal.AppellantNm</div>
+                                <div class="no-wrap"><i class="bx bx-mobile-alt font-lg"></i> @Appeal.UserMobile</div>
+                                <div class="no-wrap"><i class="bx bx-at font-lg"></i> @Appeal.UserEmail</div>
+                            </td>
+                            <td>
+                                <div>@Appeal.IntermediaryTitle</div>
+                                <div class="no-wrap"><i class="bx bx-link font-lg"></i> @Appeal.IntermediaryURL</div>
+                            </td>
+                            <td>
+                                <div>@LabelDictionary["GroundforAppeal"]: @Appeal.GroundTitle</div>
+                                <div>@LabelDictionary["CorrespondingITRule"]: @Appeal.CorrespondingITRule</div>
+                                <div title="@Appeal.GrievanceDesc">@LabelDictionary["Justification"]: @(Appeal.GrievanceDesc.Length > 60 ? Appeal.GrievanceDesc.Substring(0, 60) + "..." : Appeal.GrievanceDesc)</div>
+                            </td>
+                            <td>
+                                @if (Model.Flag == GACGridViewInbox.MenuStatus.AssignmentPending)
+                                {
+                                    if (Appeal.GrievanceActionId == GACGridViewInbox.AppealAction.Submitted)
+                                    {
+                                        <span>Pending for Assignment</span>
+                                    }
+                                    else
+                                    {
+                                        <div><i class="bx bx-user-pin me-1 align-text-bottom text-info"></i>@LabelDictionary["AppealAssignedto"] @Appeal.GACNm</div>
+                                    }
+                                }
+                                else
+                                {
+                                    if (Appeal.GrievanceStatusCd == GACGridViewInbox.GrievanceStatus.UnapprovedIntermediary)
+                                    {
+                                        <div class="text-danger"><i class="bx bx-message-alt-error align-text-bottom me-1"></i>@LabelDictionary["RespondentIntermediaryVerificationPending"]</div>
+                                    }
+                                    else
+                                    {
+                                        switch (Appeal.GrievanceActionId)
+                                        {
+                                            case GACGridViewInbox.AppealAction.AssignedToGAC:
+                                                if (Appeal.IntermediaryResponseNeeded == "N")
+                                                {
+                                                    <div class="text-danger" title="@Appeal.GroundTitle"><i class="bx bx-error me-1 align-text-bottom text-danger"></i>@LabelDictionary["ThisAppealisundersection"] @Appeal.CorrespondingITRule</div>
+                                                }
+                                                if (Appeal.IsIntermediaryReply == "N")
+                                                {
+                                                    if (Convert.ToInt64(Appeal.IntermediaryReplyPendingForMins) > (259200 / 60))
+                                                    {
+                                                        <div class="text-danger"><i class="bx bx-calendar-exclamation align-text-bottom me-1"></i>@LabelDictionary["Noresponsein96hrs."]</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="text-danger"><i class="bx bx-calendar-exclamation align-text-bottom me-1"></i>@LabelDictionary["RespondentIntermediaryResponseAwaited"]</div>
+                                                        <div>@LabelDictionary["TimeLeft"]: <span class="fw-semibold">@Html.Raw(BALCommon.ConvertMinToDHM(Appeal.IntermediaryReplyTimeLeft))</span></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <div title="@LabelDictionary["Responsesubmittedate"] @Appeal.IntermediaryReplyDt"><i class="bx bx-check-circle me-1 align-text-bottom text-success"></i>@LabelDictionary["RespondentIntermediaryResponseReceivedon"] <span class="fw-semibold">@Appeal.IntermediaryReplyDt</span></div>
+                                                }
+                                                break;
+                                            case GACGridViewInbox.AppealAction.ReassignGAC:
+                                                <div><i class="bx bx-transfer me-1 align-text-bottom text-info"></i>@LabelDictionary["AppealTransferred"]</div>
+                                                <div>@LabelDictionary["FromGAC"]: <span class="fw-semibold">@Appeal.TransferFromGAC</span></div>
+                                                break;
+                                            case GACGridViewInbox.AppealAction.Reject:
+                                                <div class="text-danger"><i class="bx bx-message-x me-1 align-text-bottom"></i>@LabelDictionary["NotAdmitted"]</div>
+                                                break;
+                                            case GACGridViewInbox.AppealAction.PrepareSummary:
+                                                if (Appeal.IsChairpersonDecision == "Y")
+                                                {
+                                                    <div><i class="bx bxs-check-circle me-1 align-text-bottom text-success"></i>@LabelDictionary["DecisiongivenbyChairperson"]</div>
+                                                    <div>@LabelDictionary["Date"]: <span class="fw-semibold">@Appeal.ChairpersonDecisionDate</span></div>
+                                                }
+                                                else
+                                                {
+                                                    <div><i class="bx bx-calendar-exclamation me-1 align-text-bottom text-info"></i>@LabelDictionary["MemberOpinionAwaited"]</div>
+                                                    <div>@LabelDictionary["Agree"]: <span class="fw-semibold">@Appeal.OpinionAgree</span>, @LabelDictionary["Disagree"]: <span class="fw-semibold">@Appeal.OpinionDisagree</span></div>
+                                                }
+                                                break;
+                                            case GACGridViewInbox.AppealAction.DecisionGAC:
+                                                <div>
+                                                    <i class="bx bxs-check-circle me-1 align-text-bottom text-success"></i>@LabelDictionary["Disposedof"] <span class="fw-semibold">(@Appeal.ActionDt)</span>
+                                                </div>
+                                                if (!string.IsNullOrWhiteSpace(Appeal.ComplianceDate))
+                                                {
+                                                    <div>
+                                                        @LabelDictionary["ComplianceGiven"] @LabelDictionary["Date"] <span class="fw-semibold">@Appeal.ComplianceDate</span>
+                                                        @if (!string.IsNullOrWhiteSpace(Appeal.ComplianceFilePath))
+                                                        {
+                                                            <a class="ms-1" target="_blank" href="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + @Appeal.ComplianceFilePath + "&FileType=pdf") })">@LabelDictionary["ViewCompliance"]</a>
+                                                        }
+                                                    </div>
+                                                    if (!string.IsNullOrWhiteSpace(Appeal.ComplianceUrl))
+                                                    {
+                                                        <a class="d-block" style="word-break:break-all" target="_blank" rel="noopener noreferrer" href="@Appeal.ComplianceUrl">@Appeal.ComplianceUrl</a>
+                                                    }
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        counter = counter + 1;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7">
+                            @LabelDictionary["NoRecordFound"]
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

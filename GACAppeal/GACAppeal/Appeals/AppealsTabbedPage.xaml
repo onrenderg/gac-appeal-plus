@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<TabbedPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="GACAppeal.AppealsTabbedPage"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    ios:Page.UseSafeArea="true"
+    xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+    android:TabbedPage.ToolbarPlacement="Bottom"
+    android:TabbedPage.BarSelectedItemColor="#117ec2"
+    android:TabbedPage.BarItemColor="Silver">
+    <NavigationPage.TitleView >
+        <StackLayout x:Name="Custom_Navigation" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" BackgroundColor="Transparent" >
+            <Image Source="goi_icon.png" HeightRequest="40" VerticalOptions="CenterAndExpand"/>
+            <Label x:Name="Lbl_Nav_title" Style="{StaticResource NavBar_LabelStyle}" />
+            <Image Source="app_nic_header.png" x:Name="Image_Nav_nic"  HeightRequest="30" VerticalOptions="CenterAndExpand"/>
+        </StackLayout>
+    </NavigationPage.TitleView>
+    <TabbedPage.ToolbarItems>
+        <ToolbarItem IconImageSource="Home_ico.png" Clicked="Btn_Home_Clicked"/>
+        <ToolbarItem IconImageSource="Log_out_ico.png" Clicked="ToolbarItem_Clicked"/>
+    </TabbedPage.ToolbarItems>
+</TabbedPage>

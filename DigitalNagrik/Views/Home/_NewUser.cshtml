@@ -1,0 +1,205 @@
+﻿@model DigitalNagrik.Areas.Public.Models.NewUserRegistration
+@{
+
+    var homelink = @Html.Action("Index", "Home");
+}
+<style>
+    .Mandatory {
+        color: red;
+    }
+
+    .form-control:disabled, .form-control[readonly] {
+        background-color: #e9ecef;
+        opacity: 1;
+    }
+
+    .field-validation-error {
+        color: red;
+    }
+
+    .validation-summary-errors {
+        color: red;
+    }
+</style>
+@using (Html.BeginForm("NewUserSendOTP", "Home", FormMethod.Post, new { id = "NewUser" }))
+{
+    @Html.ValidationSummary(true)
+
+
+    <div class="row fw-bold">
+        <div class="col-md-2 " style="padding:0px;">
+            <label for="form2Example17">Enter Your</label>
+        </div>
+        <div class="col-md-5" style="padding:0px;">
+            @Html.RadioButtonFor(m => m.EmailorMobile, "M")  Mobile
+            @Html.RadioButtonFor(m => m.EmailorMobile, "E")  Email to Register
+        </div>
+      
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-5" id="idMobile">
+            @Html.TextBoxFor(m => m.txtmobile, new { @class = "form-control", @maxlength = "10", @placeholder = "999999999" })
+            @Html.ValidationMessageFor(x => x.txtmobile)
+        </div>
+        <div class="col-md-5" id="idEmail" style="display:none;">
+            @Html.TextBoxFor(m => m.txtEmail, new { @class = "form-control", @maxlength = "100", @placeholder = "abc@xyz.com" })
+            @Html.ValidationMessageFor(x => x.txtEmail)
+        </div>
+    </div>
+
+
+    <div class="mt-4 row">
+
+        <div class="col-md-8">
+            <label class="custom-input-label mb-1">Captcha<span class="text-danger">*</span></label>
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">
+                    <img id="CaptchaImage" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                    <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                </span>
+                @Html.TextBoxFor(x => x.Captcha, new { @id = "txtCaptcha", @class = "form-control DisabledInputs", placeholder = "Enter Captcha", autocomplete = "off", maxlength = "6" })
+            </div>
+            <div id="SpanCaptchaValidation">
+                @Html.ValidationMessageFor(x => x.Captcha)
+            </div>
+        </div>
+        <div class="col-md-2  mt-1" style="text-align:left;">
+            <br />
+            <input type="button" id="btnSubmit" class="btn btn-loginpanel  btn-block" value="Send OTP" />
+        </div>
+
+    </div>
+    <div class="row mt-5">
+
+        <div class="col-md-12 " style="text-align:left;">
+            <a href="" class="btn btn-loginpanel btn-block ">Existing Appellant</a>
+        </div>
+
+    </div>
+
+    <div class="alert alert-danger" role="alert" id="dvMessage" style="display :none ;">
+
+    </div>
+}
+@if (ViewData["SuccessMessage"] != null)
+{
+    <script type="text/javascript">
+                window.onload = function () {
+                    alertify.success('@ViewData["SuccessMessage"]');
+                 };
+    </script>
+}
+@if (ViewData["ErrorMessage"] != null)
+{
+    <script type="text/javascript">
+                window.onload = function () {
+                    alertify.error('@ViewData["ErrorMessage"]');
+                 };
+    </script>
+}
+<script>
+    $(document).ready(function () {
+         if ("@Model.EmailorMobile.ToString()" == 'M') {
+            $("#idMobile").show();
+            $("#idEmail").hide();
+        }
+        else {
+            $("#idMobile").hide();
+            $("#idEmail").show();
+        }
+
+        $("input[name='EmailorMobile']").change(function () {
+            //console.log("12");
+            if ($("input[name='EmailorMobile']:checked").val() == "M") {
+                $("#idMobile").show();
+                $("#idEmail").hide();
+            }
+            else {
+                $("#idMobile").hide();
+                $("#idEmail").show();
+            }
+        });
+    });
+     function RefreshCaptcha() {
+        $.ajax({
+            url: '@Url.Action("CaptchaImage", "Home", new { area = "" })',
+            data: {},
+            success: function (data) {
+                $("#CaptchaImage").html(data);
+            }
+        });
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };
+    
+        $("#LoginHeaderText").text("Appellant Registration ");
+        //RefreshCaptcha();
+    function IsEmail(email) {
+        var regex = /^([a-zA-Z0-9_\.\-\+])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (!regex.test(email)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    $("#btnSubmit").click(function () {
+        var txtmobile = $("#txtmobile").val();
+        var txtEmail = $("#txtEmail").val();
+        var EmailorMobile = $("input[name='EmailorMobile']:checked").val();
+        if (EmailorMobile == "E") {
+
+            if (IsEmail(txtEmail) == false) {
+                $('#dvMessage').show();
+                $('#dvMessage').html("Please enter valid Email ID");
+                return false;
+            }
+        }
+        else {
+            var d = $.isNumeric(txtmobile);
+            if (!d) {
+                $('#dvMessage').show();
+                $('#dvMessage').html("Please enter valid mobile number.");
+                return false;
+            }
+            if (txtmobile.length < 10) {
+                $('#dvMessage').show();
+                $('#dvMessage').html("Your Mobile must be 10 digit.");
+                return false;
+            }
+
+        }
+
+        var data = new FormData();
+
+        data.append("txtmobile", $("#txtmobile").val());
+        data.append("txtEmail", $("#txtEmail").val());
+        data.append("Captcha", $("#txtCaptcha").val());
+        data.append("EmailorMobile", EmailorMobile);
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("NewUserSendOTP", "Home")",
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (response) {
+                if (response == "LoadOTPVerification") {
+                    //RefreshCaptcha();
+                    $("#LoginDiv").load("@Url.Action("_OTPLoginVerification", "Home", new { Message = "LoginSuccess", Area = "" })");
+
+                }
+                else {
+                    //console.log(response);
+
+                    $("#LoginDiv").html(response);
+                    RefreshCaptcha();
+                }
+
+            }
+        });
+    });
+  
+
+
+
+
+</script>

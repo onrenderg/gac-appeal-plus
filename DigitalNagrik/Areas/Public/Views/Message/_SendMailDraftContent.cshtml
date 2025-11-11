@@ -1,0 +1,54 @@
+﻿@model DigitalNagrik.Areas.Public.Models.mIntermediaryDetailPart
+@{
+    //var dt = Model.txtIntermediaryDecisionDate;
+   // var decsionLastdate = DateTime.ParseExact(dt, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture).AddDays(29);
+
+}
+<div style="background-image:@Url.Content("~/assets/img/logoGAC.png")">
+    <div>
+        Dear &nbsp;@Model.CitizenName,
+    </div>
+
+    <br />
+    <div>
+        Thank you for registering an appeal on <b>https://gac.intermediaries.gov.in</b>.
+    </div>
+    <br />
+    <div>
+        Your appeal with appeal number <b>@Model.GrievanceID/@Model.RegistrationYear</b>   against <b>@Model.txtIntermediary</b>  saved as draft.
+        To complete the appeal kindly visit the link below
+    </div>
+    <br />
+    <div style="background: #198754; padding: 11px; font-family: Arial; font-size: 1rem; color: #ffffff; text-align: center; font-style: italic; vertical-align: middle; height: 30px; width: 300px; border-radius: 15px;">
+        <a style="color: #ffffff;" target="_blank" href="@HttpContext.Current.Request.Url.Scheme://@HttpContext.Current.Request.Url.Authority@Url.Action("Index", "PublicLogin",new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID+ "&CitizenorIntermediary=C" ) })">
+            Link for view/edit the draft appeal
+        </a>
+    </div>
+    <br />
+    <div>
+        (May copy the following link and paste it into a browser to view.
+        @HttpContext.Current.Request.Url.Scheme://@HttpContext.Current.Request.Url.Authority@Url.Action("Index", "PublicLogin", new { qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceID + "&CitizenorIntermediary=C") }))
+    </div>
+    <br />
+    <br />
+    <div>
+        Alternatively you may login using your mobile no and PIN/OTP at
+        @HttpContext.Current.Request.Url.Scheme://@HttpContext.Current.Request.Url.Authority<a style="color: #ffffff;" target="_blank" href="@Url.Action("Index", "Home", new { Area = "" })"></a>
+    </div>
+    <br />
+
+    <div>
+        If you experience any issues related to filling of appeal, kindly write to us at <b>servicedesk[at]nic.in</b>.
+    </div>
+    <br />
+    <br />
+
+    <div>
+        Thanks,
+    </div>
+    <br />
+    <div>
+        Grievance Appellate Committee<br />
+        Government of India
+    </div>
+</div>

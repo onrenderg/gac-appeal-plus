@@ -1,0 +1,102 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.IntermediaryQuestions
+@{
+    ViewBag.Title = "IntermediaryQuestionsView";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+<div class="container no-padding">
+    <div class="row">
+        <div class="card p-3">
+            <div class="row">
+                <div class="col-6">
+                    <h3> <i class="bx bx-cog align-middle me-1"></i> Respondent Intermediary Response Configuration</h3>
+                </div>
+                <div class="col-6">
+                    <a class="btn btn-success float-end" href="javascript:void(0);" title="Add New Response" onclick="NewAction('N','0')">
+                        <i class="bx bx-plus-circle me-1 align-middle"></i>Add New Response
+                    </a>
+                </div>
+            </div>
+            <hr />
+            @if (@Model.IntermediaryReposnseList.Count > 0)
+            {
+                <div class="row">
+                    <div class="col-12">
+                        <ul class="list-group mt-2">
+                            @{int counter = 1; }
+                            @foreach (var item in Model.IntermediaryReposnseList)
+                            {
+
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-11">
+                                            @counter. @item.ResponseText
+                                        </div>
+                                        <div class="col-1">
+                                            <a class="btn btn-sm btn-success" href="javascript:void(0);" title="Add New Sub Response" onclick="NewSubAction('N',@item.ResponseID,'0')"><i class="bx bx-plus-circle align-middle"></i></a>
+                                            <a class="btn btn-sm btn-primary" href="javascript:void(0);" title="Edit Response" onclick="NewAction('E',@item.ResponseID)"><i class="bx bx-edit align-middle"></i></a>
+                                        </div>
+                                        @{counter = counter + 1; }
+                                    </div>
+                                    <ul class="list-group mt-3">
+                                        @if (Model.IntermediarySubReposnseList.Where(x => x.ResponseID == item.ResponseID).Count() > 0)
+                                        {
+                                            int counter1 = 1;
+                                            foreach (var item1 in Model.IntermediarySubReposnseList.Where(x => x.ResponseID == item.ResponseID))
+                                            {
+                                                <li class="list-group-item">
+                                                    <div class="row">
+                                                        <div class="col-11">
+                                                            @counter1.  @item1.SubResponseText
+                                                        </div>
+                                                        @{counter1 = counter1 + 1; }
+                                                        <div class="col-1">
+                                                            <a class="btn btn-sm btn-primary float-end" title="Edit Sub Response" href="javascript:void(0);" onclick="NewSubAction('E',@item1.ResponseID,@item1.SubResponseID)"><i class="bx bx-edit align-middle"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+
+                                            }
+                                        }
+                                    </ul>
+
+                                </li>
+
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="gv-action-modal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" id="gv-action-modal-content"></div>
+    </div>
+</div>
+<script>
+    var _FormLoadHtml_Modal = '<div class="px-4 py-4 my-4 h-100 font-lg text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><br>Loading</div>';
+
+    function NewAction(ActionType, ResponseID) {
+            $.ajax({
+            url: '@Url.Action("AddUpdateResponseShowPopUp", "IntermediaryResponseQuestion", new { area = "Intermediary" })',
+                type: "GET", data: { ActionType:ActionType,ResponseID: ResponseID }, dataType: "HTML", //, ExamStageID: ExamStageID, ApplicationNo: ApplicationNo
+            success: function (data) {
+                if (data) { $("#gv-action-modal-content").html('').html(_FormLoadHtml_Modal).html(data); }
+            }
+          }).done(function () { $("#gv-action-modal").modal('toggle'); });
+    }
+     function NewSubAction(ActionType, ResponseID,SubResponseID) {
+            $.ajax({
+            url: '@Url.Action("AddUpdateSubResponseShowPopUp", "IntermediaryResponseQuestion", new { area = "Intermediary" })',
+                type: "GET", data: { ActionType: ActionType, ResponseID: ResponseID, SubResponseID: SubResponseID }, dataType: "HTML", //, ExamStageID: ExamStageID, ApplicationNo: ApplicationNo
+            success: function (data) {
+                if (data) { $("#gv-action-modal-content").html('').html(_FormLoadHtml_Modal).html(data); }
+            }
+          }).done(function () { $("#gv-action-modal").modal('toggle'); });
+    }
+
+</script>
+
+

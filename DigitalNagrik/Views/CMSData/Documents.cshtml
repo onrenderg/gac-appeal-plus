@@ -1,0 +1,104 @@
+﻿@using System.Data
+@using System.Linq
+@model DigitalNagrik.Models.CMSDataAddDocument
+@{
+    ViewBag.Title = "Documents";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+    var resultImpDoc = Model.DocumnetListTable.Where(x => x.DocSectionID == "1").ToList();
+    var resultMOM = Model.DocumnetListTable.Where(x => x.DocSectionID == "2").ToList();
+}
+<section class="breadcrumbs">
+    @{ Html.RenderPartial("_Breadcrumbs", (DigitalNagrik.Models.PublicMenu)ViewBag.Menu); }
+</section>
+
+<section class="inner-page">
+    <div class="container mt-3" style="min-height:50vh;">
+        <table class="table table-responsive table-borderless" id="tableDocList">
+            <tbody>
+                @{
+                    int counter = 1;
+                }
+                @if (resultImpDoc.Count > 0)
+                {
+                    foreach (var row in resultImpDoc)
+                    {
+                        <tr>
+                            <td width="1%" class="ps-0">@counter</td>
+                            <td width="99%" class="text-start pe-0">
+                                @if (@row.PDFlink_URLLink == null || @row.PDFlink_URLLink == "")
+                                {
+                                    <a class="text-black" target="_blank" href="@Url.Action("ViewDocumentPDF", "CMSData", new { Area = "", qs = SecureQueryString.SecureQueryString.Encrypt("DocID=" + row.DocID) })">@row.DocumentName_link</a>
+                                }
+                                else
+                                {
+                                    <a class="text-black" href="@row.PDFlink_URLLink">@row.DocumentName_link</a>
+                                }
+                            </td>
+                        </tr>
+                        counter = counter + 1;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9">No Records Found</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @*@if (resultMOM.Count > 0)
+        {
+            <h5 style="color:#F15A24"><i class="fa fa-file me-1"></i> Minutes of Meeting</h5>
+            <table class="table table-responsive table-bordered" id="tableMoMList">
+                <thead>
+                    <tr class="table-primary">
+                        <th scope="col" width="5%">#</th>
+                        <th scope="col" width="85%">Document Name</th>
+                        <th scope="col" width="10%" class="text-center">PDF/ Link Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int counter1 = 1;
+                    }
+                    @if (resultMOM.Count > 0)
+                    {
+                        foreach (var row in resultMOM)
+                        {
+                            <tr>
+                                <td>@counter1</td>
+                                <td>@row.DocumentName_link</td>
+                                <td class="text-center">
+                                    @if (@row.PDFlink_URLLink == null || @row.PDFlink_URLLink == "")
+                                    {
+                                        <a target="_blank" href="@Url.Action("ViewDocumentPDF", "CMSData", new { Area = "", qs = SecureQueryString.SecureQueryString.Encrypt("DocID=" + row.DocID) })"><i class="fa fa-file-pdf text-danger"></i></a>
+                                    }
+                                    else
+                                    {
+                                        <a target="_blank" href="@row.PDFlink_URLLink"><i class="fa fa-link text-primary"></i></a>
+                                    }
+                                </td>
+                            </tr>
+                            counter1 = counter1 + 1;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9">No Records Found</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }*@
+    </div>
+</section>
+<script>
+    $(document).ready(function () {
+        $("#tableDocList").DataTable()
+    });
+    $(document).ready(function () {
+        $("#tableMoMList").DataTable()
+    });
+</script>
+

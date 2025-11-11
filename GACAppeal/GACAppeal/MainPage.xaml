@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GACAppeal.MainPage"
+    xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+    ios:Page.UseSafeArea="true">
+    <NavigationPage.TitleView >
+        <StackLayout x:Name="Custom_Navigation" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" BackgroundColor="Transparent" >
+            <Image Source="goi_icon.png" HeightRequest="40" VerticalOptions="CenterAndExpand"/>
+            <Label x:Name="Lbl_Nav_title" Style="{StaticResource NavBar_LabelStyle}" />
+            <Image Source="app_nic_header.png" x:Name="Image_Nav_nic"  HeightRequest="30" VerticalOptions="CenterAndExpand"/>
+        </StackLayout>
+    </NavigationPage.TitleView>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="language_ico.png" Clicked="ToolbarItem_Clicked"/>
+    </ContentPage.ToolbarItems>
+    <Grid Margin="6">
+        <StackLayout>
+            <ScrollView VerticalOptions="FillAndExpand">
+                <StackLayout VerticalOptions="FillAndExpand">
+                    <StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+                        <Image x:Name="img_logogac" Source="logogac.png" Margin="40,0,40,0" WidthRequest="350" HorizontalOptions="CenterAndExpand"/>
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_AppDesc" Text="The app accepts appeals related to resolution provided by the Grievance Officer or Resident Grievance Officer designated by Intermediary related to Blocking of Account or Removal of Objectionable content related to the Complainant. The applicant can register appeal within 30 days of communication received from the Intermediary conveying the final resolution to the grievance." HorizontalTextAlignment="Center"/>
+
+                        <Label x:Name="Lbl_mandatory" Text="Fields marked with * are mandatory" Style="{StaticResource Danger_LabelStyle}" Padding="5"/>
+                        <BoxView Style="{StaticResource BoxView_Line}"/>
+                        
+                        <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_MobileNo" Text="Enter Mobile Number*"/>
+                        <Entry Placeholder="10 digit mobile number" Keyboard="Telephone" x:Name="Entry_Mobile" ClearButtonVisibility="WhileEditing" FontAttributes="Bold" MaxLength="10"/>
+                        <Button Style="{StaticResource Danger_ButtonStyle}" Text="Generate OTP" x:Name="Btn_GenerateOTP" Clicked="Btn_GenerateOTP_Clicked" IsVisible="true"/>
+                        <StackLayout x:Name="Stack_OTP" IsVisible="false">
+                            <Label Style="{StaticResource LabelStyle}" x:Name="Lbl_EnterOTP" Text="Enter OTP Sent on Mobile Number"/>
+                            <Entry Placeholder="******" x:Name="Entry_OTP" Keyboard="Numeric" HorizontalOptions="FillAndExpand"  ClearButtonVisibility="WhileEditing" FontAttributes="Bold"/>
+                            <Button Style="{StaticResource ButtonStyle}" Text="Verify" x:Name="Btn_Verify" Clicked="Btn_Verify_Clicked"/>
+                        </StackLayout>
+                    </StackLayout>
+                </StackLayout>
+            </ScrollView>
+            <Grid HorizontalOptions="FillAndExpand">
+                <Frame Style="{StaticResource FrameStyle}" HorizontalOptions="FillAndExpand" Grid.Column="0">
+                    <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand">
+                        <Label x:Name="Lbl_Appeals_Received_Count" Style="{StaticResource LabelStyle}" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
+                        <Label x:Name="Lbl_Appeals_Received" Text="Appeals Received " Style="{StaticResource LabelStyle}" HorizontalOptions="CenterAndExpand" HorizontalTextAlignment="Center"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Style="{StaticResource FrameStyle}" HorizontalOptions="FillAndExpand" Grid.Column="1">
+                    <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand">
+                        <Label x:Name="Lbl_Disposed_Of_Count" Style="{StaticResource LabelStyle}" FontAttributes="Bold" HorizontalOptions="CenterAndExpand"/>
+                        <Label x:Name="Lbl_Disposed_Of" Text="Disposed of " Style="{StaticResource LabelStyle}"  HorizontalOptions="CenterAndExpand"/>
+                    </StackLayout>
+                </Frame>
+            </Grid>
+
+        </StackLayout>
+        <ContentView x:Name="Loading_activity" BackgroundColor="#C0808080" Padding="20, 20" IsVisible="false">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <Frame Style="{StaticResource FrameLoadingStyle}">
+                    <StackLayout Orientation="Horizontal" Padding="6">
+                        <ActivityIndicator IsVisible="true" IsRunning="true" Margin="5"/>
+                        <Label x:Name="Lbl_PleaseWait" Text="Please Wait ..." Style="{StaticResource LabelStyle}" HorizontalOptions="FillAndExpand" WidthRequest="600"/>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </ContentView>
+    </Grid>
+</ContentPage>
+

@@ -1,0 +1,60 @@
+﻿@model DigitalNagrik.Areas.Dashboard.Models.Dashboard_AvgDays
+@using Newtonsoft.Json
+@{
+    string CD = "MeityAvgDays";
+    string[] SeriesData_AvgTime = { };
+    string[] XAxis_GAC = { };
+    if (Model.DataList != null && Model.DataList.Count > 0)
+    {
+        SeriesData_AvgTime = Model.DataList.Select(x => x.AverageDisposalDays).ToArray();
+        XAxis_GAC = Model.DataList.Select(x => x.GACAbbr).ToArray();
+    }
+}
+
+<div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between pb-0">
+        <div class="card-title mb-0">
+            <h5 class="m-0 me-2">Average Disposal Days (GAC wise)</h5>
+        </div>
+    </div>
+    <div class="card-body pb-0">
+        <div id="CC_AverageTime@(CD)">
+            <script>
+                $(function () {
+                    const ChartOptions@(CD) = {
+                        series: [{ name: "Average Time", data: JSON.parse('@Html.Raw(JsonConvert.SerializeObject(SeriesData_AvgTime))') }],
+                        chart: { height: 160, stacked: false, type: 'bar', toolbar: { show: true } },
+                        plotOptions: {
+                            bar: {
+                                distributed: true,
+                                horizontal: false,
+                                columnWidth: '35%',
+                                borderRadius: 12,
+                                startingShape: 'rounded',
+                                endingShape: 'rounded'
+                            }
+                        },
+                        colors: [config.colors.primary, config.colors.success, config.colors.info, config.colors.warning],
+                        dataLabels: { enabled: true },
+                        legend: {
+                            show: false,
+                            horizontalAlign: 'left',
+                            position: 'top',
+                            markers: { height: 8, width: 8, radius: 12, offsetX: -3 },
+                            labels: { colors: axisColor },
+                            itemMargin: { horizontal: 10 }
+                        },
+                        grid: { borderColor: borderColor, padding: { top: 0, bottom: 0, left: 10, right: 0 } },
+                        xaxis: {
+                            categories: JSON.parse('@Html.Raw(JsonConvert.SerializeObject(XAxis_GAC))'), labels: { style: { fontSize: '13px', colors: axisColor } },
+                            axisTicks: { show: true },
+                            axisBorder: { show: false }
+                        },
+                        yaxis: { labels: { style: { fontSize: '12px', colors: axisColor } } },
+                    };
+                    var Chart = new ApexCharts(document.querySelector('#CC_AverageTime@(CD)'), ChartOptions@(CD)); Chart.render();
+                });
+            </script>
+        </div>
+    </div>
+</div>

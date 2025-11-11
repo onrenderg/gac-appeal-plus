@@ -1,0 +1,118 @@
+﻿@model DigitalNagrik.Areas.Public.Models.mPinLogin
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_LayoutPublic.cshtml";
+}
+
+
+<main id="main">
+    <div class="special-container">
+        <div class="row">
+            @Html.Partial("~/Views/Home/_PublicChartPartial.cshtml")
+            @Html.Partial("~/Views/Home/_PublicHomeTextPartial.cshtml")
+            <div class="col-lg-3">
+                <div class="card">
+                    <div class=" card-header loginpanel text-white   ">
+                        <div class="row">
+                            <div class="col-md-12" style="text-align:left ">
+                                <i class="fa fa-layer-group "></i>
+                                &nbsp;&nbsp;&nbsp;
+                                <span id="LoginHeaderText"> Appellant Registration</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body " id="LoginDiv" style="min-height:250px;">
+                        <div class="row mt-2" id="dvOuterNewUser">
+                            @using (Html.BeginForm("NewAppellant", "Home", FormMethod.Post, new { id = "NewUser" }))
+                            {
+                                @Html.ValidationSummary(true)
+
+
+                                <div class="row fw-bold">
+                                    <div class="col-md-12 ">
+                                        <label for="form2Example17">Enter Your Mobile</label>
+                                    </div>
+                                </div>
+                               
+                                <div class="row mt-2">
+                                    <div class="col-md-9" id="idMobile">
+                                        @Html.TextBoxFor(m => m.txtMobile, new { @class = "form-control", @maxlength = "10", @placeholder = "999999999" })
+                                        @Html.ValidationMessageFor(x => x.txtMobile)
+                                    </div>
+                                   
+                                </div>
+
+
+                                <div class="mt-4 row">
+
+                                    <div class="col-md-9">
+                                        <label class="custom-input-label mb-1">Captcha<span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <img id="CaptchaImage" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                                                <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                                            </span>
+                                            @Html.TextBoxFor(x => x.Captcha, new { @id = "txtCaptcha", @class = "form-control DisabledInputs", placeholder = "Enter Captcha", autocomplete = "off", maxlength = "6" })
+                                        </div>
+                                        <div id="SpanCaptchaValidation">
+                                            @Html.ValidationMessageFor(x => x.Captcha)
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <br />
+                                        <input type="submit" id="btnSubmit" class="btn btn-loginpanel  btn-block" value="Send OTP" />
+                                    </div>
+
+                                </div>
+                                <div class="row mt-5">
+
+                                    <div class="col-md-12 " style="text-align:left;">
+                                        @Html.ActionLink("Existing Appellant", "Index", "Home", new { @class = "btn btn-loginpanel  btn-block" })
+                                        @*<input type="button" id="btnUser" class="btn btn-loginpanel  btn-block" value="Existing Appellant" />*@
+                                    </div>
+
+                                </div>
+
+                                <div class="alert alert-danger" role="alert" id="dvMessage" style="display :none ;">
+
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+                <div class="mt-2" style="text-align:left ;">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:void(0);" data-bs-toggle="modal" class="btn btn-warning " data-bs-target="#LoginModal">Login for GAC</a>
+                </div>
+            </div>
+        </div>
+</main>
+<style>
+    .morecontent span {
+        display: none;
+    }
+
+    .morelink {
+        display: block;
+    }
+</style>
+
+<script>
+   
+    function RefreshCaptcha() {
+        $.ajax({
+            url: '@Url.Action("CaptchaImageNew", "Home", new { area = "" })',
+            data: {},
+            success: function (data) {
+                $("#CaptchaImage").html(data);
+            }
+        });
+        $("#CaptchaImage").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    };
+</script>
+
+
+
+
+
+

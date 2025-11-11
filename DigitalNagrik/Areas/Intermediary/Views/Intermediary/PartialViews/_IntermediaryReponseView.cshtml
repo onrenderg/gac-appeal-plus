@@ -1,0 +1,86 @@
+﻿@model DigitalNagrik.Areas.Intermediary.Data.IntermediaryResponseDownloadPDF
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<style>
+    .container-attachment .attachment-seperator:last-child {
+        display: none;
+    }
+</style>
+<ul class="list-unstyled">
+    @{ int counter = 1;}
+    @foreach (var item in Model.IntermediaryResponseDownloadPDFResponse)
+    {
+
+
+        <li class="" style="font-size:18px">
+            <div class="">
+                @*@Html.Raw(LabelDictionary["Application"])*@
+                To,<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;Grievance Appellate Committee<br /><br />
+
+                Madam/Sir,<br /><br />
+                I hereby submit my response to Appeal No. @Model.GrievanceId/@Model.RegistrationYear filed with Grievance Appellate Committee under sub-rule (3) of rule 3A of the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021. The details are as submitted by me herewith online.
+                <br /><br />
+            </div>
+            <div class="d-flex">
+                @*<div style="width:1%">@counter.</div>*@
+                <div style="width:70%"><b>@Html.Raw(@LabelDictionary["IntermediaryResponseText"])</b></div>
+                <div style="width:5%" class="h5 mb-1 @(item.ResponseValue == "Yes" ? "text-success" : "text-danger")"><b>@(item.ResponseValue == "Yes" ? LabelDictionary["Yes"] : LabelDictionary["No"])</b></div>
+            </div>
+
+            @if (item.ResponseDetails != "")
+            {
+        <div style="color: black;">@LabelDictionary["Anyrelevantdetails/reason"]: <b>@item.ResponseDetails</b></div>
+            }
+            @if (!string.IsNullOrWhiteSpace(item.ResponseUrls))
+            {
+        <div>@LabelDictionary["URL(s)"]: <span style="color: black "></span><b>@item.ResponseUrls</b></div>
+            }
+            <div class="container-attachment">
+                @if (Model.IntermediaryResponseDownloadPDFsubResponseFiles.Where(x => x.ResponseID == item.ResponseID && x.SubResponseID == "").Count() > 0)
+                {
+                    <span> <i class="bx bx-paperclip me-1 text-primary"></i></span>
+                    foreach (var File in Model.IntermediaryResponseDownloadPDFsubResponseFiles.Where(x => x.ResponseID == item.ResponseID && x.SubResponseID == ""))
+                    {
+                        <a class="text-primary" target="_blank" href="@Url.Action("ViewAppealDocument", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("FilePath=" + File.File + "&FileType=pdf") })">Supporting Document(s)</a> <span class="text-lighter attachment-seperator font-sm  px-1">|</span>
+                        //string Base64Pdf = Convert.ToBase64String(File.File);
+                        @*<a target="_blank" class="text-primary" href="@Url.Action("IntermediaryResponsePDFView", "Intermediary", new { Area = "Intermediary", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + File.RegistrationYear+ "&GrievanceId=" + File.GrievanceID + "&ResponseId=" + File.ResponseID + "&SubResponseId=0" + "&FileId=" + File.FileID) })">Attachment @File.FileID</a> <span class="text-lighter attachment-seperator font-sm  px-1">|</span>*@
+                    }
+                }
+            </div>
+
+            <ul>
+                @{
+                    var resultSubResponse = Model.IntermediaryResponseDownloadPDFsubResponse.Where(x => x.ResponseID == item.ResponseID).ToList();
+                }
+                @foreach (var item1 in resultSubResponse)
+                {
+
+                    <li>
+                        @item1.SubResponseText<br />
+                        <div style="color: black">Relevant detail/ reason: <b>@item1.SubResponseDetails</b></div>
+                        <div class="container-attachment">
+                            @if (Model.IntermediaryResponseDownloadPDFsubResponseFiles.Where(x => x.ResponseID == item.ResponseID && x.SubResponseID == item1.SubResponseID).Count() > 0)
+                            {
+                                <span> <i class="fa fa-paperclip me-1 text-primary"></i></span>
+                                foreach (var File in Model.IntermediaryResponseDownloadPDFsubResponseFiles.Where(x => x.ResponseID == item.ResponseID && x.SubResponseID == item1.SubResponseID))
+                                {
+                                    //string Base64Pdf = Convert.ToBase64String(File.File);
+                                    <a target="_blank" class="text-primary" href="@Url.Action("IntermediaryResponsePDFView", "Intermediary", new { Area = "Intermediary", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + File.RegistrationYear+ "&GrievanceId=" + File.GrievanceID + "&ResponseId=" + File.ResponseID + "&SubResponseId=" + File.SubResponseID+ "&FileId=" + File.FileID) })">Attachment @File.FileID</a> <span class="text-lighter attachment-seperator font-sm px-1">|</span>
+                                }
+                            }
+                        </div>
+                    </li>
+                }
+            </ul>
+            <div class="">
+                <br /><br />@DigitalNagrik.Models.UserSession.UserName
+                <br />@item.IntermediaryReplyDateTime
+            </div>
+            <hr />
+
+        </li>
+        counter = counter + 1;
+    }
+</ul>

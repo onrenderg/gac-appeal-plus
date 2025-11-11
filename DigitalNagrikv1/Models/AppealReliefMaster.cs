@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace DigitalNagrik.Models
+{
+    public class AppealReliefMaster
+    {
+        public string ReliefId { get; set; }
+        public string ReliefTitle { get; set; }
+    }
+}

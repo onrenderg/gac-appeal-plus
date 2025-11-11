@@ -1,0 +1,144 @@
+﻿@using DigitalNagrik.Models
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutSubjectExpert.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<link href="@Url.Content("~/assets/alertifyjs/css/alertify.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/alertifyjs/alertify.min.js")"></script>
+<script>
+    let config = { colors: { primary: '#696cff', secondary: '#8592a3', success: '#71dd37', info: '#03c3ec', warning: '#ffab00', danger: '#ff3e1d', dark: '#233446', black: '#000', white: '#fff', body: '#f4f5fb', headingColor: '#566a7f', axisColor: '#a1acb8', borderColor: '#eceef1' } };
+
+    let cardColor, headingColor, axisColor, shadeColor, borderColor;
+    cardColor = config.colors.white;
+    headingColor = config.colors.headingColor;
+    axisColor = config.colors.axisColor;
+    borderColor = config.colors.borderColor;
+
+    function RenderGACPie(_containerId, _labels, _data) {
+        var ChartOptions = {
+            chart: { height: 240, type: 'pie' },
+            labels: _labels,
+            series: _data,
+            colors: [config.colors.primary, config.colors.success, config.colors.info, config.colors.warning],
+            stroke: { width: 10 },
+            dataLabels: { enabled: true, formatter: function (val, opt) { return parseInt(val); } },
+            legend: { show: true },
+            grid: { padding: { top: 0, bottom: 0 } },
+            plotOptions: {}
+        };
+        var Chart = new ApexCharts(document.querySelector('#' + _containerId), ChartOptions); Chart.render();
+    }
+</script>
+<style>
+    .highcharts-drilldown-axis-label {
+        font-weight: normal !important;
+        text-decoration: none !important;
+    }
+
+    .highcharts-data-label text, .highcharts-drilldown-data-label text {
+        text-decoration: none !important;
+        font-weight: normal !important;
+        color: red !important;
+    }
+
+    .font-lg {
+        font-size: 14px;
+    }
+
+    .font-md {
+        font-size: 13px;
+    }
+
+    .font-sm {
+        font-size: 12px;
+    }
+
+    .font-xs {
+        font-size: 11px;
+    }
+
+    .font-xxs {
+        font-size: 10px;
+    }
+
+    .text-orange {
+        color: #ed9943;
+    }
+
+    .spinner-border-xs {
+        width: 0.8rem;
+        height: 0.8rem;
+        border-width: 0.1em;
+    }
+</style>
+<style>
+    .min-vh-50 {
+        min-height: 80vh !important;
+    }
+</style>
+<div class="container-fluid flex-grow-1 px-3 pt-3 pb-0 min-vh-50">
+    <h3 class="fw-bold py-2 mb-0">
+        <i class="bi bi-speedometer me-2"></i> @LabelDictionary["SubjectExpertDashboard"]
+    </h3>
+    <hr class="mt-2 mb-3" />
+    <div class="row gx-3">
+        @{ Html.RenderAction("Statistics_PV", "SubjectExpert", new { Area = "SubjectExpert" }); }
+    </div>
+    <div class="row gx-3">
+        <div class="gv-container-action-form">
+            @{ Html.RenderAction("ListofAppeals", "SubjectExpert", new { Area = "SubjectExpert" }); }
+        </div>
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(Convert.ToString(TempData["Status"])))
+{
+    string AlertFlag = Convert.ToString(TempData["Status"]);
+    string AlertMessage = !string.IsNullOrWhiteSpace(Convert.ToString(TempData["Status_Msg"])) ? Convert.ToString(TempData["Status_Msg"]) : string.Empty;
+    string AlertType = !string.IsNullOrWhiteSpace(Convert.ToString(TempData["Status_Type"])) ? Convert.ToString(TempData["Status_Type"]) : string.Empty;
+    string IconClass = "bx-check-circle";
+    switch (AlertFlag)
+    {
+        case "S":
+            AlertMessage = "Successfully Saved"; AlertType = "success";
+            break;
+        case "U":
+            AlertMessage = "Successfully Updated"; AlertType = "success";
+            break;
+        case "D":
+            AlertMessage = "Successfully Deleted"; AlertType = "success";
+            break;
+        case "O":
+            IconClass = "bx-info-circle";
+            break;
+        default:
+            IconClass = "bx-x-circle";
+            AlertMessage = "Failed to process your request. Please contact your administrator if problem persists"; AlertType = "error"; IconClass = "bx-x-circle";
+            break;
+    }
+    if (!string.IsNullOrEmpty(AlertMessage) && !string.IsNullOrEmpty(AlertType))
+    {
+        <script type="text/javascript">
+                $(function () {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='bx @IconClass me-1'></i> @AlertMessage </div>", "@AlertType", 5, function () { });
+                });
+        </script>
+    }
+}
+@if (!string.IsNullOrEmpty(Convert.ToString(TempData["AlertStatus"])))
+{
+    BALCommon.CustomClientAlerts Alert = (BALCommon.CustomClientAlerts)TempData["AlertStatus"]; TempData["AlertStatus"] = null;
+    <script type="text/javascript">
+            $(function () { alertify.alert("<h5 class='m-0'><i class='bx @Alert.AlertIcon @Alert.AlertColor me-1'></i> @Alert.AlertTitle</h5>", "@Html.Raw(Alert.AlertMessage)", function () { }); });
+    </script>
+}
+<script>
+    var _AppealActionFormContainer = $(".gv-container-action-form");
+    var _FormLoadHtml_Grid = '<div class="px-4 py-3 font-sm text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">@LabelDictionary["FetchingData"]</span></div><br>@LabelDictionary["FetchingData"]</div>';
+
+    function ViewAppeals(element) {
+        var URL = element.data("url"); var ActionContainer;
+        ActionContainer = _AppealActionFormContainer; _AppealModalActionFormContainer.html(_FormLoadHtml_Grid); ActionContainer.html(_FormLoadHtml_Grid);
+        setTimeout(function () { $.ajax({ url: URL, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { ActionContainer.html(data); } } }); }, 400);
+    }
+</script>

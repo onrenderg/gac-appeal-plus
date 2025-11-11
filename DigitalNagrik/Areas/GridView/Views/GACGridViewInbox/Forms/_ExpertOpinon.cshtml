@@ -1,0 +1,145 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACAppealExpertOpinion
+@{
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+}
+
+<div class="modal-header pt-3">
+    <h4 class="modal-title">@LabelDictionary["SeekAssistancefromSubjectExpert"] (<span class="h5">@LabelDictionary["AppealNumber"]: </span><span>@Model.GrievanceId/@Model.RegistrationYear</span>)</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<hr class="mb-0 mt-2" />
+@using (Html.BeginForm("GACExpertOpinonInput", "GACGridViewInbox", FormMethod.Post, new { @class = "frmGACExpertOpinonInput" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(x => x.GrievanceId)
+    @Html.HiddenFor(x => x.RegistrationYear)
+    @Html.HiddenFor(x => x.ExpertUserId, new { id = "txtExpertUserId" })
+
+    <div class="modal-body pb-0 pt-3 px-4">
+        <div class="row gx-3">
+            <div class="col-xl-6">
+                <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["ExpertDetails/Query"]</div>
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <label class="form-label">@LabelDictionary["SubjectExpert"] <span class="text-danger">*</span></label>
+                        <span id="lblExpertNm" class="form-control" data-bs-toggle="dropdown" aria-expanded="false">@LabelDictionary["SelectSubjectExpert"]</span>
+                        <div class="dropdown-menu py-2">
+                            <div class="px-3">
+                                <div class="alert alert-warning font-lg py-2 fw-semibold">
+                                    @LabelDictionary["IncasethenameofSubjectExpertdoesnotappearinthelistbelow"], <a class="btn btn-primary btn-sm mx-1" href="javascript:void(0);" onclick="EnterExpert()">@LabelDictionary["clickhere"]</a> @LabelDictionary["toaddanewsubjectexpert"]
+                                </div>
+                            </div>
+                            <div class="px-3 mb-2"><input type="text" id="GVSearchSubjectExpert" name="GVSearchSubjectExpert" class="form-control" placeholder="Search Subject Expert" /></div>
+                            <div style="max-height:280px" class="overflow-auto">
+                                <ul class="ps-0 mb-0" style="list-style:none">
+                                    @if (Model.ExpertUserList != null && Model.ExpertUserList.Count() > 0)
+                                    {
+
+                                        foreach (var Expert in Model.ExpertUserList)
+                                        {
+                                            <li><a href="javascript:void(0);" data-nm="@Expert.ExpertUserNm" data-areaexp="@Expert.AreaOfExpertise" data-exemail="@Expert.EmailId" data-exmobile="@Expert.MobileNo" data-id="@Expert.ExpertUserId" onclick="SelectExpert($(this));" class="dropdown-item searchable-expert">@Expert.ExpertUserNm (@Expert.MobileNo)</a></li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(x => x.ExpertUserId)
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label class="form-label">@LabelDictionary["NameofExpert"] <span class="text-danger">*</span></label>
+                        @Html.TextBoxFor(x => x.ExpertName, new { placeholder = LabelDictionary["NameofExpert"], @class = "form-control text-uppercase gv-field-expert-info", maxlength = "100", disabled = "disabled" })
+                        @Html.ValidationMessageFor(x => x.ExpertName)
+                    </div>
+
+
+                    <div class="col-12 mb-3">
+                        <label class="form-label">@LabelDictionary["AreaofExpertise"] <span class="text-danger">*</span></label>
+                        @Html.TextAreaFor(x => x.AreaOfExpertise, new { placeholder = LabelDictionary["AreaofExpertise"], @class = "form-control gv-field-expert-info", maxlength = "500", disabled = "disabled" })
+                        @Html.ValidationMessageFor(x => x.AreaOfExpertise)
+                    </div>
+
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">@LabelDictionary["EmailofExpert"] <span class="text-danger">*</span></label>
+                        @Html.TextBoxFor(x => x.ExpertEmail, new { placeholder = LabelDictionary["EmailofExpert"], @class = "form-control gv-field-expert-info", maxlength = "100", disabled = "disabled" })
+                        @Html.ValidationMessageFor(x => x.ExpertEmail)
+                    </div>
+
+                    <div class="col-lg-6 mb-3">
+                        <label class="form-label">@LabelDictionary["ExpertMobile"] <span class="text-danger">*</span></label>
+                        @Html.TextBoxFor(x => x.ExpertMobile, new { placeholder = LabelDictionary["ExpertMobile"], @class = "form-control gv-field-expert-info", maxlength = "10", disabled = "disabled" })
+                        @Html.ValidationMessageFor(x => x.ExpertMobile)
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label class="form-label">@LabelDictionary["Query"]</label> <span class="font-sm ms-1">(@LabelDictionary["Max.characters"]: 1000)</span><span class="text-danger">*</span>
+                        @Html.TextAreaFor(x => x.SeekRemarks, new { placeholder = LabelDictionary["Query"], @class = "form-control", rows = 3, maxlength = "2000" })
+                        @Html.ValidationMessageFor(x => x.SeekRemarks)
+                    </div>
+                    <div class="col-12 mb-3">
+                        <hr class="mt-0" />
+                        <button type="button" class="btn btn-success" onclick="Submit($(this))">@LabelDictionary["Submit"]</button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@LabelDictionary["Close"]</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-xl-6">
+                <div class="bg-white gv-container-comparison-doc"></div>
+
+                <div class="mb-2 ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["AppealDetails"]</div>
+                    <div style="height:230px" class="overflow-auto">
+                        @{ Html.RenderAction("GetAppealDetailsGrid_PV", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+                <hr />
+                <div class="ps-0 ps-xl-1">
+                    <div class="px-3 py-2 bg-primary mb-2 text-white">@LabelDictionary["RespondentIntermediaryResponse"]</div>
+                    <div style="height:330px" class="overflow-auto">
+                        @{ Html.RenderAction("IntermediaryResponseView", "GACGridViewInbox", new { Area = "GridView", qs = SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Model.RegistrationYear + "&GrievanceId=" + Model.GrievanceId) }); }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    $.validator.unobtrusive.parse($(".frmGACExpertOpinonInput"));
+    $(".frmGACExpertOpinonInput").validate().settings.ignore = "";
+
+    function SelectExpert(element) {
+        var Id = element.data("id"); var Nm = element.data("nm");
+        $("#txtExpertUserId").val(Id); $("#lblExpertNm").html(Nm);
+        $("#ExpertMobile").val(element.data("exmobile")); $("#ExpertEmail").val(element.data("exemail")); $("#ExpertName").val(Nm); $("#AreaOfExpertise").val(element.data("areaexp"));
+        $(".gv-field-expert-info").attr("disabled", "disabled");
+        $("#txtExpertUserId").rules("add", { required: true, messages: { required: "Mandatory Field!" } });
+    }
+
+
+    function EnterExpert() {
+        $(".gv-field-expert-info").removeAttr("disabled");
+        $("#txtExpertUserId").val(''); $("#lblExpertNm").html('@LabelDictionary["EnterExpertDetailsbeloworClicktoselectExpertfromList"]');
+        $("#ExpertMobile").val(''); $("#ExpertEmail").val(''); $("#ExpertName").val(''); $("#AreaOfExpertise").val('');
+        $("#txtExpertUserId").rules("remove", "required");
+    }
+
+    $(document).on("keyup paste", "#GVSearchSubjectExpert", function () {
+        var SearchText = $.trim($(this).val().toLowerCase());
+        if (SearchText !== "" && SearchText.length >= 2) {
+            $(".searchable-expert").filter(function (e, i) {
+                if ($(this).text().toLowerCase().indexOf(SearchText) > -1) {
+                    $(this).toggle(true); $(this).removeHighlight().highlight(SearchText);
+                }
+                else {
+                    $(this).toggle(false); $(this).removeHighlight();
+                }
+            });
+        }
+        else {
+            $('.searchable-expert').removeHighlight(); $(".searchable-expert").filter(function (e, i) { $(this).toggle(true); });
+        }
+    });
+</script>

@@ -1,0 +1,222 @@
+﻿@using DigitalNagrik.Models
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_LayoutIntermediary.cshtml";
+    List<SelectListItem> Notifications = ViewBag.Notifications;
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<link href="@Url.Content("~/assets/alertifyjs/css/alertify.min.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/alertifyjs/alertify.min.js")"></script>
+<script>
+    let config = { colors: { primary: '#696cff', secondary: '#8592a3', success: '#71dd37', info: '#03c3ec', warning: '#ffab00', danger: '#ff3e1d', dark: '#233446', black: '#000', white: '#fff', body: '#f4f5fb', headingColor: '#566a7f', axisColor: '#a1acb8', borderColor: '#eceef1' } };
+
+    let cardColor, headingColor, axisColor, shadeColor, borderColor;
+    cardColor = config.colors.white;
+    headingColor = config.colors.headingColor;
+    axisColor = config.colors.axisColor;
+    borderColor = config.colors.borderColor;
+
+    function RenderGACPie(_containerId, _labels, _data) {
+        var ChartOptions = {
+            chart: { height: 240, type: 'pie' },
+            labels: _labels,
+            series: _data,
+            colors: [config.colors.primary, config.colors.success, config.colors.info, config.colors.warning],
+            stroke: { width: 10 },
+            dataLabels: { enabled: true, formatter: function (val, opt) { return parseInt(val); } },
+            legend: { show: true },
+            grid: { padding: { top: 0, bottom: 0 } },
+            plotOptions: {}
+        };
+        var Chart = new ApexCharts(document.querySelector('#' + _containerId), ChartOptions); Chart.render();
+    }
+</script>
+<style>
+    .highcharts-drilldown-axis-label {
+        font-weight: normal !important;
+        text-decoration: none !important;
+    }
+
+    .highcharts-data-label text, .highcharts-drilldown-data-label text {
+        text-decoration: none !important;
+        font-weight: normal !important;
+        color: red !important;
+    }
+
+    .font-lg {
+        font-size: 14px;
+    }
+
+    .font-md {
+        font-size: 13px;
+    }
+
+    .font-sm {
+        font-size: 12px;
+    }
+
+    .font-xs {
+        font-size: 11px;
+    }
+
+    .font-xxs {
+        font-size: 10px;
+    }
+
+    .text-orange {
+        color: #ed9943;
+    }
+
+    .spinner-border-xs {
+        width: 0.8rem;
+        height: 0.8rem;
+        border-width: 0.1em;
+    }
+</style>
+<style>
+    .min-vh-50 {
+        min-height: 80vh !important;
+    }
+</style>
+<div class="container-fluid flex-grow-1 px-3 pt-3 pb-0 min-vh-50">
+    <div class="row py-2 mb-0">
+        <div class="col-lg-3 h3 mb-1 fw-bold">
+            <i class="bi bi-speedometer me-2"></i>@LabelDictionary["RespondentDashboard"]
+        </div>
+        <div class="col-lg-6 h2 mb-1 text-center fw-bold">
+            <span style="color: red; text-decoration:underline;">@DigitalNagrik.Models.UserSession.IntermediaryTitle</span>
+        </div>
+        <div class="col-lg-3">
+            <span class="d-block d-lg-inline-block float-lg-end">
+                <button class="d-none d-lg-inline-block btn btn-light mt-1" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-bell text-danger"></i>
+                </button>
+                <ul class="dropdown-menu py-2">
+                    @if (Notifications != null && Notifications.Count > 0)
+                    {
+                        foreach (var NotificationList in Notifications)
+                        {
+                            <li><a class="dropdown-item item-remove" href="javascript:void(0);" title="Delete Notification" id="li_@NotificationList.Value" data-li="li_@NotificationList.Value" onclick="DeleteNotification($(this))" data-url="@Url.Action("DeleteNotification" , "GACGridViewInbox",new {Area="GridView",qs = SecureQueryString.SecureQueryString.Encrypt("NotificationId=" + NotificationList.Value + "&IsSingle=Y") })"><i class="fa fa-trash text-danger text-end me-1"></i> @NotificationList.Text </a></li>
+                        }
+                        <li class="text-center"><a class="dropdown-item text-danger item-remove" href="javascript:void(0);" title="Delete Notification" data-li="li_0" onclick="DeleteNotification($(this))" data-url="@Url.Action("DeleteNotification" , "GACGridViewInbox",new {Area="GridView",qs = SecureQueryString.SecureQueryString.Encrypt("NotificationId=" + 0 + "&IsSingle=N") })"><i class="fa fa-trash text-danger me-1"></i>Clear All  </a></li>
+                    }
+                    else
+                    {
+                        <li class="text-center"><a class="dropdown-item text-primary" href="javascript:void(0);"><i class="fa fa-newspaper text-primary me-1"></i>No New Notification(s) </a></li>
+                    }
+                </ul>
+                <a class="btn btn-primary" href="javascript:void(0);" title="Edit Respondent Intermediary" data-url="@Url.Action("AddUpdateIntermediaryShowPopUp", "IntermediaryDashboard", new { Area = "Intermediary", qs=SecureQueryString.SecureQueryString.Encrypt("IntermediaryId="+@UserSession.IntermediaryId +"&Type="+"E") })" onclick="NewAction($(this))"><i class="bx bx-user me-2 align-text-bottom"></i>@LabelDictionary["EditProfile"]</a>
+                <a class="btn btn-info" title="Set/ Edit Password" href="@Url.Action("ChangePassword", "IntermediaryDashboard", new { Area = "Intermediary" })"><i class="bx bx-key me-2 align-text-bottom"></i>@LabelDictionary["SetPassword"]</a>
+            </span>
+        </div>
+    </div>
+    <hr class="mt-2 mb-3" />
+    <div class="row gx-3">
+        @{ Html.RenderAction("Statistics_PV", "IntermediaryDashboard", new { Area = "Intermediary" }); }
+    </div>
+    <div class="row gx-3">
+        <div class="gv-container-action-form">
+            @{ Html.RenderAction("ListofAppeals", "IntermediaryDashboard", new { Area = "Intermediary" }); }
+        </div>
+    </div>
+</div>
+
+
+
+@if (!string.IsNullOrEmpty(Convert.ToString(TempData["Status"])))
+{
+    string AlertFlag = Convert.ToString(TempData["Status"]);
+    string AlertMessage = !string.IsNullOrWhiteSpace(Convert.ToString(TempData["Status_Msg"])) ? Convert.ToString(TempData["Status_Msg"]) : string.Empty;
+    string AlertType = !string.IsNullOrWhiteSpace(Convert.ToString(TempData["Status_Type"])) ? Convert.ToString(TempData["Status_Type"]) : string.Empty;
+    string IconClass = "bx-check-circle";
+    switch (AlertFlag)
+    {
+        case "S":
+            AlertMessage = "Successfully Saved"; AlertType = "success";
+            break;
+        case "U":
+            AlertMessage = "Successfully Updated"; AlertType = "success";
+            break;
+        case "D":
+            AlertMessage = "Successfully Deleted"; AlertType = "success";
+            break;
+        case "O":
+            IconClass = "bx-info-circle";
+            break;
+        default:
+            IconClass = "bx-x-circle";
+            AlertMessage = "Failed to process your request. Please contact your administrator if problem persists"; AlertType = "error"; IconClass = "bx-x-circle";
+            break;
+    }
+    if (!string.IsNullOrEmpty(AlertMessage) && !string.IsNullOrEmpty(AlertType))
+    {
+        <script type="text/javascript">
+                $(function () {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='bx @IconClass me-1'></i> @AlertMessage </div>", "@AlertType", 5, function () { });
+                });
+        </script>
+    }
+}
+@if (!string.IsNullOrEmpty(Convert.ToString(TempData["AlertStatus"])))
+{
+    BALCommon.CustomClientAlerts Alert = (BALCommon.CustomClientAlerts)TempData["AlertStatus"]; TempData["AlertStatus"] = null;
+    <script type="text/javascript">
+            $(function () { alertify.alert("<h5 class='m-0'><i class='bx @Alert.AlertIcon @Alert.AlertColor me-1'></i> @Alert.AlertTitle</h5>", "@Html.Raw(Alert.AlertMessage)", function () { }); });
+    </script>
+}
+<script>
+    var _AppealActionFormContainer = $(".gv-container-action-form");
+    var _FormLoadHtml_Grid = '<div class="px-4 py-3 font-sm text-center"><div class="spinner-border spinner-border text-primary" role="status"><span class="visually-hidden">@LabelDictionary["FetchingData"]</span></div><br>@LabelDictionary["FetchingData"]</div>';
+
+    function ViewAppeals(element) {
+        var URL = element.data("url"); var ActionContainer;
+        ActionContainer = _AppealActionFormContainer; _AppealModalActionFormContainer.html(_FormLoadHtml_Grid); ActionContainer.html(_FormLoadHtml_Grid);
+        setTimeout(function () { $.ajax({ url: URL, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { ActionContainer.html(data); } } }); }, 400);
+    }
+   function NewAction(element) {
+        var URL = element.data("url");
+        $.ajax({
+            url: URL,
+            type: "GET", dataType: "HTML",
+            success: function (data) {
+                if (data) { $("#gv-action-modal-content").html('').html(_FormLoadHtml_Modal).html(data); }
+            }
+        }).done(function () { $("#gv-action-modal").modal('toggle'); });
+    }
+</script>
+<script>
+    function DeleteNotification(element) {
+        var URL = element.data("url");
+        var li = element.data("li");
+        $.ajax({
+            url: URL,
+            type: "get",
+            datatype: "json",
+            success: function (data) {
+                if (data.Status == "S") {
+                    //alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-check-circle me-1'></i> Successfully Removed </div>", "success", 5, function () { });
+                    $("#" + li).fadeOut(300, function () {
+                        // After the fadeOut completes, remove the <li> element
+                        $("#" + li).remove();
+                    });
+                }
+                else if (data.Status == "A") {
+                    //alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-check-circle me-1'></i> Successfully Removed </div>", "success", 5, function () { });
+                    $('.item-remove').each(function () {
+                        $(this).fadeOut(300, function () {
+                            // After the fadeOut completes, remove the <li> element
+                            $(this).remove();
+                        });
+
+                    });
+                    var newItem = $('<li class="text-center"><a class="dropdown-item text-primary" href="javascript:void(0);"><i class="fa fa-newspaper text-primary me-1"></i>No New Notification(s) </a></li>');
+                    // Append the new <li> to the list
+                    $('#listNotifications').append(newItem);
+                }
+                else if (data.Status == "F") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-window-close me-1'></i> Error while saving the record </div>", "error", 5, function () { });
+                }
+            }
+        });
+    }
+</script>

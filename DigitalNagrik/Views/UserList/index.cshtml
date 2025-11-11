@@ -1,0 +1,112 @@
+﻿@using System.Data
+@model DigitalNagrik.Models.UserList
+@{
+    ViewBag.Title = "UserList";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+@*<link href=@Url.Content("~/assets/css/jquery.dataTables.min.css") rel="stylesheet" />
+    <script src=@Url.Content("~/assets/js/jquery.datatable.min.js")></script>*@
+
+<link href="@Url.Content("~/assets/DataTables/css/dataTables.bootstrap5.css")" rel="stylesheet" />
+<script src="@Url.Content("~/assets/DataTables/js/jquery.dataTables.min.js")"></script>
+<script src="@Url.Content("~/assets/DataTables/js/dataTables.bootstrap5.min.js")"></script>
+
+<div class="col-lg-12 bg-light">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 style="font-size: 26px; color: black;margin-left:10px; margin-top: 10px;"><i class="bx-user bx"></i>&nbsp;GAC User(s) List</h1>
+        </div>
+        <div class="col-lg-4">
+            <div class="row">
+                <div class="col-12 mt-2">
+                    <a class="btn btn-warning float-end me-2" href='@Url.Action("Index", "AdminDashboard", new {Area="Dashboard"})'>
+                        <i class="bx bx-arrow-back align-middle"></i> Back
+                    </a>
+                    <a href="@Url.Action("AddUser","UserList")" class="btn btn-success float-end me-2"><i class="bx bx-plus-circle"></i> Add User</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="mt-0" />
+    <div class="row p-3">
+        <div class="col-12 overflow-auto">
+            <table id="tableAppList" class="table table-bordered">
+                <thead>
+                    <tr class="table-primary  text-secondary">
+                        <th scope="col">Sl.No</th>
+                        <th scope="col">User ID</th>
+                        <th scope="col">User Name</th>
+                        <th scope="col">Designation</th>
+                        <th scope="col">Mobile No</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Is Active</th>
+
+                        <th class="text-center" scope="col">Action</th>
+
+                    </tr>
+                </thead>
+                <tbody style="font-size:18px;">
+                    @{
+                        int counter = 1;
+                    }
+                    @foreach (var row in Model.UserListDetails)
+                    {
+                        <tr>
+                            <td>@counter</td>
+                            <td>@row.UserId</td>
+                            <td>@row.UserName</td>
+                            <td>@row.Designation</td>
+                            <td>@row.Mobile</td>
+                            <td>@row.RoleName</td>
+                            @*<td>@row.isActive</td>*@
+                            <td>
+                                @if (@row.isActive == "Yes")
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeisActive('@row.UserId', 'N')" role="switch" id="flexisActive" checked>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" onchange="changeisActive('@row.UserId', 'Y')" role="switch" id="flexisActive">
+                                    </div>
+                                }
+
+                            </td>
+                            <td class="text-center">
+                                <a href="@Url.Action("GetUserDetails", "UserList", new { Area = "", qs = SecureQueryString.SecureQueryString.Encrypt("UserID=" + row.UserId) })"><i class="bx bx-edit h4 text-success" style="font-size:22px"></i></a>
+                            </td>
+
+                        </tr>
+                        counter = counter + 1;
+                    }
+                    <script>
+                        $(document).ready(function () {
+                            $("#tableAppList").DataTable()
+                        });
+                    </script>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    function changeisActive(UserID, Command) {
+        $.ajax({
+            url: '@Url.Action("ChangeStatusisActive", "UserList", new { Area = "" })',
+            type: "get",
+            data: { UserID: UserID, Command: Command},
+            datatype: "json",
+            success: function (data) {
+                if (data.Status == "S") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-check-circle me-1'></i> Successfully Saved </div>", "success", 5, function () { });
+                }
+                else if (data.Status=="F") {
+                    alertify.notify("<div class='animated fadeIn m-0'><i class='fa fa-window-close me-1'></i> Error while saving the record </div>", "error", 5, function () { });
+                }
+            }
+        });
+    }
+</script>
+

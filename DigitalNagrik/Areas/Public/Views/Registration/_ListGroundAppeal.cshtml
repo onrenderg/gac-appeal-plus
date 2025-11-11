@@ -1,0 +1,77 @@
+﻿@{ 
+
+    List<DigitalNagrik.Areas.Public.Models.mGroundMaster> AppealGrounds = ViewData["AppealGroundMaster"] as List<DigitalNagrik.Areas.Public.Models.mGroundMaster>;
+}
+<div class="modal modal-xl fade" id="ModalGround" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Choose relevant Ground for Appeal</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mt-1" style="width:100%; overflow-x:auto;" id="ddlGrond">
+                    <table id="cbGroundAppeal" class="table table-striped">
+                        @if (ViewData["AppealGroundMaster"] != null)
+                        {
+                            <thead>
+                                <tr>
+                                    <th>Sr No</th>
+                                    <th>Ground for Appeal</th>
+                                </tr>
+                            </thead>
+                            foreach (var item in AppealGrounds)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.listorder
+                                    </td>
+                                    <td>
+                                        <input id="checkbox_@item.GroundId" type="checkbox" value="@item.GroundId" class="appealCheckBox" />&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span id="title_@item.GroundId" class="appealCheckBox">@item.GroundTitle</span>
+                                        <span id="required_@item.GroundId" style="display:none">@item.EntryRequired</span>
+                                        <span id="fieldLabel_@item.GroundId" style="display:none">@item.EntryFieldLabel</span>
+                                        <br />
+                                        <span id="extractITRule_@item.GroundId" >@Html.Raw(item.ExtractITRule)</span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.appealCheckBox').click(function () {
+        var groundID = $(this).parent().find("input").val();
+        $('#GroundAppealLawText').val("");
+        populateAppealGround(groundID);
+    });
+
+    function populateAppealGround(groundID) {
+        var checkBoxField = "#checkbox_" + groundID;
+        var titleField = "#title_" + groundID;
+        var entryField = "#required_" + groundID;
+        var entryLabelField = "#fieldLabel_" + groundID;
+        var extractITRuleLabelField = "#extractITRule_" + groundID;
+        $("#GroundAppeal").val($(titleField).html());
+        $("#ddlGroundAppeal").val(groundID);
+        $("#dvInformative").html($(extractITRuleLabelField).html());
+        $('.appealCheckBox').prop("checked", false);
+        $(checkBoxField).prop("checked", true);
+        $('#ModalGround').modal('hide');
+        $('#GroundAppealLawText').hide();
+        $('#GroundAppealLawLabel').hide();
+
+        if ($(entryField).html() == "Y") {
+            $('#GroundAppealLawLabel').html($(entryLabelField).html() + '<span class="Mandatory">*</span>');
+            $('#GroundAppealLawText').show();
+            $('#GroundAppealLawLabel').show();
+        }
+    }
+
+</script>

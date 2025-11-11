@@ -1,0 +1,91 @@
+﻿@model DigitalNagrik.Areas.SubjectExpert.Data.Experts
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<style>
+    table, td, th {
+        border: 1px solid #000000;
+        text-align: left;
+        color: black;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        font-family: Calibri !important;
+        color: black;
+        font-size: 15px !important;
+        vertical-align: top;
+    }
+
+    th, td {
+        padding: 10px;
+        font-family: Calibri !important;
+        color: black;
+    }
+
+    div, span {
+        font-family: Calibri !important;
+        font-size: 15px !important;
+        display: block;
+        word-break: break-all;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+</style>
+<link href=@Url.Content("~/assets/vendor/bootstrap/css/bootstrap.min.css") rel="stylesheet" />
+<div class="container-lg" style="font-family: Calibri !important; width: 100% !important">
+    <div class="row">
+        <div class="col-12 text-center" style="text-align:center;padding:0px;">
+            <img id="Header" src="@Server.MapPath("~/assets/img/logo.png")" style="height:100px;" alt="DigitalNagrikHeader" />
+        </div>
+    </div>
+    <div class="col-12 text-center" style="padding: 0px !important; margin-top: 0px !important; ">
+        <h2 class="text-primary" style="text-align:center; padding-top: 5px !important; margin-bottom: 5px !important; margin-top: 17px !important">Expert List</h2>
+    </div>
+    <div class="col-12 text-center" style="padding: 0px !important; margin-top: 0px !important; ">
+        <table class="table table-bordered table-responsive">
+            <tbody>
+                <tr style="font-weight:bold;">
+                    <td width="5%"> <span>@LabelDictionary["Sl.No"]</span></td>
+                    <td> <span>@LabelDictionary["UserName"]</span></td>
+                    <td> <span>@LabelDictionary["Mobile"]</span></td>
+                    <td> <span>@LabelDictionary["EmailID"]</span></td>
+                    <td> <span>@LabelDictionary["AreaofExpertise"]</span></td>
+                </tr>
+                @{
+                    int counter = 1;
+                }
+                @foreach (var row in Model.List)
+                {
+                    <tr>
+                        <td><span>@counter</span></td>
+                        <td>
+                            <span>
+                                @row.UserName
+                            </span>
+                        </td>
+                        <td>
+                            <span>
+                                @row.Mobile
+                            </span>
+                        </td>
+                        <td>
+                            <span>
+                                @row.EmailID
+                            </span>
+                        </td>
+                        <td>
+                            <span>
+                                @row.AreaofExpertise
+                            </span>
+                        </td>                       
+                    </tr>
+                    counter = counter + 1;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

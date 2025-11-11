@@ -1,0 +1,75 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_LayoutPublicCurrent.cshtml";
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+
+}
+<script src=@Url.Content("~/assets/js/sha256.js")></script>
+
+
+<div class="row">
+    <div class="col-xl-8 my-3 my-lg-5 py-lg-5 text-center text-xl-start">
+        @Html.Partial("~/Views/Home/_IndexImageContent.cshtml")
+    </div>
+
+    <div class="col-xl-4 my-3 my-lg-5">
+        <div class="card box-shadow">
+            <div class=" card-header loginpanel text-white   ">
+                <div class="row">
+                    <div class="col-md-12" style="text-align:left ">
+
+                        &nbsp;&nbsp;&nbsp;
+                        <span id="LoginHeaderText" class="fw-bold"> @LabelDictionary["GrievanceAppellateCommitteeLogin"] </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body " id="GACLoginDiv">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">@LabelDictionary["GrievanceAppellateCommitteeLogin"]</div>
+                            <div class="col-md-12" style="text-align:right;"><a id="btnAdminLogin" class="btn btn-loginpanel text-white"><i class="fa fa-lock me-1"></i>@LabelDictionary["SigninwithParichay(SSO)"]</a></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">@LabelDictionary["IncaseyoudonothaveGovernmentemail"],<br /> @LabelDictionary["SignInwithregisteredEmailID"]</div>
+                            <div class="col-md-12" style="text-align:right;"><a href="@Url.Action("GACLogin", "Home", new { Area = "" })" class="btn btn-loginpanel" id="GACLoginFormLink"><i class="fa fa-user me-1"></i>@LabelDictionary["SignInwithEmailID"]</a></div>
+                        </div>
+                        @*<div class="row">
+                                <div class="col-md-12"></div>
+                            </div>*@
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-12">@LabelDictionary["ExpertmembersMobileNumberOTP"]</div>
+                            <div class="col-md-12" style="text-align:right;"><a href="@Url.Action("ExpertMember", "Home", new { Area = "" })" class="btn btn-loginpanel" id="GACExpertLoginFormLink"><i class="fa fa-user me-1"></i>@LabelDictionary["SigninwithMobileNumber"]</a></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-lg-6" style="text-align: center;">
+                <div class="card box-shadow mt-2">
+                    <div class="card-body" style="padding-top: 6px; padding-bottom: 6px; padding-left: 5px; padding-right: 5px;">
+                        <b>@Model.Submitted.Trim()</b><br />@LabelDictionary["AppealsReceived"]
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12 col-lg-6" style="text-align:center;">
+                <div class="card box-shadow mt-2">
+                    <div class="card-body" style="padding-top:6px;padding-bottom:6px; padding-left:5px;padding-right:5px;">
+                        <b>@Model.Disposed.Trim()</b><br />@LabelDictionary["AppealsDisposed"]
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+

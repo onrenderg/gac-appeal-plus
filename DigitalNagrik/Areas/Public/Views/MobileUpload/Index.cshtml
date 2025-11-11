@@ -1,0 +1,77 @@
+﻿@model DigitalNagrik.Areas.Public.Models.UploadDocument
+@{
+    List<DigitalNagrik.Areas.Public.Models.DocumentFileTypeMaster> listtocheck = (List<DigitalNagrik.Areas.Public.Models.DocumentFileTypeMaster>)ViewData["DocumentFileType"];
+    var AppealDocumentType = (string)ViewData["AppealDocumentType"];
+    var sizeinmb = listtocheck.FindAll(x => x.AppealDocumentType == AppealDocumentType).Select(o => o.MaxFileSize).FirstOrDefault();
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    @using (Html.BeginForm("Index", "MobileUpload", FormMethod.Post, new { id = "MobileUpload", enctype = "multipart/form-data" }))
+    {
+        <div class="row">
+            <div class="col-sm-12">
+
+
+                @Html.HiddenFor(m => m.MobileNo)
+                @Html.HiddenFor(m => m.GrievanceID)
+                @Html.HiddenFor(m => m.RegistrationYear)
+                @Html.HiddenFor(m => m.DocumentType)
+
+                <label style="text-align:justify;font-size:14px;font-style :italic  ">
+                    (Max size @sizeinmb MB)
+                </label>
+                <br />
+                @if (listtocheck != null)
+                {
+                    int count = 1;
+                    string fileext = "";
+                    string[] validExtension = (string[])listtocheck.FindAll(x => x.AppealDocumentType == AppealDocumentType).Select(o => o.FileExtension).ToArray();
+                    foreach (string ext in validExtension)
+                    {
+                        if (count != validExtension.Length)
+                        {
+                            fileext = fileext + ext + ",";
+                        }
+                        else
+                        {
+                            fileext = fileext + ext;
+                        }
+                        count++;
+                    }
+                    <label style="text-align:justify;font-size:13px;font-style :italic  ">
+                        @fileext.ToUpper()
+                    </label>
+                    @Html.TextBoxFor(m => m.fileUpload, new { @class = "form-control", type = "file" })
+                    @Html.ValidationMessageFor(m => m.fileUpload, "", new { @class = "text-danger" })
+                }
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn  btn-secondary btn-block" data-bs-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-success btn-block " value="Upload" id="btnCorresMadeUpload" />
+            </div>
+        </div>
+    }
+    <script>
+
+    $('#fileUpload').on('change', function () {
+
+        var filesize = @sizeinmb * 1024 * 1024;
+        console.log(filesize);
+        if (this.files[0].size > filesize) {
+            $('#fileUpload').val("");
+            alertify.error("Max file size is "+@sizeinmb+"MB is allowed");
+        }
+    });
+    </script>
+</body>
+
+</html>

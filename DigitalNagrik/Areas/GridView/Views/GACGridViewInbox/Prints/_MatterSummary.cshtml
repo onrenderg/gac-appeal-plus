@@ -1,0 +1,54 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACAppealMatterSummary
+@using DigitalNagrik.Areas.GridView.Data
+@{
+    string IsDraft = ViewBag.IsDraft;
+}
+
+@if (IsDraft == "Y")
+{
+    <style>
+        #background {
+            position: absolute;
+            display: block;
+            min-width: 100%;
+            opacity: 0.5;
+            text-align: right;
+            background-color: transparent;
+            padding-top: 22%;
+        }
+
+        #bg-text {
+            color: lightgrey;
+            font-size: 150px !important;
+            opacity: 0.9;
+            filter: alpha(opacity=50);
+            background-color: transparent;
+        }
+    </style>
+
+    <div id="background">
+        <p id="bg-text">DRAFT</p>
+    </div>
+}
+@if (IsDraft != "F")
+{
+    <style>
+        table, div, p, span {
+            font-size: 20px !important;
+            font-family: Calibri !important;
+        }
+    </style>
+    @*<div style="text-align:center">
+        <img id="Header" src="@Server.MapPath("~/assets/img/logo_gac.jpg")" style="height: 120px;"/>
+    </div>*@
+}
+<div>
+    @Html.Raw(Model.Summary)
+
+    @if (IsDraft == "Y" || IsDraft == "F")
+    {
+        <div><b>Observation</b>:</div>
+        <div>@Model.ObservationText</div>
+    }
+</div>
+

@@ -1,0 +1,258 @@
+﻿@model DigitalNagrik.Areas.GridView.Data.GACGridViewInbox_Appeal
+@using DigitalNagrik.Models
+@using DigitalNagrik.Areas.GridView.Data
+<script src="@Url.Content("~/assets/js/search-highlight.min.js")"></script>
+@{
+    int Count = Model.AppealList.Where(x => !string.IsNullOrEmpty(x.GrievanceId)).Count();
+    Dictionary<string, string> LabelDictionary = ViewBag.LabelDictionary as Dictionary<string, string>;
+    var IconClassDanger = "bg-danger";
+    var IconClassSuccess = "bg-success";
+}
+<style>
+    .highlight {
+        background-color: #fff1a5;
+    }
+
+    .gv-link-grievance {
+        border: 1px solid #ececec;
+        border-left: 4px solid #ececec;
+    }
+
+        .gv-link-grievance.active {
+            border: 1px solid #f1e7ff;
+            border-left: 4px solid #a981e3;
+            background: #f9f5ff;
+        }
+
+        .gv-link-grievance:hover {
+            border: 1px solid #f1e7ff;
+            border-left: 4px solid #a981e3;
+            background: #f9f5ff;
+        }
+
+    .accordion-button::after {
+        background-size: 0.6rem;
+        opacity: 0.5;
+    }
+</style>
+
+<div class="m-0 px-3 pt-3 pb-2 h4">
+    <div class="row">
+        <div class="col-lg-8">
+            @switch (Model.MenuStatusCd)
+            {
+                case GACGridViewInbox.MenuStatus.All:
+                    <span>@LabelDictionary["Inbox"] (@LabelDictionary["AllAppeals"])</span>
+                    <script>
+                $(function () { $(".gv_labelcount_inbox").html('@Count'); });
+                    </script>
+                    break;
+                case GACGridViewInbox.MenuStatus.Inbox:
+                    <span>@LabelDictionary["Inbox"] (@LabelDictionary["NewAppeals"])</span>
+                    <script>
+                $(function () { $(".gv_labelcount_inbox").html('@Count'); });
+                    </script>
+                    break;
+                case GACGridViewInbox.MenuStatus.PendingInDays:
+                    @(Model.MenuNm) <span class="ms-1">@Model.Days @LabelDictionary["day(s)"]</span>
+                    <script>
+                        $(function () { $(".gv_labelcount_pendingdays").html('@Count'); });
+                    </script>
+                    break;
+                default:
+                    @(Model.MenuNm)
+                    break;
+            }
+        </div>
+        <div class="col-lg-4">
+            <form class="d-lg-inline mt-2 mt-lg-0 frmSearchAppeal" method="post">
+                <span class="d-lg-inline-block float-lg-end mt-lg-n2" style="white-space:nowrap">
+                    <input type="hidden" name="qs" value="@SecureQueryString.SecureQueryString.Encrypt("MenuStatusCd=" + Model.MenuStatusCd + "&IsDateGroup=" + Model.IsDateGroup)" />
+                    <input type="hidden" name="Days" value="@Model.Days" />
+                    <input type="text" class="form-control d-inline-block" data-val="true" data-val-required="Mandatory Field!" maxlength="50" id="txtSearchText" name="SearchText" placeholder="@LabelDictionary["SearchAppeals"]" style="width:150px" value="@Model.SearchText" />
+                    <a href="javascript:void(0);" onclick="SearchAppeals($(this))" class="btn btn-info btn-sm px-1"><i class="bx bx-search align-middle"></i></a>
+                    @if (!string.IsNullOrWhiteSpace(Model.SearchText))
+                    {
+                        <a href="javascript:void(0);" data-qs="@SecureQueryString.SecureQueryString.Encrypt("MenuStatusCd=" + Model.MenuStatusCd + "&IsDateGroup=" + Model.IsDateGroup)" onclick="RenderGVAppealListData($(this))" title="@LabelDictionary["RemoveSearch"]" class="btn btn-secondary btn-sm px-1"><i class="bx bx-x align-middle"></i></a>
+                    }
+                </span>
+            </form>
+        </div>
+    </div>
+</div>
+<hr class="m-0" />
+<div class="overflow-auto" style="height:630px">
+    @if (Model.AppealList != null && Model.AppealList.Count > 0)
+    {
+        if (Model.IsDateGroup == "Y")
+        {
+            int DayDescGroups_Counter = 0;
+            var DayDescGroups = Model.AppealList.GroupBy(x => x.DayDesc);
+
+            <div class="accordion mt-1" id="accordion-gv-daydesc">
+                @foreach (var DayDescGroup in DayDescGroups)
+                {
+                    ++DayDescGroups_Counter;
+                    bool IsLast = DayDescGroups_Counter == DayDescGroups.Count() && (Model.MenuStatusCd == GACGridViewInbox.MenuStatus.Inbox);
+                    string DayRange = DayDescGroup.FirstOrDefault().DayRange;
+                    int DayDescGroup_Count = DayDescGroup.Where(x => !string.IsNullOrWhiteSpace(x.GrievanceId)).Count();
+                    <div class="accordion-button cursor-pointer font-xxxl @(DayDescGroups_Counter != 1 ? "collapsed" : "") px-3" data-bs-toggle="collapse" data-bs-target="#accordion-gv-content-@(DayDescGroup.Key.Replace(" ", ""))" aria-expanded="false" aria-controls="accordionOne">
+                        <span class="fw-semibold">@(DayDescGroup.Key)</span> <span class="text-muted ms-2 mt-1">@DayRange</span>
+                        @if (DayDescGroup_Count != 0)
+                        {
+                            <span class="badge rounded-pill bg-label-danger ms-2 font-xl text-lowercase">@DayDescGroup_Count</span>
+                        }
+                    </div>
+                    <div id="accordion-gv-content-@(DayDescGroup.Key.Replace(" ", ""))" class="px-3 accordion-collapse @(DayDescGroups_Counter != 1 ? "collapse" : "collapse show")" data-bs-parent="#accordion-gv-daydesc">
+                        <ul class="list-unstyled">
+                            @if (DayDescGroup_Count > 0)
+                            {
+                                foreach (var Appeal in DayDescGroup)
+                                {
+                                    <li style="line-height: 1.35rem;" data-bs-toggle="offcanvas" data-bs-target="#gv-offcanvas-appealdetails" id="gv-link-grievance-@(Appeal.RegistrationYear)@(Appeal.GrievanceId)" class="position-relative font-xxxl mb-2 py-2 px-3 rounded-2 cursor-pointer gv-link-grievance" data-qs="@SecureQueryString.SecureQueryString.Encrypt("RegistrationYear=" + Appeal.RegistrationYear + "&GrievanceId=" + Appeal.GrievanceId)">
+                                        @if (Appeal.IntermediaryResponseNeeded == "N")
+                                        {
+                                            <div class="text-danger font-xl" title="@Appeal.GroundTitle"><i class="bx bx-error me-1 align-text-bottom text-danger"></i>@LabelDictionary["ThisAppealisundersection"] @Appeal.CorrespondingITRule</div>
+                                        }
+                                        <div class="row">
+                                            <div class="col-lg-8 order-1">
+                                                <span class="font-xxl">@LabelDictionary["AppealNumber"]:</span> <span class="fw-semibold">@Appeal.GrievanceNo</span> <span class="mx-1 text-muted">|</span> <span title="@LabelDictionary["ReceiptDate"]">@Appeal.ReceiptDate</span> <span class="mx-1 text-muted">|</span> <span class="font-xxl">@LabelDictionary["Appellant"]:</span> <span class="fw-semibold">@Appeal.AppellantNm</span>
+                                                <div><span class="font-xxl">@LabelDictionary["RespondentIntermediary"]:</span> <span class="fw-semibold">@Appeal.IntermediaryTitle</span></div>
+                                            </div>
+                                            <div class="col-lg-4 text-start text-lg-end order-3 order-lg-2 font-xl" style="line-height:1.1rem;">
+                                                @if (Appeal.GrievanceStatusCd == GACGridViewInbox.GrievanceStatus.UnapprovedIntermediary)
+                                                {
+                                                    <div class="text-danger"><i class="bx bx-message-alt-error align-text-bottom me-1"></i>@LabelDictionary["RespondentIntermediaryVerificationPending"]</div>
+                                                }
+                                                else
+                                                {
+                                                    switch (Appeal.GrievanceActionId)
+                                                    {
+                                                        case GACGridViewInbox.AppealAction.AssignedToGAC:
+                                                            if (Appeal.IsIntermediaryReply == "N")
+                                                            {
+                                                                if (Appeal.Is72Hrs == "Y")
+                                                                {
+                                                                    <span class="text-danger"><i class="bx bx-calendar-exclamation me-1 text-danger align-text-bottom"></i>@LabelDictionary["Noresponsein96hrs."]</span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="text-danger"><i class="bx bx-calendar-exclamation align-text-bottom me-1"></i>@LabelDictionary["RespondentIntermediaryResponseAwaited"]</div>
+                                                                    <div>@LabelDictionary["TimeLeft"]: <span class="fw-semibold">@Html.Raw(BALCommon.ConvertMinToDHM(Appeal.IntermediaryReplyPendingForMins))</span></div>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Appeal.DraftMatterSummaryPrepared == "Y")
+                                                                {
+                                                                    <div><i class="bx bx-edit-alt me-1 align-text-bottom text-warning "></i>Draft Summary Prepared</div>
+                                                                    <div>@LabelDictionary["Date"]: <span class="fw-semibold">@Appeal.DraftMatterSummaryPreparedDt</span></div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div><i class="bx bx-check-circle me-1 align-text-bottom text-success "></i>@LabelDictionary["RespondentIntermediaryResponseReceived"]</div>
+                                                                    <div>@LabelDictionary["Date"]: <span class="fw-semibold">@Appeal.IntermediaryReplyDt</span></div>
+                                                                }
+
+                                                            }
+                                                            break;
+                                                        case GACGridViewInbox.AppealAction.ReassignGAC:
+                                                            <div><i class="bx bx-transfer me-1 align-text-bottom text-info "></i>@LabelDictionary["AppealTransferred"]</div>
+                                                            <div>@LabelDictionary["FromGAC"]: <span class="fw-semibold">@Appeal.TransferFromGAC</span></div>
+                                                            break;
+                                                        case GACGridViewInbox.AppealAction.Reject:
+                                                            <div class="text-danger"><i class="bx bx-message-x me-1 align-text-bottom "></i>@LabelDictionary["NotAdmitted"]</div>
+                                                            break;
+                                                        case GACGridViewInbox.AppealAction.PrepareSummary:
+
+                                                            if (Appeal.IsChairpersonDecision == "Y")
+                                                            {
+                                                                <div><i class="bx bxs-check-circle me-1 align-text-bottom text-success "></i>@LabelDictionary["DecisiongivenbyChairperson"]</div>
+                                                                <div>@LabelDictionary["Date"]: <span class="fw-semibold">@Appeal.ChairpersonDecisionDate</span></div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div><i class="bx bx-calendar-exclamation me-1 align-text-bottom text-info "></i>@LabelDictionary["MemberOpinionAwaited"]</div>
+                                                                <div>@LabelDictionary["Agree"]: <span class="fw-semibold">@Appeal.OpinionAgree</span>, @LabelDictionary["Disagree"]: <span class="fw-semibold">@Appeal.OpinionDisagree</span></div>
+                                                            }
+                                                            break;
+                                                        case GACGridViewInbox.AppealAction.DecisionGAC:
+
+                                                            if (!string.IsNullOrWhiteSpace(Appeal.ComplianceDate))
+                                                            {
+                                                                <div><i class="bx bxs-check-circle me-1 align-text-bottom text-success "></i>@LabelDictionary["CaseResolved"]</div>
+                                                                <span>@LabelDictionary["Date"]: </span> <span class="fw-semibold">@Appeal.ComplianceDate</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div><i class="bx bxs-check-circle me-1 align-text-bottom text-success "></i>@LabelDictionary["Disposedof"]</div>
+                                                                <span>@LabelDictionary["Date"]: </span> <span class="fw-semibold">@Appeal.ActionDt</span>
+                                                            }
+
+                                                            break;
+                                                    }
+                                                }
+                                            </div>
+                                            <div class="col-12 order-2 order-lg-3">
+                                                @LabelDictionary["Justification"]: <span class="fw-semibold" title="@Appeal.GrievanceDesc">
+                                                    @if (Appeal.GrievanceDesc.Length > 60)
+                                                    {
+                                                        @(Appeal.GrievanceDesc.Substring(0, 60)) <span class="text-muted fw-light">..</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @Appeal.GrievanceDesc
+                                                    }
+                                                </span>
+                                            </div>
+                                        </div>
+                                        @if (Appeal.GrievanceStatusCd != GACGridViewInbox.GrievanceStatus.Disposed && Appeal.GrievanceStatusCd != GACGridViewInbox.GrievanceStatus.Rejected)
+                                        {
+                                            <div style="position:absolute;bottom:0;right:0;border-radius:0 0 5px 0" class="px-2 font-sm @(Convert.ToInt32(Appeal.DisposeTimeLeft)<=0?IconClassDanger:IconClassSuccess) text-white"> @LabelDictionary["DaysLeftToDispose"]<span style="font-weight:bold;" class="font-lg">@Appeal.DisposeTimeLeft </span></div>
+
+                                        }
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                    if (DayDescGroups_Counter < DayDescGroups.Count())
+                    {
+                        <hr class="m-0" />
+                    }
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <div class="text-center text-muted mt-5">@LabelDictionary["NoAppeals"]<br><img src="~/assets/img/nothingtoshow.svg" alt="" style="width: 120px; height: 120px;"></div>
+    }
+</div>
+
+<script>
+    $('.frmSearchAppeal').removeData("validator").removeData("unobtrusiveValidation"); $.validator.unobtrusive.parse($('.frmSearchAppeal'));
+
+    function SearchAppeals(element) {
+        var form = element.closest('form');
+        if (form.valid()) {
+            _AppealListContainer.html(_LoadHtml); _AppealDetailsContainer.html(_BlankAppealHtml);
+             setTimeout(function () { $.ajax({ url: '@Url.Action("GetAppealList_SearchPV", "GACGridViewInbox", new { Area = "GridView" })' + '?', data: form.serialize(), type: "POST", dataType: "HTML", async: false, success: function (data) { if (data) { _AppealListContainer.html(data); } }, }); }, 400);
+        }
+    }
+
+    function RemoveSearch(element) {
+        var qs = element.data('qs');
+        if (qs) {
+            _AppealListContainer.html(_LoadHtml);
+            setTimeout(function () { $.ajax({ url: '@Url.Action("GetAppealList_PV", "GACGridViewInbox", new { Area = "GridView" })' + '?qs=' + qs, type: "GET", dataType: "HTML", async: false, success: function (data) { if (data) { _AppealListContainer.html(data); } }, }); }, 400);
+        }
+    }
+
+    $(function () {
+        var SearchText = '@Model.SearchText';
+        if (SearchText !== "") {
+            $('.gv-link-grievance').removeHighlight().highlight(SearchText);
+        }
+    });
+</script>

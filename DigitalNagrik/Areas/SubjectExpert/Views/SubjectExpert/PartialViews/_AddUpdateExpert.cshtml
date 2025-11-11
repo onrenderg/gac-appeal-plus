@@ -1,0 +1,82 @@
+﻿@model DigitalNagrik.Areas.SubjectExpert.Data.ExpertsList
+@{
+    Dictionary<string, string> LabelDictionary = ViewData["LabelDictionary"] as Dictionary<string, string>;
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title"><i class="bx bx-user text-primary me-1"></i>@LabelDictionary["Add/UpdateExpert"]</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <hr class="mt-1 mb-1" />
+    <div class="modal-body">
+        @using (Html.BeginForm("SaveExpert", "SubjectExpert", FormMethod.Post, new { id = "frm_SaveExpert", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(x => x.UserID)
+            <div class="row mt-2">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["UserName"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.UserName, new { @id = "UserName", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["UserName"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.UserName)
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["EmailID"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.EmailID, new { @id = "SpecificationLabel", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["EmailID"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.EmailID)
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["Mobile"] </label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(x => x.Mobile, new { @id = "Mobile", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["Mobile"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.Mobile)
+                </div>
+                <div class="col-lg-2">
+                    <label class="custom-input-label">@LabelDictionary["AreaofExpertise"]</label><span class="text-danger"> *</span>
+                </div>
+                <div class="col-lg-4">
+                    @Html.TextAreaFor(x => x.AreaofExpertise, new { @id = "SpecificationLabel", @class = "form-control DisabledInputs", maxlength = "1000", placeholder = @LabelDictionary["AreaofExpertise"], @autocomplete = "off" })
+                    @Html.ValidationMessageFor(x => x.AreaofExpertise)
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-lg-2">
+                    @LabelDictionary["IsActive"]
+                </div>
+                <div class="col-2">
+                    <div class="form-check form-switch">
+                        @if (Model.IsActive == "Y")
+                        {
+                            <input class="form-check-input" type="checkbox" role="switch" id="IsActive" name="IsActive" checked>
+                        }
+                        else
+                        {
+                            <input class="form-check-input" type="checkbox" role="switch" id="IsActive" name="IsActive">
+                        }
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="btnSubmit"><i class="bx-check-circle bx align-middle"></i>&nbsp;@LabelDictionary["Submit"]</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bx bx-x-circle me-1 align-middle"></i>@LabelDictionary["Close"]</button>
+    </div>
+</div>
+
+<script>
+    $('#frm_SaveExpert').removeData("validator").removeData("unobtrusiveValidation");
+    $.validator.unobtrusive.parse($('#frm_SaveExpert'));
+    $("#btnSubmit").click(function () {
+        if ($("#frm_SaveExpert").valid()) {
+            $('#frm_SaveExpert').submit();
+        }
+    });
+</script>

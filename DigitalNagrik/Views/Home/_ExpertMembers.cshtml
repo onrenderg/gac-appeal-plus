@@ -1,0 +1,69 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+<div class="row mt-2" >
+    @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { id = "ExpertMember" }))
+    {
+        @Html.AntiForgeryToken()
+        
+        
+        @Html.HiddenFor(x => x.hdExpertMember)
+
+        @Html.ValidationMessage("ExpertMemberMessage")
+        <div class="mb-2 row">
+            <div class="col-12">
+                <div class="col-md-12 ">
+                    <label class="fw-bold" for="form2Example17">Enter Mobile Number<span class="text-danger">*</span></label>
+                    @Html.TextBoxFor(m => m.ExpertMobile, new { @class = "form-control", @maxlength = "10", @placeholder = "Ten Digit Mobile Number", @OnKeyPress = "return AllowNumericOnly();" })
+                    @Html.ValidationMessageFor(x => x.ExpertMobile)
+                </div>
+            </div>
+        </div>
+       
+        <div class="mb-4 row">
+            <div class="col-12">
+                <label class="custom-input-label mb-1">Captcha<span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text" id="basic-addon1">
+                        <img id="CaptchaImageMExp" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                        <a title="Click to refresh Captcha" onclick="RefreshCaptcha();"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                    </span>
+                    @Html.TextBoxFor(x => x.MExpCaptcha, new {  @class = "form-control DisabledInputs", placeholder = "Enter Captcha", autocomplete = "off", maxlength = "6" })
+                </div>
+                <div id="SpanCaptchaGACValidation">
+                    @Html.ValidationMessageFor(x => x.MExpCaptcha)
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-12 text-center">
+                <button type="button" class="btn btn-primary" id="btnMExpUserSubmit">&nbsp;Send OTP</button>
+            </div>
+        </div>
+
+    }
+</div>
+<script>
+    @*function RefreshGACCaptcha() {
+       
+        $("#CaptchaImageMExp").attr("src", '@Url.Action("CaptchaImageNew", "Home", new { area = "" })?' + new Date().getTime());
+    }*@
+    $("#btnMExpUserSubmit").click(function () {
+        console.log("1");
+        if ($("#ExpertMember").valid()) {
+            $('#hdExpertMember').val("E");
+            $('#ExpertMember').submit();
+        }
+    });
+    function AllowNumericOnly(e) {
+        var ch = String.fromCharCode(event.keyCode);
+        var filter = /[0-9]/;
+        if (!filter.test(ch)) {
+            event.returnValue = false;
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+</script>
+

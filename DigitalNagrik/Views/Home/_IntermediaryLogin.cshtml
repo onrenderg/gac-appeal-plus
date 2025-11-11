@@ -1,0 +1,51 @@
+﻿@model DigitalNagrik.Models.CommonLogin
+@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { id = "IntermediaryLogin" }))
+{@Html.AntiForgeryToken()
+@Html.HiddenFor(x => x.hdActionInter)
+@Html.ValidationMessage("IntErrorMessage")
+<div class="mb-3 row">
+    <div class="col-12">
+        <label class="custom-input-label mb-2">Email ID<span class="text-danger">*</span></label>
+        @Html.TextBoxFor(x => x.InterEmailID, new { @class = "form-control DisabledInputs", maxlength = "100", placeholder = "Email ID", @autocomplete = "off" })
+        @Html.ValidationMessageFor(x => x.InterEmailID)
+    </div>
+</div>
+<div id="divCaptcha">
+    <div class="mb-2 row">
+        <div class="col-12">
+            <label class="custom-input-label mb-1">Captcha<span class="text-danger">*</span></label>
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">
+                    <img id="CaptchaImageInter" alt="Captcha" src="@Url.Action("CaptchaImageNew", "Home", new { Area = "" })" />
+                    <a title="Click to refresh Captcha" onclick="RefreshCaptcha()"><i class="fa fa-refresh ms-2" aria-hidden="true"></i></a>
+                </span>
+                @Html.TextBoxFor(x => x.IntCaptcha, new { @id = "txtCaptcha", @class = "form-control DisabledInputs", placeholder = "Enter Captcha", autocomplete = "off", maxlength = "6" })
+            </div>
+            <div id="SpanCaptchaValidation">
+                @Html.ValidationMessageFor(x => x.IntCaptcha)
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-12 text-center">
+            <button type="button" class="btn btn-primary" id="btnIntermediarySendOTP">&nbsp;Send OTP</button>
+        </div>
+    </div>
+    <div class="row" style="font-style:italic;">
+        <div class="col-md-12 mt-1" style="text-align:center;font-size:14px;">
+            Please use your grievance officer's email to generate OTP
+        </div>
+    </div>
+</div>
+}
+<script>
+
+    $("#btnIntermediarySendOTP").click(function () {
+        if ($("#IntermediaryLogin").valid()) {
+
+            $('#hdActionInter').val("I");
+            console.log($('#hdActionInter').val());
+            $('#IntermediaryLogin').submit();
+        };
+    });
+</script>

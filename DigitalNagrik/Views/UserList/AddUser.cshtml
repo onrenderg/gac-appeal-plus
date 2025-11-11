@@ -1,0 +1,288 @@
+﻿@model DigitalNagrik.Models.UserListD
+@{
+    ViewBag.Title = "AddUser";
+    Layout = "~/Views/Shared/_LayoutDash.cshtml";
+}
+
+<style>
+    .custom-input-label {
+        font-size: 0.92rem;
+        font-weight: 600;
+        display: inline-block;
+        line-height: 1.2rem;
+    }
+</style>
+
+<div class="container no-padding bg-light" style="font-size:18px">
+    <div class="row">
+        <div class="col-lg-6">
+            <h1 style="font-size: 26px; color: black;margin-left:10px; margin-top: 10px;"><i class=" bx bx-user "></i>&nbsp;Add User</h1>
+        </div>
+        <div class="col-lg-6 mt-1">
+            <a class="btn btn-warning float-end" href='@Url.Action("index", "UserList", new {area=""})'>
+                <i class="bx bx-arrow-back align-middle"></i> Back
+            </a>
+        </div>
+    </div>
+    <hr />
+    @using (Html.BeginForm("InsertUserData", "UserList", FormMethod.Post, new { id = "frm_Adduser", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-lg-2">
+                <label class="custom-input-label mb-1">User ID</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-4 mb-3">
+                @Html.TextBoxFor(x => x.UserId, new { @id = "UserID", @class = "form-control DisabledInputs", maxlength = "100", placeholder = "User ID", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.UserId)
+            </div>
+            <div class="col-lg-2">
+                <label class="custom-input-label mb-1">User Name</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-4 mb-3">
+                @Html.TextBoxFor(x => x.UserName, new { @id = "UserName", @class = "form-control DisabledInputs", maxlength = "500", placeholder = "User Name", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.UserName)
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-2">
+                <label class="custom-input-label mb-1">Designation</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-4 mb-3">
+                @Html.TextAreaFor(x => x.Designation, new { @id = "Designation", @class = "form-control DisabledInputs", maxlength = "500", placeholder = "Designation", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.Designation)
+            </div>
+            <div class="col-lg-2">
+                <label class="custom-input-label mb-1">User Address</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-4 mb-3">
+                @Html.TextAreaFor(x => x.UserAddress, new { @id = "UserAddress", @class = "form-control DisabledInputs", maxlength = "500", placeholder = "User Address", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.UserAddress)
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-2">
+                <label class="custom-input-label mb-1">Mobile No.</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-4 mb-3">
+                @Html.TextBoxFor(x => x.Mobile, new { @id = "MobileNo", @class = "form-control DisabledInputs allow_Numbers", maxlength = "10", placeholder = "Mobile No.", @autocomplete = "off" })
+                @Html.ValidationMessageFor(x => x.Mobile)
+            </div>
+            <div class="col-lg-2">
+                <label class="custom-input-label mb-1">Role Type</label><span class="text-danger"> *</span>
+            </div>
+            <div class="col-lg-4 mb-3">
+                @foreach (var item in Model.RoleTypeList)
+                {
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="RoleTypeID" id="RoleTypeID" value="@item.Value">
+                        <label class="form-check-label">@item.Text</label>
+                    </div>
+                }
+                @Html.ValidationMessageFor(x => x.RoleTypeID)
+            </div>
+        </div>
+
+        <div id="divRole" style="display:none;">
+            <div class="row" id="divRole">
+                @*id="divRole" style="display:none;"*@
+                <div class="col-lg-6" id="divRoleName">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <label class="custom-input-label mb-1">Role Name</label><span class="text-danger"> *</span>
+                        </div>
+                        <div class="col-lg-8 mb-3">
+                            @Html.DropDownListFor(m => m.UserRoleID, Model.UserRoleList, "Select", new { @id = "UserRoleID", @class = "form-select", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(x => x.UserRoleID)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" id="divGACType">
+                    @*style="display:none;"*@
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <label class="custom-input-label mb-1">GAC Type</label><span class="text-danger"> *</span>
+                        </div>
+                        <div class="col-lg-8 mb-3">
+                            @*@Html.DropDownListFor(m => m.GACID, Model.GACTypeList, "Select", new { @id = "GACID", @class = "form-select", @autocomplete = "off" })
+                                @Html.ValidationMessageFor(x => x.GACID)*@
+                            @{ var i = 1;
+                                foreach (var item in Model.GACTypeList)
+                                {
+
+                                    <label>
+                                        <input class="GACIDList form-check-input" type="checkbox" value="@item.Value" name="GACID_@i" id="GACID_@item.Value"
+                                               onchange="checkChange('@item.Value',this)" /><span style="vertical-align: text-bottom">&nbsp; @item.Text</span>
+                                        </label>
+                                        <br />
+                                        i++;
+                                    }
+                            }
+                            @Html.HiddenFor(x => x.GACIDString, new { id = "GACIDString" })
+                            <span id="GACIDStringValidationMsg" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <button type="button" class="btn btn-success" id="btnSubmit"><i class="bx bx-check-circle align-middle"></i>&nbsp;Submit</button>
+                <a class="btn btn-danger " href='@Url.Action("index", "UserList", new {area=""})'>
+                    <i class="bx bx-window-close align-middle"></i> Cancel
+                </a>
+            </div>
+        </div>
+    }
+
+</div>
+<script>
+    $(document).ready(function () {
+             if ('@Model.RoleTypeID'!= '') {
+                 $('#divRole').show()
+                 $('#divRoleName').show()
+                   $.ajax({
+            url: '@Url.Action("GetUserRolesData", "UserList", new { area = "" })',
+            type: "GET",
+            dataType: "JSON",
+            data: { UserRoleType: '@Model.RoleTypeID' },
+             success: function (data) {
+                 //console.log(data)
+                if (data) {
+                    $("#UserRoleID").empty();
+                    if ('@Model.RoleTypeID' == '3') {
+                        $("#UserRoleID").append("<option value=''>Select</option>");
+                    }
+                    $.each(data["RoleList"], function (Index, d) {
+                    $("#UserRoleID").append("<option value='" + d.Value + "'>" + d.Text + "</option>")
+                             });
+                 }
+                 $('#UserRoleID').val('@Model.UserRoleID');
+            },
+            error: function () {
+                $("#UserRoleID").empty();
+                $("#UserRoleID").append("<option value=''>Select</option>");
+                    }
+                });
+        }
+
+        var RoleTypeID = '@Model.RoleTypeID';
+        if (RoleTypeID != null && RoleTypeID != "") {
+            $('input[name=RoleTypeID][value=@Model.RoleTypeID]').prop("checked", true);
+        }
+        @*if ('@Model.RoleTypeID'=='2') {
+            $('#divGACType').show();
+        }*@
+
+        $(".allow_Numbers").on("input", function (evt) {
+            var self = $(this);
+            self.val(self.val().replace(/[^0-9]/g, ''));
+        });
+    });
+
+    $("#btnCancel").click(function () {
+        $('.DisabledInputs').prop('disabled', false);
+        var url = '@Url.Action("index", "UserList")';
+        window.location.href = url;
+    });
+
+    $("#btnSubmit").click(function () {
+        if ($("#frm_Adduser").valid())
+        {
+            var GACIDString = $('#GACIDString').val();
+            //alert("GACIDString=" + $('#GACIDString').val());
+            if (GACIDString != null && GACIDString != "") {
+                $('#frm_Adduser').submit();
+            }
+            else {
+                $('#GACIDStringValidationMsg').html("Please Select GAC !");
+                return false;
+            }
+        }
+      });
+
+    $('input[type=radio][name=RoleTypeID]').change(function () {
+        //alert("checked value of  RoleTypeID=" + this.value);
+        $('#divRole').show();
+        if (this.value == '1') {
+            //$('#divGACType').hide();
+            $('#UserRoleID').empty();
+        }
+        else if (this.value == '2') {
+            // ...
+            $('#divRole').show();
+            $('#divGACType').show();
+        }
+
+         $.ajax({
+            url: '@Url.Action("GetUserRolesData", "UserList", new { area = "" })',
+            url: '@Url.Action("GetUserRolesData", "UserList", new { area = "" })',
+            type: "GET",
+            dataType: "JSON",
+            data: { UserRoleType: $(this).val() },
+             success: function (data) {
+                 //console.log(data)
+                if (data) {
+                    $("#UserRoleID").empty();
+                    if (this.value == '3') {
+                        RoleTypeID
+                        $("#UserRoleID").append("<option value=''>Select</option>");
+                    }
+                    $.each(data["RoleList"], function (Index, d) {
+                    $("#UserRoleID").append("<option value='" + d.Value + "'>" + d.Text + "</option>")
+                             });
+                         }
+            },
+            error: function () {
+                $("#UserRoleID").empty();
+                $("#UserRoleID").append("<option value=''>Select</option>");
+                    }
+         });
+
+
+        var GACIDString = $('#GACIDString').val();
+        if ((this.value == '1' || this.value == '2') && (GACIDString != "" || GACIDString!= null )) {
+            $('[id^=GACID_]').prop("checked", true);
+
+            var count = ($('.GACIDList').length);
+            var str = "";
+            for (var i = 1; i <= count; i++) {
+                var name = "GACID_" + i;
+                if ($("input[name='" + name + "']").prop("checked") == true) {
+                    str = ($.trim(str) == "" ? "" : str + ',') + $("input[name='" + name + "']").val();
+                }
+            }
+            $('#GACIDString').val(str);
+            //alert("GACIDString=" + $('#GACIDString').val());
+        }
+    });
+
+    function checkChange(DId, CInput) {
+        var count = ($('.GACIDList').length);
+        var str = "";
+        for (var i = 1; i <= count; i++) {
+            var name = "GACID_" + i;
+            if ($("input[name='" + name + "']").prop("checked") == true) {
+                str = ($.trim(str) == "" ? "" : str + ',') + $("input[name='" + name + "']").val();
+            }
+        }
+        $('#GACIDString').val(str);
+        //alert("GACIDString=" + $('#GACIDString').val());
+    }
+
+
+    var GACIDString = '@Model.GACIDString';
+    if (GACIDString != "" && GACIDString!=null  && '@Model.GACTypeList.Count' > 0) {
+        var array = GACIDString.split(",");
+        $.each(array, function (i) {
+            if ($("#GACID_" + $.trim(array[i])).length) {
+                document.getElementById("GACID_" + $.trim(array[i])).checked = true;
+            }
+        });
+    }
+</script>
+
+

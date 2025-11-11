@@ -1,0 +1,26 @@
+﻿@model DigitalNagrik.Areas.Masters.Data.LabelDataMaster
+<div class="row mt-3 ms-2">
+    <div class="col-lg-1">
+        <label class="custom-input-label">Module Name</label><span class="text-danger"> *</span>
+    </div>
+    <div class="col-lg-2">
+        @Html.DropDownListFor(m => m.ModuleID, Model.ModuleList, "--All Module(s)--", new { @class = "form-select" })
+        @Html.ValidationMessageFor(x => x.ModuleID)
+    </div>
+    <div class="col-lg-1">
+        <label class="custom-input-label">Form Name</label><span class="text-danger"> *</span>
+    </div>
+    <div class="col-lg-2">
+        @Html.DropDownListFor(m => m.FormID, Model.FormList, "--All Form(s)--", new { @class = "form-select" })
+        @Html.ValidationMessageFor(x => x.FormID)
+    </div>
+
+
+    <div class="col-lg-1">
+        <label class="custom-input-label">Language</label><span class="text-danger"> *</span>
+    </div>
+    <div class="col-lg-2">
+        @Html.DropDownListFor(m => m.LanguageCode, Model.LanguageList, "--All Language(s)--", new { @class = "form-select" })
+        @Html.ValidationMessageFor(x => x.LanguageCode)
+    </div>
+</div>
